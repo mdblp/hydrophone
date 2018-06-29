@@ -14,10 +14,10 @@ addons:
 
 before_install:
   # fix travis working folder (see http://www.ruflin.com/2015/08/13/fix-for-travis-ci-failure-in-forked-golang-repositories/)
-  - mkdir -p $HOME/gopath/src/github.com/tidepool-org/message-api
-  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/tidepool-org/message-api/
-  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/tidepool-org/message-api
-  - cd $HOME/gopath/src/github.com/tidepool-org/message-api
+  - mkdir -p $HOME/gopath/src/github.com/tidepool-org/hydrophone
+  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/tidepool-org/hydrophone/
+  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/tidepool-org/hydrophone
+  - cd $HOME/gopath/src/github.com/tidepool-org/hydrophone
 
 
 deploy:
