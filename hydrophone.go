@@ -98,15 +98,14 @@ func main() {
 	// Create collection of pre-compiled templates
 	// Templates are built based on HTML files which location is calculated from config
 	// Config is initalized with environment variables
-	emailTemplates, err := templates.New(config.Api.InternationalizationTemplatesPath)
+	emailTemplates, err := templates.New(config.Api.I18nTemplatesPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, gatekeeper, highwater, seagull, emailTemplates)
+	api := api.InitApiWithI18n(config.Api, store, mail, shoreline, gatekeeper, highwater, seagull, emailTemplates)
 	api.SetHandlers("", rtr)
-	api.InitI18n(config.Api.InternationalizationTemplatesPath)
 
 	/*
 	 * Serve it up and publish

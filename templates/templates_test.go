@@ -23,12 +23,12 @@ func Test_GetTemplateMeta(t *testing.T) {
 	}
 }
 
-func Test_GetBody(t *testing.T) {
+func Test_GetBodySkeleton(t *testing.T) {
 	// Get template Metadata
 	var templateMeta = getTemplateMeta(templatesPath + "/meta/" + templateName + ".json")
 	var templateFileName = templatesPath + "/html/" + templateMeta.TemplateFilename
 
-	var templateBody = getBody(templateFileName)
+	var templateBody = getBodySkeleton(templateFileName)
 
 	if templateBody == "" {
 		t.Fatalf("Template Body cannot be found: %s", templateFileName)

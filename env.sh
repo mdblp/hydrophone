@@ -31,7 +31,7 @@ export TIDEPOOL_HYDROPHONE_SERVICE='{
         "serverSecret": "This needs to be the same secret everywhere. YaHut75NsK1f9UKUXuWqxNN0RUwHFBCy",
         "webUrl": "http://localhost:3000",
         "assetUrl": "https://s3-us-west-2.amazonaws.com/tidepool-dev-asset",
-        "internationalizationTemplatesPath": "/go/src/github.com/tidepool-org/hydrophone/templates"
+        "i18nTemplatesPath": "/go/src/github.com/tidepool-org/hydrophone/templates"
     },
     "sesEmail" : {
         "serverEndpoint":"https://email.us-west-2.amazonaws.com",

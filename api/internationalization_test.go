@@ -3,6 +3,7 @@ package api
 import (
 	"testing"
 
+	"github.com/tidepool-org/hydrophone/models"
 	templates "github.com/tidepool-org/hydrophone/templates"
 )
 
@@ -55,7 +56,8 @@ func Test_ExecuteTemplate(t *testing.T) {
 	}
 
 	// Create Test Template
-	temp, err := templates.NewTestTemplate(templatesPath)
+	temp, err := templates.NewGenericTemplate(templatesPath, models.TemplateNameTest)
+
 	if temp == nil {
 		t.Fatalf("Failed to create test template: %s", err.Error())
 	}

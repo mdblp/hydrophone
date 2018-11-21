@@ -33,10 +33,10 @@ type (
 		LanguageBundle *i18n.Bundle
 	}
 	Config struct {
-		ServerSecret                      string `json:"serverSecret"` //used for services
-		WebURL                            string `json:"webUrl"`
-		AssetURL                          string `json:"assetUrl"`
-		InternationalizationTemplatesPath string `json:"internationalizationTemplatesPath"`
+		ServerSecret      string `json:"serverSecret"` //used for services
+		WebURL            string `json:"webUrl"`
+		AssetURL          string `json:"assetUrl"`
+		I18nTemplatesPath string `json:"i18nTemplatesPath"`
 	}
 
 	group struct {
@@ -87,6 +87,33 @@ func InitApi(
 		templates:      templates,
 		LanguageBundle: nil,
 	}
+}
+
+// InitApiI18n initializes both the API and the i18n artefacts
+func InitApiWithI18n(
+	cfg Config,
+	store clients.StoreClient,
+	ntf clients.Notifier,
+	sl shoreline.Client,
+	gatekeeper commonClients.Gatekeeper,
+	metrics highwater.Client,
+	seagull commonClients.Seagull,
+	templates models.Templates,
+) *Api {
+	var theAPI *Api
+	theAPI = &Api{
+		Store:          store,
+		Config:         cfg,
+		notifier:       ntf,
+		sl:             sl,
+		gatekeeper:     gatekeeper,
+		metrics:        metrics,
+		seagull:        seagull,
+		templates:      templates,
+		LanguageBundle: nil,
+	}
+	theAPI.InitI18n(cfg.I18nTemplatesPath)
+	return theAPI
 }
 
 func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {

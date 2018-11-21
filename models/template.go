@@ -22,7 +22,7 @@ const (
 	TemplateNameSignupClinic          TemplateName = "signup_clinic_confirmation"
 	TemplateNameSignupCustodial       TemplateName = "signup_custodial_confirmation"
 	TemplateNameSignupCustodialClinic TemplateName = "signup_custodial_clinic_confirmation"
-	TemplateNameTestTemplate          TemplateName = "test_template"
+	TemplateNameTest                  TemplateName = "test_template"
 	TemplateNameUndefined             TemplateName = ""
 )
 
