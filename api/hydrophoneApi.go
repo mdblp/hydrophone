@@ -241,9 +241,8 @@ func (a *Api) checkFoundConfirmations(res http.ResponseWriter, results []*models
 }
 
 //Generate a notification from the given confirmation,write the error if it fails
-func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[string]interface{}) bool {
+func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[string]interface{}, lang string) bool {
 
-	lang := getUserLanguage(conf, a)
 	log.Printf("sending notification with template %s to %s with language %s", conf.TemplateName, conf.Email, lang)
 
 	// Get the template name based on the requested communication type
@@ -300,6 +299,7 @@ func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[s
 //find and validate the token
 func (a *Api) token(res http.ResponseWriter, req *http.Request) *shoreline.TokenData {
 	if token := req.Header.Get(TP_SESSION_TOKEN); token != "" {
+		log.Printf("Found token in request header %s", token)
 		td := a.sl.CheckToken(token)
 
 		if td == nil {
@@ -340,6 +340,7 @@ func (a *Api) findExistingUser(indentifier, token string) *shoreline.UserData {
 		log.Printf("Error [%s] trying to get existing users details", err.Error())
 		return nil
 	} else {
+		log.Printf("User found at shoreline using token %s", token)
 		return usr
 	}
 }

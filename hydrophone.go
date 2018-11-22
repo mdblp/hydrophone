@@ -72,6 +72,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Printf("Shoreline client started with server token %s", shoreline.TokenProvide())
+
 	gatekeeper := clients.NewGatekeeperClientBuilder().
 		WithHostGetter(config.GatekeeperConfig.ToHostGetter(hakkenClient)).
 		WithHttpClient(httpClient).

@@ -70,7 +70,9 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 			"Email": resetCnf.Email,
 		}
 
-		if a.createAndSendNotification(resetCnf, emailContent) {
+		userLanguage := getUserLanguage(resetCnf.UserId, a, req)
+
+		if a.createAndSendNotification(resetCnf, emailContent, userLanguage) {
 			a.logMetricAsServer("reset confirmation sent")
 		} else {
 			a.logMetricAsServer("reset confirmation failed to be sent")

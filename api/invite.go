@@ -429,7 +429,9 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 						"WebPath":      webPath,
 					}
 
-					if a.createAndSendNotification(invite, emailContent) {
+					userLanguage := getUserLanguage(invite.UserId, a, req)
+
+					if a.createAndSendNotification(invite, emailContent, userLanguage) {
 						a.logMetric("invite sent", req)
 					}
 				}

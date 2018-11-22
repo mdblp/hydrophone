@@ -211,7 +211,9 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 						emailContent["CreatorName"] = newSignUp.Creator.Profile.FullName
 					}
 
-					if a.createAndSendNotification(newSignUp, emailContent) {
+					userLanguage := getUserLanguage(newSignUp.UserId, a, req)
+
+					if a.createAndSendNotification(newSignUp, emailContent, userLanguage) {
 						a.logMetricAsServer("signup confirmation sent")
 						res.WriteHeader(http.StatusOK)
 						return
@@ -275,7 +277,9 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 					emailContent["CreatorName"] = found.Creator.Profile.FullName
 				}
 
-				if a.createAndSendNotification(found, emailContent) {
+				userLanguage := getUserLanguage(found.UserId, a, req)
+
+				if a.createAndSendNotification(found, emailContent, userLanguage) {
 					a.logMetricAsServer("signup confirmation re-sent")
 				} else {
 					a.logMetricAsServer("signup confirmation failed to be sent")
