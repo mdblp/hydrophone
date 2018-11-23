@@ -14,7 +14,7 @@
         "FooterSignature",
         "FooterMadePossible"
     ],
-    "escapeTranslationChunks":[
+    "escapeContentChunks":[
         "CreatorName",
         "FullName"
     ]

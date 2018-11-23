@@ -118,32 +118,6 @@ func fillEscapedParts(template models.Template, content map[string]interface{}) 
 	return escape
 }
 
-// getUserLanguage returns the language of the user
-// the language of the user is found in the user profile if user is connected or retrieved from the brower language in case he is not connected
-// by default, if neither is found, it will be "en" (for English)
-func getUserLanguage(userID string, a *Api, req *http.Request) string {
-	// Get user profile and language for message
-	type (
-		UserProfile struct {
-			Language string `json:"language"`
-		}
-	)
-
-	var profile = &UserProfile{}
-	a.seagull.GetCollection(userID, "profile", a.sl.TokenProvide(), profile)
-
-	if profile.Language == "" {
-		// the profile language is not found, we check the browser language
-		if browserLang := getBrowserPreferredLanguage(req); browserLang != "" {
-			profile.Language = browserLang
-		} else {
-			profile.Language = "en"
-		}
-	}
-
-	return profile.Language
-}
-
 // getAllLocalizationFiles returns all the filenames within the folder specified by the TIDEPOOL_HYDROPHONE_SERVICE environment variable
 // Add yaml file to this folder to get a language added
 // At least en.yaml should be present
