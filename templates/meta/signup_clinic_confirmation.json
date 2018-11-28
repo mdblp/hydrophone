@@ -3,7 +3,7 @@
     "description": "email to ask clinician for verification of email",
     "templateFilename": "signup_clinic_confirmation.html",
     "subject": "SignupClinicConfirmationSubject",
-    "contentChunks":[
+    "contentParts":[
         "SignupClinicHello",
         "SignupClinicCongrats",
         "SignupClinicVerify",
@@ -13,5 +13,5 @@
         "FooterSignature",
         "FooterMadePossible"
     ],
-    "escapeContentChunks":[]
+    "escapeContentParts":[]
 }

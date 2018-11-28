@@ -3,7 +3,7 @@
     "description": "email for those that requested password reset but did not create their account before",
     "templateFilename": "no_account.html",
     "subject": "NoAccountSubject",
-    "contentChunks":[
+    "contentParts":[
         "NoAccountHello",
         "NoAccountNoAccount",
         "NoAccountClick",
@@ -14,5 +14,5 @@
         "FooterSignature",
         "FooterMadePossible"
     ],
-    "escapeContentChunks":[]
+    "escapeContentParts":[]
 }

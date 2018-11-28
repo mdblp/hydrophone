@@ -11,12 +11,12 @@ import (
 )
 
 type TemplateMeta struct {
-	Name                string   `json:"name"`
-	Description         string   `json:"description"`
-	TemplateFilename    string   `json:"templateFilename"`
-	ContentChunks       []string `json:"contentChunks"`
-	Subject             string   `json:"subject"`
-	EscapeContentChunks []string `json:"escapeContentChunks"`
+	Name               string   `json:"name"`
+	Description        string   `json:"description"`
+	TemplateFilename   string   `json:"templateFilename"`
+	ContentParts       []string `json:"contentParts"`
+	Subject            string   `json:"subject"`
+	EscapeContentParts []string `json:"escapeContentParts"`
 }
 
 func New(templatesPath string) (models.Templates, error) {
@@ -74,7 +74,7 @@ func NewGenericTemplate(templatesPath string, templateName models.TemplateName) 
 	var templateMeta = getTemplateMeta(templatesPath + "/meta/" + string(templateName) + ".json")
 	var templateFileName = templatesPath + "/html/" + templateMeta.TemplateFilename
 
-	return models.NewPrecompiledTemplate(templateName, templateMeta.Subject, getBodySkeleton(templateFileName), templateMeta.ContentChunks, templateMeta.EscapeContentChunks)
+	return models.NewPrecompiledTemplate(templateName, templateMeta.Subject, getBodySkeleton(templateFileName), templateMeta.ContentParts, templateMeta.EscapeContentParts)
 }
 
 // getTemplateMeta returns the template metadata

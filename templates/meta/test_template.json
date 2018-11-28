@@ -3,10 +3,10 @@
     "description": "email for testing purposes",
     "templateFilename": "test_template.html",
     "subject": "TestTemplateSubject",
-    "contentChunks":[
+    "contentParts":[
         "TestContentInjection"
     ],
-    "escapeContentChunks":[
+    "escapeContentParts":[
         "TestCreatorName"
     ]
 }

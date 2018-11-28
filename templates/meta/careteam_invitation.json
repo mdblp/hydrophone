@@ -3,7 +3,7 @@
     "description": "email for those that invited someone to join medical crew",
     "templateFilename": "careteam_invitation.html",
     "subject": "CareTeamInvitationSubject",
-    "contentChunks":[
+    "contentParts":[
         "CareTeamInviteHello",
         "CareTeamInviteInvitation",
         "CareTeamInviteClick",
@@ -14,7 +14,7 @@
         "FooterSignature",
         "FooterMadePossible"
     ],
-    "escapeContentChunks":[
+    "escapeContentParts":[
         "CareteamName"
     ]
 }
