@@ -40,7 +40,7 @@ The templates and locales files are located under /templates:
 * /templates/locales: content in various languages
 * /templates/meta: email structure
 
-**Configuration note:** you do need to provide the template location to Hydrophone via in the environment variables as an absolute path. relative path won't work (not yet).  
+**Configuration note:** you do need to provide the template location to Hydrophone in the environment variables as an absolute path. relative path won't work.  
 For example:  
 ```
 export TIDEPOOL_HYDROPHONE_SERVICE='{
