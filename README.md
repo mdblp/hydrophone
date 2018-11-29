@@ -9,7 +9,7 @@ This API sends notifications (using relevant language) to users for things like 
 To build the Hydrophone module you simply need to execute the build script:  
 
 ```
-$ source ./build
+$ ./build.sh
 ```
 This will automatically get the dependencies (using goget) and build the code. 
 
@@ -18,7 +18,7 @@ This will automatically get the dependencies (using goget) and build the code.
 If you would like to contribute then you will likely need to run the tests locally before pushing your changes. 
 To run **all** tests you can simply execute the test script from your favorite shell:
 
-`$ source ./build`  
+`$ ./test.sh`  
 
 To run the tests for a particular folder (i.e. the api part) you need to go into this folder and execute the gotest command:  
 To run all tests for this repo then in the root directory use:
