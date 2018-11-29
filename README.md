@@ -15,7 +15,7 @@ This will automatically get the dependencies (using goget) and build the code.
 
 
 ## Running the Tests
-If you would like to contribute then you will likekly need to run the tests locally before pushing your changes. 
+If you would like to contribute then you will likely need to run the tests locally before pushing your changes. 
 To run **all** tests you can simply execute the test script from your favorite shell:
 
 `$ source ./build`  
