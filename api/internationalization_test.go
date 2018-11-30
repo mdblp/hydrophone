@@ -61,7 +61,7 @@ func Test_ExecuteTemplate(t *testing.T) {
 	}
 
 	// Create Test Template
-	temp, err := templates.NewGenericTemplate(templatesPath, models.TemplateNameTest)
+	temp, err := templates.NewTemplate(templatesPath, models.TemplateNameTest)
 
 	if temp == nil {
 		t.Fatalf("Failed to create test template: %s", err.Error())

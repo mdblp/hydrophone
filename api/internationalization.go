@@ -146,13 +146,13 @@ func getBrowserPreferredLanguage(req *http.Request) string {
 
 	if acptlng := req.Header.Get(HEADER_LANGUAGE); acptlng == "" {
 		return ""
-	} else if langs := parseAcceptLanguage(acptlng); langs == nil {
+	} else if languages := parseAcceptLanguage(acptlng); languages == nil {
 		return ""
 	} else {
 		// if at least 1 lang is found, we return the 2 first characters of the first lang
 		// this header language item, although initially made for handling language is sometimes used to handle complete locale under form language-locale (eg FR-fr)
 		// hence we take only the 2 first characters
-		return langs[0].Lang[0:2]
+		return languages[0].Lang[0:2]
 	}
 }
 

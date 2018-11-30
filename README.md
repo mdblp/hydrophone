@@ -46,7 +46,7 @@ For example:
 export TIDEPOOL_HYDROPHONE_SERVICE='{
     "hydrophone" : {
         ...
-        "internationalizationTemplatesPath": "/var/data/hydrophone/templates"
+        "i18nTemplatesPath": "/var/data/hydrophone/templates"
     },
 ...
 }'

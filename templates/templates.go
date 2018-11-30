@@ -22,43 +22,43 @@ type TemplateMeta struct {
 func New(templatesPath string) (models.Templates, error) {
 	templates := models.Templates{}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNameCareteamInvite); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNameCareteamInvite); err != nil {
 		return nil, fmt.Errorf("templates: failure to create careteam invite template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNameNoAccount); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNameNoAccount); err != nil {
 		return nil, fmt.Errorf("templates: failure to create no account template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNamePasswordReset); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNamePasswordReset); err != nil {
 		return nil, fmt.Errorf("templates: failure to create password reset template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNameSignup); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNameSignup); err != nil {
 		return nil, fmt.Errorf("templates: failure to create signup template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNameSignupClinic); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNameSignupClinic); err != nil {
 		return nil, fmt.Errorf("templates: failure to create signup clinic template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNameSignupCustodial); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNameSignupCustodial); err != nil {
 		return nil, fmt.Errorf("templates: failure to create signup custodial template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}
 
-	if template, err := NewGenericTemplate(templatesPath, models.TemplateNameSignupCustodialClinic); err != nil {
+	if template, err := NewTemplate(templatesPath, models.TemplateNameSignupCustodialClinic); err != nil {
 		return nil, fmt.Errorf("templates: failure to create signup custodial clinic template: %s", err)
 	} else {
 		templates[template.Name()] = template
@@ -67,9 +67,9 @@ func New(templatesPath string) (models.Templates, error) {
 	return templates, nil
 }
 
-//NewGenericTemplate returns the requested template
+//NewTemplate returns the requested template
 //templateName is the name of the template to be returned
-func NewGenericTemplate(templatesPath string, templateName models.TemplateName) (models.Template, error) {
+func NewTemplate(templatesPath string, templateName models.TemplateName) (models.Template, error) {
 	// Get template Metadata
 	var templateMeta = getTemplateMeta(templatesPath + "/meta/" + string(templateName) + ".json")
 	var templateFileName = templatesPath + "/html/" + templateMeta.TemplateFilename

@@ -64,7 +64,10 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 		// let's get the reseter user preferences
 		reseterPreferences := &models.Preferences{}
 		if err := a.seagull.GetCollection(resetCnf.UserId, "preferences", a.sl.TokenProvide(), reseterPreferences); err != nil {
-			a.sendError(res, http.StatusInternalServerError, STATUS_ERR_FINDING_USR, "forgot password: error getting reseter user preferences: ", err.Error())
+			a.sendError(res, http.StatusInternalServerError,
+				STATUS_ERR_FINDING_USR,
+				"forgot password: error getting reseter user preferences: ",
+				err.Error())
 			return
 		}
 		// if reseter has a profile and a language we override the previously set language (browser's or "en")
