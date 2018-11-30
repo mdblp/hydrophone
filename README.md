@@ -34,6 +34,8 @@ The configuration is provided to Hydrophone via 2 environment variables: `TIDEPO
 The script `env.sh` provided in this repo will set all the necessary variables with default values, allowing you to work on your development environment. However when deploying on another environment, or when using docker you will likely need to change these variables to match your setup.  
 
 ## Notes on email customization and internationalization
+More information on this in [docs/README.md](docs/README.md)
+
 The emails sent by Hydrophone can be customized and translated in the user's language.  
 The templates and locales files are located under /templates:
 * /templates/html: html template files
