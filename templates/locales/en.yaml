@@ -1,61 +1,61 @@
 # Footer 
 # (for all emails)
-FooterOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-FooterGetSupport: "Get Support"
+FooterOpenSource: ""
+FooterGetSupport: "Support"
 FooterSincerely: "Sincerely,"
-FooterSignature: "The Tidepool Team"
-FooterMadePossible: "Made possible by"
+FooterSignature: "The Diabeloop Team"
+FooterMadePossible: ""
 
 # No account 
 # (email for those that requested password reset but did not create their account before)
-NoAccountSubject: "Password reset for your Tidepool account"
-NoAccountHello: "Hey there!"
-NoAccountNoAccount: "We heard you would like to reset your Tidepool password but no account has been created yet for your email address."
+NoAccountSubject: "Password reset for your YourLoops account"
+NoAccountHello: "Hello,"
+NoAccountNoAccount: "You asked to change your YourLoops password but no account has been created yet with this email address."
 NoAccountClick: "Please click on the link below if you would like to create an account."
 NoAccountSignUp: "Sign Up"
-NoAccountOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-NoAccountGetSupport: "Get Support"
+NoAccountOpenSource: ""
+NoAccountGetSupport: "Support"
 
 # Password Reset
 # (email for those that requested password reset)
-PasswordResetSubject: "Password reset for your Tidepool account"
-PasswordResetHello: "Hey there!"
+PasswordResetSubject: "Password reset for your YourLoops account"
+PasswordResetHello: "Hello,"
 PasswordResetRequest: "You requested a password reset."
 PasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
 PasswordResetOtherwise: "Otherwise, click the link below."
 PasswordResetClick: "Reset Password"
-PasswordResetOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-PasswordResetGetSupport: "Get Support"
+PasswordResetOpenSource: ""
+PasswordResetGetSupport: "Support"
 
 # CareTeamInvite
 # (email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Diabetes care team invitation"
-CareTeamInviteHello: "Hey there!"
+CareTeamInviteHello: "Hello,"
 CareTeamInviteInvitation: "{{ .CareteamName }} invited you to be on their care team."
 CareTeamInviteClick: "Please click the link below to accept and see {{ .CareteamName }}'s data."
-CareTeamInviteJoin: "Join {{ .CareteamName }}'s Care Team"
-CareTeamInviteOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-CareTeamInviteGetSupport: "Get Support"
+CareTeamInviteJoin: "Join Care Team"
+CareTeamInviteOpenSource: ""
+CareTeamInviteGetSupport: "Support"
 
 # Signup
 # (email to ask patient for verification of email)
-SignupConfirmationSubject: "Verify your Tidepool account"
-SignupHello: "Hey there!"
-SignupCongrats: "Congrats on creating your Tidepool account!"
+SignupConfirmationSubject: "Verify your YourLoops account"
+SignupHello: "Hello,"
+SignupCongrats: "Congrats on creating your YourLoops account!"
 SignupVerify: "Verify Your Account"
-SignupOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-SignupGetSupport: "Get Support"
+SignupOpenSource: ""
+SignupGetSupport: "Support"
 
 # Signup Clinic
 # (email to ask clinician for verification of email)
-SignupClinicConfirmationSubject: "Verify your Tidepool account"
-SignupClinicHello: "Hey there!"
-SignupClinicCongrats: "Congrats on creating your Tidepool account!"
+SignupClinicConfirmationSubject: "Verify your YourLoops account"
+SignupClinicHello: "Hello,"
+SignupClinicCongrats: "Congrats on creating your YourLoops account!"
 SignupClinicVerify: "Verify Your Account"
-SignupClinicOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-SignupClinicGetSupport: "Get Support"
+SignupClinicOpenSource: ""
+SignupClinicGetSupport: "Support"
 
-# Signup Custodial
+# Signup Custodial => SUPPRIMER
 # (email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
 SignupCustodialHello: "Hi, {{ .FullName }}!"
@@ -65,7 +65,7 @@ SignupCustodialClaim: "Claim Your Account"
 SignupCustodialOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
 SignupCustodialGetSupport: "Get Support"
 
-# Signup Custodial Clinic
+# Signup Custodial Clinic => SUPPRIMER
 # (email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
 SignupCustodialClinicHello: "Hi, {{ .FullName }}!"
