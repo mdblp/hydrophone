@@ -4,7 +4,7 @@ FooterOpenSource: "Un projet open source, non profitable, pour construire une pl
 FooterGetSupport: "Contacter le support"
 FooterSincerely: "Cordialement."
 FooterSignature: "L'équipe Tidepool"
-FooterMadePossible: "Rendu possible grâce à"
+FooterMadePossible: ""
 
 # No account
 # (email for those that requested password reset but did not create their account before)
