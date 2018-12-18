@@ -26,7 +26,7 @@ Each HTML file has its corresponding meta file. This meta file describes the tem
 
 ## Pitfall
 
-Following the previous logic of having all the templates in memory when the service is starting, this first version of emails based on HTML templates has the same pitfall. It needs a service restart to take changes in the HTML files into consideration. This limit in dynamic behaviour is logged as an issue in Github already.
+ Following the previous logic of having all the templates in memory when the service is starting, this first version of emails based on HTML templates has the same pitfall. It needs a service restart to take changes in the HTML files into consideration. 
 
 One part of the path to have a more dynamic behaviour is already crossed  with the use of the meta files. These meta files ensure:
 - we can add more content to the html file without code change
