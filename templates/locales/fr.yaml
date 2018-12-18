@@ -35,28 +35,27 @@ CareTeamInviteJoin: "Réjoindre l'équipe de {{ .CareteamName }}"
 # (email to ask patient for verification of email)
 SignupConfirmationSubject: "Vérification de votre compte Tidepool"
 SignupHello: "Bonjour,"
-SignupCongrats: "Félicitations pour la création de votre compte Tidepool!"
+SignupCongrats: "Félicitations pour la création de votre compte Tidepool !"
 SignupVerify: "Vérifier mon compte"
 
 # Signup Clinic
 # (email to ask clinician for verification of email)
 SignupClinicConfirmationSubject: "Vérification de votre compte Tidepool"
 SignupClinicHello: "Bonjour,"
-SignupClinicCongrats: "Félicitations pour la création de votre compte Tidepool!"
+SignupClinicCongrats: "Félicitations pour la création de votre compte Tidepool !"
 SignupClinicVerify: "Vérifier mon compte"
 
 # Signup Custodial
 # (email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialConfirmationSubject: "Suivi Diabète - Réclamer votre compte"
-SignupCustodialHello: "Bonjour {{ .FullName }}!"
-SignupCustodialAccount: "{{ .CreatorName }} a créé pour vous un compte Tidepool pour que vous puissiez visualiser vos données de diabète."
-SignupCustodialOwnership: "Vous pouvez réclamer votre compte gratuit pour voir et charger vos données depuis la maison."
-SignupCustodialClaim: "Réclamer mon compte"
+SignupCustodialConfirmationSubject: "Vérification de votre compte Tidepool"
+SignupCustodialHello: "Bonjour,"
+SignupCustodialCongrats: "Félicitations pour la création de votre compte Tidepool !"
+SignupCustodialVerify: "Vérifier mon compte"
 
 # Signup Custodial Clinic
 # (email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialClinicConfirmationSubject: "Suivi Diabète - Réclamer votre compte"
-SignupCustodialClinicHello: "Bonjour {{ .FullName }}!"
+SignupCustodialClinicHello: "Bonjour {{ .FullName }} !"
 SignupCustodialClinicAccount: "{{ .CreatorName }} a créé pour vous un compte Tidepool pour que vous puissiez visualiser vos données de diabète."
 SignupCustodialClinicOwnership: "Vous pouvez réclamer votre compte gratuit pour voir et charger vos données depuis la maison."
 SignupCustodialClinicClaim: "Réclamer mon compte"

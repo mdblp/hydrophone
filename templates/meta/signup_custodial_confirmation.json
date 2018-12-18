@@ -5,17 +5,13 @@
     "subject": "SignupCustodialConfirmationSubject",
     "contentParts":[
         "SignupCustodialHello",
-        "SignupCustodialAccount",
-        "SignupCustodialOwnership",
-        "SignupCustodialClaim",
+        "SignupCustodialCongrats",
+        "SignupCustodialVerify",
         "FooterOpenSource",
         "FooterGetSupport",
         "FooterSincerely",
         "FooterSignature",
         "FooterMadePossible"
     ],
-    "escapeContentParts":[
-        "CreatorName",
-        "FullName"
-    ]
+    "escapeContentParts":[]
 }

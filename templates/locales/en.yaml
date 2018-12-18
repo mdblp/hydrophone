@@ -13,8 +13,6 @@ NoAccountHello: "Hey there!"
 NoAccountNoAccount: "We heard you would like to reset your Tidepool password but no account has been created yet for your email address."
 NoAccountClick: "Please click on the link below if you would like to create an account."
 NoAccountSignUp: "Sign Up"
-NoAccountOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-NoAccountGetSupport: "Get Support"
 
 # Password Reset
 # (email for those that requested password reset)
@@ -24,8 +22,6 @@ PasswordResetRequest: "You requested a password reset."
 PasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
 PasswordResetOtherwise: "Otherwise, click the link below."
 PasswordResetClick: "Reset Password"
-PasswordResetOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-PasswordResetGetSupport: "Get Support"
 
 # CareTeamInvite
 # (email for those that invited someone to join medical crew)
@@ -34,8 +30,6 @@ CareTeamInviteHello: "Hey there!"
 CareTeamInviteInvitation: "{{ .CareteamName }} invited you to be on their care team."
 CareTeamInviteClick: "Please click the link below to accept and see {{ .CareteamName }}'s data."
 CareTeamInviteJoin: "Join {{ .CareteamName }}'s Care Team"
-CareTeamInviteOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-CareTeamInviteGetSupport: "Get Support"
 
 # Signup
 # (email to ask patient for verification of email)
@@ -43,8 +37,6 @@ SignupConfirmationSubject: "Verify your Tidepool account"
 SignupHello: "Hey there!"
 SignupCongrats: "Congrats on creating your Tidepool account!"
 SignupVerify: "Verify Your Account"
-SignupOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-SignupGetSupport: "Get Support"
 
 # Signup Clinic
 # (email to ask clinician for verification of email)
@@ -52,18 +44,13 @@ SignupClinicConfirmationSubject: "Verify your Tidepool account"
 SignupClinicHello: "Hey there!"
 SignupClinicCongrats: "Congrats on creating your Tidepool account!"
 SignupClinicVerify: "Verify Your Account"
-SignupClinicOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-SignupClinicGetSupport: "Get Support"
 
 # Signup Custodial
 # (email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
-SignupCustodialHello: "Hi, {{ .FullName }}!"
-SignupCustodialAccount: "{{ .CreatorName }} created a Tidepool account for your diabetes device data."
-SignupCustodialOwnership: "You can take ownership of your free account to view and upload data from home."
-SignupCustodialClaim: "Claim Your Account"
-SignupCustodialOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-SignupCustodialGetSupport: "Get Support"
+SignupCustodialConfirmationSubject: "Verify your YourLoops account"
+SignupCustodialHello: "Hello,"
+SignupCustodialCongrats: "Congrats on creating your YourLoops account!"
+SignupCustodialVerify: "Verify Your Account"
 
 # Signup Custodial Clinic
 # (email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
@@ -72,5 +59,3 @@ SignupCustodialClinicHello: "Hi, {{ .FullName }}!"
 SignupCustodialClinicAccount: "{{ .CreatorName }} created a Tidepool account for your diabetes device data."
 SignupCustodialClinicOwnership: "You can take ownership of your free account to view and upload data from home."
 SignupCustodialClinicClaim: "Claim Your Account"
-SignupCustodialClinicOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
-SignupCustodialClinicGetSupport: "Get Support"
