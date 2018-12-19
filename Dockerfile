@@ -7,7 +7,7 @@ COPY . .
 
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
-    apk add build-base git cyrus-sasl-dev
+    apk add build-base git cyrus-sasl-dev rsync
 
 RUN  dos2unix build.sh && ./build.sh && \
      dos2unix test.sh && \
