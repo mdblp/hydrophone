@@ -1,6 +1,5 @@
 deploy/
 dist/
-.vscode/
 
 artifact_go.sh
 *.exe

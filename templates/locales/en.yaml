@@ -1,10 +1,8 @@
 # Footer 
 # (for all emails)
-FooterOpenSource: ""
 FooterGetSupport: "Support"
 FooterSincerely: "Sincerely,"
 FooterSignature: "The Diabeloop Team"
-FooterMadePossible: ""
 
 # No account 
 # (email for those that requested password reset but did not create their account before)
@@ -27,7 +25,7 @@ PasswordResetClick: "Reset Password"
 # (email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Diabetes care team invitation"
 CareTeamInviteHello: "Hello,"
-CareTeamInviteInvitation: "{{ .CareteamName }} invited you to be on their care team."
+CareTeamInviteInvitation: "{{ .CareteamName }} invited you to be on his/her care team."
 CareTeamInviteClick: "Please click the link below to accept and see {{ .CareteamName }}'s data."
 CareTeamInviteJoin: "Join {{ .CareteamName }}'s Care Team"
 
@@ -56,6 +54,6 @@ SignupCustodialVerify: "Verify Your Account"
 # (email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
 SignupCustodialClinicHello: "Hi, {{ .FullName }}!"
-SignupCustodialClinicAccount: "{{ .CreatorName }} created a Tidepool account for your diabetes device data."
+SignupCustodialClinicAccount: "{{ .CreatorName }} created a YourLoops account for your diabetes device data."
 SignupCustodialClinicOwnership: "You can take ownership of your free account to view and upload data from home."
 SignupCustodialClinicClaim: "Claim Your Account"
