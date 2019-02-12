@@ -23,6 +23,15 @@ PasswordResetDidNotRequest: "Si vous n'êtes pas à l'origine de cette demande, 
 PasswordResetOtherwise: "Sinon, veuillez cliquer sur le lien ci-dessous."
 PasswordResetClick: "Réinitialiser mon mot de passe"
 
+# Patient Password Reset
+# (email for patients that requested password reset)
+PatientPasswordResetSubject: "Réinitialisation de votre mot de passe Tidepool"
+PatientPasswordResetHello: "Bonjour,"
+PatientPasswordResetRequest: "Vous avez demandé une réinitialisation de votre mot de passe Tidepool."
+PatientPasswordResetDidNotRequest: "Si vous n'êtes pas à l'origine de cette demande, merci d'ignorer cet email."
+PatientPasswordResetByDevice: "La réinitialisation de votre mot de passe s'éffectue via votre terminal."
+PatientPasswordResetClick: "Cliquez ici pour voir la procédure."
+
 # CareTeamInvite
 # (email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Invitation à rejoindre une équipe de suivi d'un diabétique"

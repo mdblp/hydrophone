@@ -1,4 +1,4 @@
-# Footer 
+# Footer
 # (for all emails)
 FooterOpenSource: "An open source, not-for-profit effort to build an open data platform and better applications that reduce the burden of diabetes."
 FooterGetSupport: "Get Support"
@@ -6,7 +6,7 @@ FooterSincerely: "Sincerely,"
 FooterSignature: "The Tidepool Team"
 FooterMadePossible: "Made possible by"
 
-# No account 
+# No account
 # (email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Password reset for your Tidepool account"
 NoAccountHello: "Hey there!"
@@ -22,6 +22,15 @@ PasswordResetRequest: "You requested a password reset."
 PasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
 PasswordResetOtherwise: "Otherwise, click the link below."
 PasswordResetClick: "Reset Password"
+
+# Patient Password Reset
+# (email for patients that requested password reset)
+PatientPasswordResetSubject: "Password reset for your Tidepool account"
+PatientPasswordResetHello: "Hey there!"
+PatientPasswordResetRequest: "You requested a password reset."
+PatientPasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
+PatientPasswordResetByDevice: "Resetting your password is done on your device."
+PatientPasswordResetClick: "Please click here to see the instructions."
 
 # CareTeamInvite
 # (email for those that invited someone to join medical crew)

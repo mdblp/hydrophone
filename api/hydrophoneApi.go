@@ -33,10 +33,11 @@ type (
 		LanguageBundle *i18n.Bundle
 	}
 	Config struct {
-		ServerSecret      string `json:"serverSecret"` //used for services
-		WebURL            string `json:"webUrl"`
-		AssetURL          string `json:"assetUrl"`
-		I18nTemplatesPath string `json:"i18nTemplatesPath"`
+		ServerSecret              string `json:"serverSecret"` //used for services
+		WebURL                    string `json:"webUrl"`
+		AssetURL                  string `json:"assetUrl"`
+		I18nTemplatesPath         string `json:"i18nTemplatesPath"`
+		AllowPatientResetPassword bool   `json:"allowPatientResetPassword"`
 	}
 
 	group struct {
@@ -251,6 +252,8 @@ func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[s
 		switch conf.Type {
 		case models.TypePasswordReset:
 			templateName = models.TemplateNamePasswordReset
+		case models.TypePatientPasswordReset:
+			templateName = models.TemplateNamePatientPasswordReset
 		case models.TypeCareteamInvite:
 			templateName = models.TemplateNameCareteamInvite
 		case models.TypeSignUp:
