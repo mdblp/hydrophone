@@ -37,7 +37,8 @@ type (
 		WebURL                    string `json:"webUrl"`
 		AssetURL                  string `json:"assetUrl"`
 		I18nTemplatesPath         string `json:"i18nTemplatesPath"`
-		AllowPatientResetPassword bool   `json:"allowPatientResetPassword"`
+		AllowPatientResetPassword bool   `json:"allowPatientResetPassword"` // true means that patients can reset their password, false means that only clinicianc can reset their password
+		WebHelp                   string `json:"webHelp"`                   // URL of the help web site that is used to give instructions to reset password for patients
 	}
 
 	group struct {
@@ -269,6 +270,7 @@ func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[s
 	// Content collection is here to replace placeholders in template body/content
 	content["WebURL"] = a.Config.WebURL
 	content["AssetURL"] = a.Config.AssetURL
+	content["WebHelp"] = a.Config.WebHelp
 
 	// Retrieve the template from all the preloaded templates
 	template, ok := a.templates[templateName]

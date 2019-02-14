@@ -32,7 +32,8 @@ export TIDEPOOL_HYDROPHONE_SERVICE='{
         "webUrl": "http://localhost:3000",
         "assetUrl": "https://s3-us-west-2.amazonaws.com/tidepool-dev-asset",
         "i18nTemplatesPath": "/go/src/github.com/tidepool-org/hydrophone/templates",
-        "allowPatientResetPassword": true
+        "allowPatientResetPassword": true,
+        "WebHelp": "https://diabeloop.zendesk.com"
     },
     "sesEmail" : {
         "serverEndpoint":"https://email.us-west-2.amazonaws.com",
