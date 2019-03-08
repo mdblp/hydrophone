@@ -245,7 +245,7 @@ func (a *Api) checkFoundConfirmations(res http.ResponseWriter, results []*models
 //Generate a notification from the given confirmation,write the error if it fails
 func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[string]interface{}, lang string) bool {
 
-	log.Printf("sending notification with template %s to %s with language %s", conf.TemplateName, conf.Email, lang)
+	log.Printf("trying notification with template '%s' to %s with language '%s'", conf.TemplateName, conf.Email, lang)
 
 	// Get the template name based on the requested communication type
 	templateName := conf.TemplateName
@@ -287,7 +287,7 @@ func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[s
 	_, body, err := template.Execute(content)
 
 	if err != nil {
-		log.Printf("Error executing email template %s", err)
+		log.Printf("Error executing email template '%s'", err)
 		return false
 	}
 	// Get localized subject of email
@@ -298,6 +298,7 @@ func (a *Api) createAndSendNotification(conf *models.Confirmation, content map[s
 		log.Printf("Issue sending email: Status [%d] Message [%s]", status, details)
 		return false
 	}
+	log.Printf("Success: email sent")
 	return true
 }
 
