@@ -135,7 +135,8 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 			}
 
 			if a.createAndSendNotification(newSignUp, emailContent, signerLanguage) {
-				a.logMetricAsServer("signup confirmation sent")
+				log.Printf("signup information sent for %s", userID)
+				a.logMetricAsServer("signup information sent")
 				res.WriteHeader(http.StatusOK)
 				return
 			} else {
