@@ -114,7 +114,7 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 			return
 		}
 		if usrDetails.IsClinic() {
-			log.Printf("sendSignUp: error [%s]\n", err.Error())
+			log.Printf("Clinician account [%s] cannot receive information message", usrDetails.UserID)
 			a.sendModelAsResWithStatus(res, STATUS_ERR_CLINICAL_USR, http.StatusForbidden)
 			return
 		}
