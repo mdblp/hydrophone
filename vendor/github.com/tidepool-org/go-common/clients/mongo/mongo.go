@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/globalsign/mgo"
 	"github.com/tidepool-org/go-common/errors"
 	"github.com/tidepool-org/go-common/jepson"
-	mgo "gopkg.in/mgo.v2"
 )
 
 type Config struct {
