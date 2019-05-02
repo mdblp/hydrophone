@@ -1,12 +1,4 @@
 language: go
-<<<<<<< HEAD
-
-go:
-  - 1.0
-  - 1.1
-  - 1.2
-  - tip
-=======
 
 
 matrix:
@@ -30,4 +22,3 @@ script:
   - diff -u <(echo -n) <(gofmt -d .)
   - if [[ "$LATEST" = true ]]; then go vet .; fi
   - go test -v -race ./...
->>>>>>> 54979ea... Replaced Mongo driver.  Updated Go to 1.11.4
