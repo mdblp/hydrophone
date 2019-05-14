@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/globalsign/mgo"
 	"github.com/tidepool-org/go-common/errors"
 	"github.com/tidepool-org/go-common/jepson"
+	"github.com/globalsign/mgo"
 )
 
 type Config struct {
@@ -30,7 +30,7 @@ func Connect(config *Config) (*mgo.Session, error) {
 		dur = time.Duration(*config.Timeout)
 	}
 
-	dialInfo, err := mgo.ParseURL(config.ConnectionString)
+	dialInfo, err := mgo.ParseURL(config.ConnectionString) 
 	if err != nil {
 		return nil, err
 	}
@@ -42,10 +42,11 @@ func Connect(config *Config) (*mgo.Session, error) {
 			return tls.Dial("tcp", addr.String(), &tls.Config{InsecureSkipVerify: true})
 		}
 	}
-
+	
 	log.Printf("Initializing with config[%+v], dur[%v]", config, dur)
 	return mgo.DialWithInfo(dialInfo)
 }
+
 
 /*
  All following code originally C&Pd from mgo.  It has been adjusted to allow
