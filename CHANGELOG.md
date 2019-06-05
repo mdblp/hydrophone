@@ -7,6 +7,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 
 ### Added
 
+- Add capacity to override the AWS SES endpoint through the environment variable TIDEPOOL_HYDROPHONE_SERVICE/sesEMail
 - Integrate Tidepool latest changes 
   
   __!!! There are changes in the way the AWS credentials are challenged !!!__ (see [docs/README.md](docs/README.md) for more information on this)
