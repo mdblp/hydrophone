@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
 )
@@ -27,20 +28,31 @@ type (
 	// SesNotifierConfig contains the static configuration for the Amazon SES service
 	// Credentials come from the environment and are not passed in via configuration variables.
 	SesNotifierConfig struct {
-		From   string `json:"fromAddress"`
-		Region string `json:"region"`
+		From     string `json:"fromAddress"`
+		Region   string `json:"region"`
+		Endpoint string `json:"serverEndpoint"`
 	}
 )
 
 //NewSesNotifier creates a new Amazon SES notifier
 func NewSesNotifier(cfg *SesNotifierConfig) (*SesNotifier, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(cfg.Region)},
-	)
 
-	if err != nil {
-		return nil, err
+	// For SES, if there is a serverEndpoint specified in config, AWS' default is overriden
+	myCustomResolver := func(service, region string, optFns ...func(*endpoints.Options)) (endpoints.ResolvedEndpoint, error) {
+		if service == endpoints.EmailServiceID && cfg.Endpoint != "" {
+			return endpoints.ResolvedEndpoint{
+				URL:           cfg.Endpoint,
+				SigningRegion: "custom-signing-region",
+			}, nil
+		}
+
+		return endpoints.DefaultResolver().EndpointFor(service, region, optFns...)
 	}
+
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region:           aws.String(cfg.Region),
+		EndpointResolver: endpoints.ResolverFunc(myCustomResolver),
+	}))
 
 	// Verify whether we have actual credentials to connect to AWS SES
 	creds, err := sess.Config.Credentials.Get()
