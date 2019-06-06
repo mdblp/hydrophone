@@ -14,6 +14,7 @@ This API sends notifications to users for things like forgotten passwords, initi
   
 ### Changed
 
+- Review AWS SES Errors handling
 - Update to MongoDb 3.6 drivers in order to use replica set connections
 
 ## dblp.0.3.2 - 2019-04-17

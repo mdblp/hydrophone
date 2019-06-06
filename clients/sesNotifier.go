@@ -2,6 +2,7 @@ package clients
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -107,26 +108,13 @@ func (c *SesNotifier) Send(to []string, subject string, msg string) (int, string
 	// Attempt to send the email.
 	result, err := c.SES.SendEmail(input)
 
-	// Display error messages if they occur.
+	// Return error messages if they occur. They are traced in the caller function
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case ses.ErrCodeMessageRejected:
-				log.Printf("%v: %v\n", ses.ErrCodeMessageRejected, aerr.Error())
-			case ses.ErrCodeMailFromDomainNotVerifiedException:
-				log.Printf("%v: %v\n", ses.ErrCodeMailFromDomainNotVerifiedException, aerr.Error())
-			case ses.ErrCodeConfigurationSetDoesNotExistException:
-				log.Printf("%v: %v\n", ses.ErrCodeConfigurationSetDoesNotExistException, aerr.Error())
-			default:
-				log.Println(aerr.Error())
-			}
+			return http.StatusInternalServerError, aerr.Error()
 		} else {
-			// Print the error, cast err to awserr.Error to get the Code and
-			// Message from an error.
-			log.Println(err.Error())
+			return http.StatusInternalServerError, err.Error()
 		}
-
-		return 400, result.String()
 	}
-	return 200, result.String()
+	return http.StatusOK, result.String()
 }
