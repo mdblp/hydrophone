@@ -44,7 +44,7 @@ This configuration item is a JSON string that uses the following:
   **As a matter of fact**, it is necessary to provide AWS credentials differently. The credentials provider chain looks for credentials in this order. It stops when one working credential is found:
   - Environment variables (_AWS_ACCESS_KEY_ID_ and _AWS_SECRET_ACCESS_KEY_)
   - Shared Credentials file present in home directory (use environment variable _AWS_PROFILE_ if several profiles are present and you don't want the default one to be used)
-  - It the application is running on an EC2 instance, IAM roles for the said instance
+  - If the application is running on an EC2 instance, IAM roles for the said instance
 
   This order is the reverse order of preference for enhanced security (IAM roles being the preferred way of doing).
 
@@ -179,7 +179,7 @@ with
 In order to test emails without actually sending them, it is possible to mock the AWS SES service. This can be achieved by using [MockServer](http://www.mock-server.com/) that is capturing all the HTTP traffic and acting upon email pattern matching.
 For that, it is possible to override the AWS SES endpoint using _TIDEPOOL_HYDROPHONE_SERVICE/sesEmail/serverEndpoint_ item. See [above](#sesemail)
 
-**Note**: it is necessary to pass AWS Credentials that do have authorization for sending emails even if using a Mock. Theses credentials are still challenged before the custom endpoint is reached for sending the emails.
+**Note**: it is necessary to pass AWS Credentials even if using a Mock. These credentials are still challenged by the SDK before the actual attempt to send email, even if not checked for actual validity.
 
 ## Multiple Email Client Testing
 
