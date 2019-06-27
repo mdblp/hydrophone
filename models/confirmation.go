@@ -146,7 +146,11 @@ func (c *Confirmation) ValidateCreatorID(expectedCreatorID string, validationErr
 	return c
 }
 
-func (c *Confirmation) ValidateUserID(expectedUserID string, validationErrors *[]error) *Confirmation {
+func (c *Confirmation) ValidateUserID(expectedUserID string, expectedEmail string, validationErrors *[]error) *Confirmation {
+
+	if expectedEmail == c.Email && expectedUserID != c.UserId {
+		c.UserId = expectedUserID
+	}
 	if expectedUserID != c.UserId {
 		*validationErrors = append(
 			*validationErrors,
