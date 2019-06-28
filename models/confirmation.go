@@ -146,6 +146,13 @@ func (c *Confirmation) ValidateCreatorID(expectedCreatorID string, validationErr
 	return c
 }
 
+// ValidateUserID
+// Validate the user based on UserID and Email (entered as username)
+//
+// expectedUserID: userid of the account
+// expectedEmail: username of the account (email)
+// validationErrors: array of error filled in case of error, empty if everything is ok
+//
 func (c *Confirmation) ValidateUserID(expectedUserID string, expectedEmail string, validationErrors *[]error) *Confirmation {
 
 	if expectedEmail == c.Email && expectedUserID != c.UserId {

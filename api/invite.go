@@ -203,6 +203,10 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 
 		validationErrors := []error{}
 
+		/* get the invitee details so that we can use its username/email to
+		*  validate it when the invitation was sent while inviteeID was not
+		*  yet created.
+		 */
 		inviteeDetails, err := a.sl.GetUser(inviteeID, a.sl.TokenProvide())
 		if err != nil {
 			log.Printf("AcceptInvite InviteeID not found %s err[%s]", STATUS_ERR_FINDING_USER, err.Error())
