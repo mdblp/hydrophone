@@ -156,6 +156,9 @@ func (c *Confirmation) ValidateCreatorID(expectedCreatorID string, validationErr
 func (c *Confirmation) ValidateUserID(expectedUserID string, expectedEmail string, validationErrors *[]error) *Confirmation {
 
 	if expectedEmail == c.Email && expectedUserID != c.UserId {
+		// corner case where UserID is not available for new accounts.
+		// in that case we rely on the email and we override the UserId with
+		// the expectedUserID
 		c.UserId = expectedUserID
 	}
 	if expectedUserID != c.UserId {
