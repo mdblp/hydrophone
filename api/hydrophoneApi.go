@@ -153,7 +153,7 @@ func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 // @ID hydrophone-api-getstatus
 // @Accept  json
 // @Produce  json
-// @Success 200
+// @Success 200 {string} string "OK"
 // @Failure 500 {string} string "error description"
 // @Router /status [get]
 func (a *Api) GetStatus(res http.ResponseWriter, req *http.Request) {

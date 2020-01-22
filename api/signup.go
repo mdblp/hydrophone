@@ -172,7 +172,7 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
 // @Failure 403 {object} status.Status "Operation is forbiden, return detailed error"
 // @Failure 500 {object} status.Status "Internal error while processing the confirmation, detailled error returned in the body"
-// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service)"
 // @Router /send/signup/{userid} [post]
 func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	var signerLanguage string
@@ -313,7 +313,7 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 // @Param useremail path string true "user email address"
 // @Success 200 {string} string "OK"
 // @Failure 404 {object} status.Status "Confirmation not found, return \"No matching signup confirmation was found\" "
-// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service)"
 // @Failure 500 {object} status.Status "Internal error while regenerating the confirmation, detailled error returned in the body"
 // @Router /resend/signup/{useremail} [post]
 func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[string]string) {
@@ -397,7 +397,7 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 // @Failure 400 {object} status.Status "confirmationid was not provided, return:\"Required confirmation id is missing\" "
 // @Failure 404 {object} status.Status "Confirmation not found or expired"
 // @Failure 409 {object} status.Status "Payload is missing or invalid. Return the detailled error"
-// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service)"
 // @Failure 500 {object} status.Status "Error (internal) while updating the user account, return detailed error"
 // @Router /accept/signup/{confirmationid} [put]
 func (a *Api) acceptSignUp(res http.ResponseWriter, req *http.Request, vars map[string]string) {

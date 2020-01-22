@@ -17,10 +17,10 @@ const (
 // @ID hydrophone-api-sanityCheck
 // @Accept  json
 // @Produce  json
-// @Param userID path string true "user id"
+// @Param userid path string true "user id"
 // @Success 200 {string} string "OK"
 // @Failure 500 {object} status.Status "Error while generating/sending the email"
-// @Failure 400 {object} status.Status "userId was not provided or incorrect "
+// @Failure 400 {object} status.Status "userid was not provided or incorrect "
 // @Router /sanity_check/{userid} [post]
 func (a *Api) sendSanityCheckEmail(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 
