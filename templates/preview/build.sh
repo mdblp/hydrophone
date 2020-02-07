@@ -22,6 +22,7 @@ cp env.sh dist/
 cp start.sh dist/
 
 cp index.html dist/index.html
+cp livecrowdin.html dist/livePreview.html
 echo "Push email templates"
 rsync -av --progress ../ dist/ --exclude '*.go' --exclude 'preview'
 
