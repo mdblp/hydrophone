@@ -46,8 +46,8 @@ func main() {
 		log.Fatal(err)
 	}
 	router := mux.NewRouter()
-	// localizationManager = NewLocoManager(config.LocalizeServiceUrl, config.LocalizeServiceAuthKey)
-	localizationManager := &DefaultManager{}
+	localizationManager := NewLokaliseManager(config.LocalizeServiceUrl, config.LocalizeServiceAuthKey)
+	// localizationManager := &DefaultManager{}
 	a := InitApi(config, emailTemplates, emailTemplatesPreview, localizationManager)
 	a.SetHandlers("", router)
 	/*
