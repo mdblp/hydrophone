@@ -1,0 +1,67 @@
+---
+#Footer
+#(for all emails)
+FooterGetSupport: "crwdns95:0crwdne95:0"
+FooterSincerely: "crwdns97:0crwdne97:0"
+FooterSignature: "crwdns99:0crwdne99:0"
+#No account
+#(email for those that requested password reset but did not create their account before)
+NoAccountSubject: "crwdns101:0crwdne101:0"
+NoAccountHello: "crwdns103:0crwdne103:0"
+NoAccountNoAccount: "crwdns105:0crwdne105:0"
+NoAccountClick: "crwdns107:0crwdne107:0"
+NoAccountSignUp: "crwdns109:0crwdne109:0"
+#Password Reset
+#(email for those that requested password reset)
+PasswordResetSubject: "crwdns111:0crwdne111:0"
+PasswordResetHello: "crwdns113:0crwdne113:0"
+PasswordResetRequest: "crwdns115:0crwdne115:0"
+PasswordResetDidNotRequest: "crwdns117:0crwdne117:0"
+PasswordResetOtherwise: "crwdns119:0crwdne119:0"
+PasswordResetClick: "crwdns121:0crwdne121:0"
+#Patient Password Reset
+#(email for patients that requested password reset)
+PatientPasswordResetSubject: "crwdns123:0crwdne123:0"
+PatientPasswordResetHello: "crwdns125:0crwdne125:0"
+PatientPasswordResetRequest: "crwdns127:0crwdne127:0"
+PatientPasswordResetDidNotRequest: "crwdns129:0crwdne129:0"
+PatientPasswordResetByDevice: "crwdns131:0crwdne131:0"
+PatientPasswordResetClick: "crwdns133:0crwdne133:0"
+#CareTeamInvite
+#(email for those that invited someone to join medical crew)
+CareTeamInvitationSubject: "crwdns135:0crwdne135:0"
+CareTeamInviteHello: "crwdns137:0crwdne137:0"
+CareTeamInviteInvitation: "crwdns139:0{{ .CareteamName }}crwdne139:0"
+CareTeamInviteClick: "crwdns141:0{{ .CareteamName }}crwdne141:0"
+CareTeamInviteJoin: "crwdns143:0{{ .CareteamName }}crwdne143:0"
+#Signup
+#(email to ask patient for verification of email)
+SignupConfirmationSubject: "crwdns145:0crwdne145:0"
+SignupHello: "crwdns147:0crwdne147:0"
+SignupCongrats: "crwdns149:0crwdne149:0"
+SignupAction: "crwdns151:0crwdne151:0"
+SignupVerify: "crwdns153:0crwdne153:0"
+#Signup Clinic
+#(email to ask clinician for verification of email)
+SignupClinicConfirmationSubject: "crwdns155:0crwdne155:0"
+SignupClinicHello: "crwdns157:0crwdne157:0"
+SignupClinicCongrats: "crwdns159:0crwdne159:0"
+SignupClinicAction: "crwdns161:0crwdne161:0"
+SignupClinicVerify: "crwdns163:0crwdne163:0"
+#Signup Custodial => SUPPRIMER
+#(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
+SignupCustodialConfirmationSubject: "crwdns165:0crwdne165:0"
+SignupCustodialHello: "crwdns167:0crwdne167:0"
+SignupCustodialCongrats: "crwdns169:0crwdne169:0"
+SignupCustodialVerify: "crwdns171:0crwdne171:0"
+#Signup Custodial Clinic => SUPPRIMER
+#(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
+SignupCustodialClinicConfirmationSubject: "crwdns173:0crwdne173:0"
+SignupCustodialClinicHello: "crwdns175:0{{ .FullName }}crwdne175:0"
+SignupCustodialClinicAccount: "crwdns177:0{{ .CreatorName }}crwdne177:0"
+SignupCustodialClinicOwnership: "crwdns179:0crwdne179:0"
+SignupCustodialClinicClaim: "crwdns181:0crwdne181:0"
+#Patient Information
+InformationSubject: "crwdns183:0crwdne183:0"
+PatientInformation: "crwdns185:0crwdne185:0"
+PatientLogin: "crwdns187:0crwdne187:0"
