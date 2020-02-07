@@ -18,9 +18,10 @@ import (
 
 type (
 	Api struct {
-		Config        Config
-		templates     models.Templates
-		localeManager LocaleManager
+		Config           Config
+		templates        models.Templates
+		templatesPreview models.Templates
+		localeManager    LocaleManager
 	}
 	// this just makes it easier to bind a handler for the Handle function
 	varsHandler func(http.ResponseWriter, *http.Request, map[string]string)
@@ -30,19 +31,23 @@ type (
 func InitApi(
 	cfg Config,
 	templates models.Templates,
+	templatesPreview models.Templates,
 	localeManager LocaleManager,
 ) *Api {
 	return &Api{
-		Config:        cfg,
-		templates:     templates,
-		localeManager: localeManager,
+		Config:           cfg,
+		templates:        templates,
+		templatesPreview: templatesPreview,
+		localeManager:    localeManager,
 	}
 }
 
 func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	rtr.Handle("/preview/{template}", varsHandler(a.preview)).Methods("GET")
 	rtr.Handle("/refreshlocal", varsHandler(a.refreshLocal)).Methods("POST")
+	rtr.Handle("/lokalisepreview/{template}", varsHandler(a.livePreview)).Methods("GET")
 	rtr.HandleFunc("/", a.serveStatic).Methods("GET")
+	rtr.HandleFunc("/livepreview/", a.serveLiveStatic).Methods("GET")
 }
 
 func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
@@ -53,6 +58,18 @@ func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 // Return the index page
 func (a *Api) serveStatic(res http.ResponseWriter, req *http.Request) {
 	data, err := ioutil.ReadFile("index.html")
+	if err != nil {
+		log.Printf("templates - failure to read index.html")
+	}
+	res.Header().Set("content-type", "text/html")
+	res.WriteHeader(200)
+	res.Write(data)
+	return
+}
+
+// Return the index page
+func (a *Api) serveLiveStatic(res http.ResponseWriter, req *http.Request) {
+	data, err := ioutil.ReadFile("livePreview.html")
 	if err != nil {
 		log.Printf("templates - failure to read index.html")
 	}
@@ -89,8 +106,18 @@ func (a *Api) refreshLocal(res http.ResponseWriter, req *http.Request, vars map[
 	a.templates = emailTemplates
 }
 
-// Compile a template with test content and return the html result
 func (a *Api) preview(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	a.buildPreview(res, req, vars, false)
+	return
+}
+
+func (a *Api) livePreview(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	a.buildPreview(res, req, vars, true)
+	return
+}
+
+// Compile a template with test content and return the html result
+func (a *Api) buildPreview(res http.ResponseWriter, req *http.Request, vars map[string]string, livePreview bool) {
 	//Determine the email template:
 	var templateName models.TemplateName
 	lang := "en"
@@ -124,7 +151,7 @@ func (a *Api) preview(res http.ResponseWriter, req *http.Request, vars map[strin
 	if ok && len(langs[0]) == 2 {
 		lang = langs[0]
 	}
-	email, err := a.generateEmail(templateName, lang)
+	email, err := a.generateEmail(templateName, lang, livePreview)
 	if err != nil {
 		log.Println("Error generating email preview", err)
 		s := status.NewApiStatus(http.StatusInternalServerError, err.Error())
@@ -139,7 +166,7 @@ func (a *Api) preview(res http.ResponseWriter, req *http.Request, vars map[strin
 }
 
 //Generate a notification from the given confirmation,write the error if it fails
-func (a *Api) generateEmail(templateName models.TemplateName, lang string) (string, error) {
+func (a *Api) generateEmail(templateName models.TemplateName, lang string, livePreview bool) (string, error) {
 
 	log.Printf("trying preview with template '%s' with language '%s'", templateName, lang)
 
@@ -158,10 +185,15 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 	content["PatientPasswordResetURL"] = a.Config.PatientPasswordResetURL
 
 	// Retrieve the template from all the preloaded templates
-
-	template, ok := a.templates[templateName]
-	if !ok {
-		return "", fmt.Errorf("Unknown template type %s", templateName)
+	var template models.Template
+	var ok bool
+	if livePreview {
+		template, _ = a.templatesPreview[templateName]
+	} else {
+		template, ok = a.templates[templateName]
+		if !ok {
+			return "", fmt.Errorf("Unknown template type %s", templateName)
+		}
 	}
 
 	// Get localized subject of email

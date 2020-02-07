@@ -36,17 +36,19 @@ func main() {
 	}
 
 	localizer, err := localize.NewI18nLocalizer(path.Join(config.I18nTemplatesPath, "locales/"))
+	lokalisePreviewer := &localize.PreviewLokalise{}
 	if err != nil {
 		log.Panic("Problem creating i18n localizer ", err)
 	}
 	emailTemplates, err := templates.New(config.I18nTemplatesPath, localizer)
+	emailTemplatesPreview, err := templates.New(config.I18nTemplatesPath, lokalisePreviewer)
 	if err != nil {
 		log.Fatal(err)
 	}
 	router := mux.NewRouter()
 	// localizationManager = NewLocoManager(config.LocalizeServiceUrl, config.LocalizeServiceAuthKey)
 	localizationManager := &DefaultManager{}
-	a := InitApi(config, emailTemplates, localizationManager)
+	a := InitApi(config, emailTemplates, emailTemplatesPreview, localizationManager)
 	a.SetHandlers("", router)
 	/*
 	 * Serve it up and publish
