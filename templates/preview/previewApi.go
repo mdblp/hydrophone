@@ -47,7 +47,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	rtr.Handle("/refreshlocal", varsHandler(a.refreshLocal)).Methods("POST")
 	rtr.Handle("/lokalisepreview/{template}", varsHandler(a.livePreview)).Methods("GET")
 	rtr.HandleFunc("/", a.serveStatic).Methods("GET")
-	rtr.HandleFunc("/livepreview/", a.serveLiveStatic).Methods("GET")
+	rtr.HandleFunc("/mail_preview", a.serveStatic).Methods("GET")
+	rtr.HandleFunc("/livepreview", a.serveLiveStatic).Methods("GET")
 }
 
 func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
