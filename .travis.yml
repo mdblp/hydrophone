@@ -64,7 +64,8 @@ deploy:
     region: $AWS_DEFAULT_REGION
     bucket: com.diabeloop.yourloops.doc
     skip_cleanup: true
-    local-dir: docs/openapi
+    local-dir: docs
+    glob: "*.json"
     upload-dir: openapi/hydrophone
     cache_control: "max-age=21600"
 
