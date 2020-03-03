@@ -3,6 +3,7 @@ package clients
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -29,9 +30,10 @@ type (
 	// SesNotifierConfig contains the static configuration for the Amazon SES service
 	// Credentials come from the environment and are not passed in via configuration variables.
 	SesNotifierConfig struct {
-		From     string `json:"fromAddress"`
-		Region   string `json:"region"`
-		Endpoint string `json:"serverEndpoint"`
+		From     string  `json:"fromAddress"`
+		ToDomain *string `json:"toDomain,omitempty"`
+		Region   string  `json:"region"`
+		Endpoint string  `json:"serverEndpoint"`
 	}
 )
 
@@ -68,6 +70,10 @@ func NewSesNotifier(cfg *SesNotifierConfig) (*SesNotifier, error) {
 		log.Printf("AWS credentials found with provider %s", creds.ProviderName)
 	}
 
+	if cfg.ToDomain != nil {
+		log.Println("SES configuration: send mail is restricted to", *cfg.ToDomain)
+	}
+
 	return &SesNotifier{
 		Config: cfg,
 		SES:    ses.New(sess),
@@ -78,7 +84,15 @@ func NewSesNotifier(cfg *SesNotifierConfig) (*SesNotifier, error) {
 func (c *SesNotifier) Send(to []string, subject string, msg string) (int, string) {
 	var toAwsAddress = make([]*string, len(to))
 	for i, x := range to {
+		if c.Config.ToDomain != nil && !strings.HasSuffix(x, *c.Config.ToDomain) {
+			log.Println("SES e-mail not send to", x, "by server configuration")
+			continue
+		}
 		toAwsAddress[i] = aws.String(x)
+	}
+
+	if len(toAwsAddress) == 0 {
+		return http.StatusOK, "OK"
 	}
 
 	input := &ses.SendEmailInput{

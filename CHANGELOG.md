@@ -7,6 +7,8 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Added
 - PT-899: Preview emails
 - PT-995: Document the api using openApi and swaggo
+### Changed
+- PT-414 Add switch to enable/disable sending of emails
 
 ## 0.7.0 - 2019-10-18
 ### Added
