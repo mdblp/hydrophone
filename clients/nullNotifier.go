@@ -3,7 +3,7 @@ package clients
 import "log"
 
 type (
-	// NullNotifier
+	// NullNotifier for dummy e-mail client
 	NullNotifier struct {
 	}
 )
@@ -17,6 +17,6 @@ func NewNullNotifier() (*NullNotifier, error) {
 // Send do nothing, return 200, "OK"
 func (c *NullNotifier) Send(to []string, subject string, msg string) (int, string) {
 	var toAddress = to[0]
-	log.Printf("Not sending mail to %s, disabled by server configuration\n", toAddress)
+	log.Printf("Not sending mail to %s, disabled by server configuration: %s\n", toAddress, subject)
 	return 200, "OK"
 }

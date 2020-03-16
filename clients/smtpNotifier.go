@@ -47,5 +47,6 @@ func (c *SmtpNotifier) Send(to []string, subject string, msg string) (int, strin
 		log.Println(err.Error())
 		return 400, err.Error()
 	}
+	log.Printf("SMTP email sent: %s\n", subject)
 	return 200, "OK"
 }
