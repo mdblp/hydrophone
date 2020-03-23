@@ -1,3 +1,17 @@
+// @title Hydrophone API
+// @version 0.0.1
+// @description The purpose of this API is to send notifications to users: forgotten passwords, initial signup, invitations and more
+// @license.name BSD 2-Clause "Simplified" License
+// @host localhost
+// @BasePath /confirm
+// @accept json
+// @produce json
+// @schemes https
+
+// @securityDefinitions.apikey TidepoolAuth
+// @in header
+// @name x-tidepool-session-token
+
 package main
 
 import (
@@ -6,6 +20,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 
 	"github.com/tidepool-org/go-common/clients/version"
@@ -21,6 +36,7 @@ import (
 	"github.com/tidepool-org/go-common/clients/shoreline"
 	"github.com/tidepool-org/hydrophone/api"
 	sc "github.com/tidepool-org/hydrophone/clients"
+	"github.com/tidepool-org/hydrophone/localize"
 	"github.com/tidepool-org/hydrophone/templates"
 )
 
@@ -130,6 +146,8 @@ func main() {
 		mail, mailErr = sc.NewSesNotifier(&config.Ses)
 	case "smtp":
 		mail, mailErr = sc.NewSmtpNotifier(&config.Smtp)
+	case "null":
+		mail, mailErr = sc.NewNullNotifier()
 	default:
 		log.Fatalf("the mail system provided in the configuration (%s) is invalid", config.NotifierType)
 	}
@@ -139,16 +157,21 @@ func main() {
 		log.Printf("Mail client %s created", config.NotifierType)
 	}
 
+	//Create a localizer to be used by the templates
+	localizer, err := localize.NewI18nLocalizer(path.Join(config.Api.I18nTemplatesPath, "/locales"))
+	if err != nil {
+		log.Fatalf("Problem creating i18n localizer %s", err)
+	}
 	// Create collection of pre-compiled templates
 	// Templates are built based on HTML files which location is calculated from config
 	// Config is initalized with environment variables
-	emailTemplates, err := templates.New(config.Api.I18nTemplatesPath)
+	emailTemplates, err := templates.New(config.Api.I18nTemplatesPath, localizer)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApiWithI18n(config.Api, store, mail, shoreline, gatekeeper, highwater, seagull, emailTemplates)
+	api := api.InitApi(config.Api, store, mail, shoreline, gatekeeper, highwater, seagull, emailTemplates)
 	api.SetHandlers("", rtr)
 
 	/*
