@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"runtime"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	commonClients "github.com/tidepool-org/go-common/clients"
-	"github.com/tidepool-org/go-common/clients/highwater"
 	"github.com/tidepool-org/go-common/clients/shoreline"
 	"github.com/tidepool-org/go-common/clients/status"
 	"github.com/tidepool-org/hydrophone/clients"
@@ -28,9 +28,9 @@ type (
 		sl             shoreline.Client
 		gatekeeper     commonClients.Gatekeeper
 		seagull        commonClients.Seagull
-		metrics        highwater.Client
 		Config         Config
 		LanguageBundle *i18n.Bundle
+		logger         *log.Logger
 	}
 	Config struct {
 		ServerSecret              string `json:"serverSecret"`              //used for services
@@ -50,7 +50,12 @@ type (
 )
 
 const (
+	//api logging prefix
+	CONFIRM_API_PREFIX = "api/confirm "
+
 	TP_SESSION_TOKEN = "x-tidepool-session-token"
+	// TP_TRACE_SESSION Session trace: uuid v4
+	TP_TRACE_SESSION = "x-tidepool-trace-session"
 
 	//returned error messages
 	STATUS_ERR_SENDING_EMAIL         = "Error sending email"
@@ -77,20 +82,20 @@ func InitApi(
 	ntf clients.Notifier,
 	sl shoreline.Client,
 	gatekeeper commonClients.Gatekeeper,
-	metrics highwater.Client,
 	seagull commonClients.Seagull,
 	templates models.Templates,
 ) *Api {
+	logger := log.New(os.Stdout, CONFIRM_API_PREFIX, log.LstdFlags|log.Lshortfile)
 	return &Api{
 		Store:          store,
 		Config:         cfg,
 		notifier:       ntf,
 		sl:             sl,
 		gatekeeper:     gatekeeper,
-		metrics:        metrics,
 		seagull:        seagull,
 		templates:      templates,
 		LanguageBundle: nil,
+		logger:         logger,
 	}
 }
 
@@ -308,20 +313,23 @@ func (a *Api) token(res http.ResponseWriter, req *http.Request) *shoreline.Token
 	return nil
 }
 
-//send metric
-func (a *Api) logMetric(name string, req *http.Request) {
-	token := req.Header.Get(TP_SESSION_TOKEN)
-	emptyParams := make(map[string]string)
-	a.metrics.PostThisUser(name, token, emptyParams)
-	return
-}
+// logAudit Variatic log for audit trails
+func (a *Api) logAudit(req *http.Request, format string, isServer bool, args ...interface{}) {
+	var prefix string
 
-//send metric
-func (a *Api) logMetricAsServer(name string) {
-	token := a.sl.TokenProvide()
-	emptyParams := make(map[string]string)
-	a.metrics.PostServer(name, token, emptyParams)
-	return
+	if req.RemoteAddr != "" {
+		prefix = fmt.Sprintf("remoteAddr{%s}, ", req.RemoteAddr)
+	}
+
+	traceSession := req.Header.Get(TP_TRACE_SESSION)
+	if traceSession != "" {
+		prefix += fmt.Sprintf("trace{%s}, ", traceSession)
+	}
+
+	prefix += fmt.Sprintf("isServer{%t}, ", isServer)
+
+	s := fmt.Sprintf(format, args...)
+	a.logger.Printf("%s%s", prefix, s)
 }
 
 //Find existing user based on the given indentifier

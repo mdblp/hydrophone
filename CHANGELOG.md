@@ -13,6 +13,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 - PT-995: Document the api using openApi and swaggo
 ### Changed
 - PT-414 Add switch to enable/disable sending of emails
+- PT-1199 Remove Highwater (replace by log audits)
 
 ### Changed
 - PT-1139: Add openapi generation and deployment in pipeline
