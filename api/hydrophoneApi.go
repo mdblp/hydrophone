@@ -332,10 +332,10 @@ func (a *Api) logAudit(req *http.Request, format string, isServer bool, args ...
 	a.logger.Printf("%s%s", prefix, s)
 }
 
-//Find existing user based on the given indentifier
-//The indentifier could be either an id or email address
-func (a *Api) findExistingUser(indentifier, token string) *shoreline.UserData {
-	if usr, err := a.sl.GetUser(indentifier, token); err != nil {
+//Find existing user based on the given identifier
+//The identifier could be either an id or email address
+func (a *Api) findExistingUser(identifier, token string) *shoreline.UserData {
+	if usr, err := a.sl.GetUser(identifier, token); err != nil {
 		log.Printf("Error [%s] trying to get existing users details", err.Error())
 		return nil
 	} else {
