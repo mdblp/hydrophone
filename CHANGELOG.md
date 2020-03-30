@@ -14,7 +14,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 - PT-1139: Add openapi generation and deployment in pipeline
 
 ### Engineering use
-- PT-1214 integrate Crowdin live preview
+- PT-1214 integrate Crowdin live preview in HydroMail (email template preview webapp)
 
 ## 0.7.0 - 2019-10-18
 ### Added
