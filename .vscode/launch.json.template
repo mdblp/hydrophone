@@ -2,7 +2,7 @@
    "version": "0.2.0",
    "configurations": [
        {
-           "name": "launch hydro",
+           "name": "Launch hydro",
            "type": "go",
            "request": "launch",
            "mode": "debug",
@@ -17,6 +17,15 @@
                // "AWS_SECRET_ACCESS_KEY":""
            },
            "args": []
-       }
+       },
+       {
+        "name": "Launch Mail preview",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceRoot}/templates/preview/mailPreview.go",
+        "env": {
+            "TIDEPOOL_HYDROPHONE_SERVICE":"{ \"httpaddr\": \"localhost:8088\", \"assetUrl\": \"https://s3-eu-west-1.amazonaws.com/com.diabeloop.public-assets\", \"serverSecret\": \"secret\", \"webUrl\": \"https://preview.your-loops.dev\", \"patientPasswordResetUrl\": \"https://support.diabeloop.com/hc/articles/360025168234\", \"supportUrl\": \"mailto:yourloops@diabeloop.com\",\"i18nTemplatesPath\": \"../\" }"
+        }
    ]
 }
