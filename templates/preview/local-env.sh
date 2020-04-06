@@ -5,7 +5,5 @@ export TIDEPOOL_HYDROPHONE_SERVICE="{
     \"webUrl\": \"https://preview.your-loops.dev\",
     \"patientPasswordResetUrl\": \"https://support.diabeloop.com/hc/articles/360025168234\",
     \"supportUrl\": \"mailto:yourloops@diabeloop.com\",
-    \"i18nTemplatesPath\": \"../\",
-    \"localizeServiceUrl\": \"xxx\",
-    \"localizeServiceAuthKey\": \"xxxxxxx\"
+    \"i18nTemplatesPath\": \"../\"
   }"

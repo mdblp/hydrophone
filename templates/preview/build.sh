@@ -18,7 +18,6 @@ echo "Build hydromail $VERSION_BASE+$VERSION_FULL_COMMIT"
 go mod tidy
 go build -o dist/hydromail
 
-cp env.sh dist/
 cp start.sh dist/
 
 cp index.html dist/index.html
