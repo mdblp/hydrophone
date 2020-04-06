@@ -109,7 +109,7 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 		if invites := a.checkFoundConfirmations(res, found, err); invites != nil {
 			a.ensureIdSet(inviteeID, invites)
 			log.Printf("GetReceivedInvitations: found and have checked [%d] invites ", len(invites))
-			a.logAudit(req, "get received invites", false)
+			a.logAudit(req, "get received invites")
 			a.sendModelAsResWithStatus(res, invites, http.StatusOK)
 			return
 		}
@@ -153,7 +153,7 @@ func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, var
 		//find all invites I have sent that are pending or declined
 		found, err := a.Store.FindConfirmations(&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite}, models.StatusPending, models.StatusDeclined)
 		if invitations := a.checkFoundConfirmations(res, found, err); invitations != nil {
-			a.logAudit(req, "get sent invites", false)
+			a.logAudit(req, "get sent invites")
 			a.sendModelAsResWithStatus(res, invitations, http.StatusOK)
 			return
 		}
@@ -274,7 +274,7 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
 			return
 		}
-		a.logAudit(req, "acceptinvite", false)
+		a.logAudit(req, "acceptinvite")
 		res.WriteHeader(http.StatusOK)
 		res.Write([]byte(STATUS_OK))
 		return
@@ -330,7 +330,7 @@ func (a *Api) CancelInvite(res http.ResponseWriter, req *http.Request, vars map[
 			conf.UpdateStatus(models.StatusCanceled)
 
 			if a.addOrUpdateConfirmation(conf, res) {
-				a.logAudit(req, "cancelled invite", false)
+				a.logAudit(req, "cancelled invite")
 				res.WriteHeader(http.StatusOK)
 				return
 			}
@@ -399,7 +399,7 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 			conf.UpdateStatus(models.StatusDeclined)
 
 			if a.addOrUpdateConfirmation(conf, res) {
-				a.logAudit(req, "dismissinvite", false)
+				a.logAudit(req, "dismissinvite")
 				res.WriteHeader(http.StatusOK)
 				return
 			}
@@ -487,7 +487,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 			}
 
 			if a.addOrUpdateConfirmation(invite, res) {
-				a.logAudit(req, "invite created", false)
+				a.logAudit(req, "invite created")
 
 				if err := a.addProfile(invite); err != nil {
 					log.Println("SendInvite: ", err.Error())
@@ -513,9 +513,9 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 					}
 
 					if a.createAndSendNotification(invite, emailContent, inviteeLanguage) {
-						a.logAudit(req, "invite sent", false)
+						a.logAudit(req, "invite sent")
 					} else {
-						a.logAudit(req, "invite failed to be sent", false)
+						a.logAudit(req, "invite failed to be sent")
 						log.Print("Something happened generating an invite email")
 						res.WriteHeader(http.StatusUnprocessableEntity)
 						return

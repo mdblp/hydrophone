@@ -81,7 +81,7 @@ func (a *Api) updateSignupConfirmation(newStatus models.Status, res http.Respons
 		found.UpdateStatus(newStatus)
 
 		if a.addOrUpdateConfirmation(found, res) {
-			a.logAudit(req, updatedStatus, true)
+			a.logAudit(req, updatedStatus)
 			res.WriteHeader(http.StatusOK)
 			return
 		}
@@ -147,11 +147,11 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 
 			if a.createAndSendNotification(newSignUp, emailContent, signerLanguage) {
 				log.Printf("signup information sent for %s", userID)
-				a.logAudit(req, "signup information sent", true)
+				a.logAudit(req, "signup information sent")
 				res.WriteHeader(http.StatusOK)
 				return
 			} else {
-				a.logAudit(req, "signup confirmation failed to be sent", false)
+				a.logAudit(req, "signup confirmation failed to be sent")
 				log.Print("Something happened generating a signup email")
 				res.WriteHeader(http.StatusUnprocessableEntity)
 			}
@@ -259,7 +259,7 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 			}
 
 			if a.addOrUpdateConfirmation(newSignUp, res) {
-				a.logAudit(req, "signup confirmation created", false)
+				a.logAudit(req, "signup confirmation created")
 
 				if err := a.addProfile(newSignUp); err != nil {
 					log.Printf("sendSignUp: error when adding profile [%s]", err.Error())
@@ -292,11 +292,11 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 					}
 
 					if a.createAndSendNotification(newSignUp, emailContent, signerLanguage) {
-						a.logAudit(req, "signup confirmation sent", true)
+						a.logAudit(req, "signup confirmation sent")
 						res.WriteHeader(http.StatusOK)
 						return
 					} else {
-						a.logAudit(req, "signup confirmation failed to be sent", false)
+						a.logAudit(req, "signup confirmation failed to be sent")
 						log.Print("Something happened generating a signup email")
 						res.WriteHeader(http.StatusUnprocessableEntity)
 					}
@@ -340,7 +340,7 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 		}
 
 		if a.addOrUpdateConfirmation(found, res) {
-			a.logAudit(req, "signup confirmation recreated", true)
+			a.logAudit(req, "signup confirmation recreated")
 
 			if err := a.addProfile(found); err != nil {
 				log.Printf("resendSignUp: error when adding profile [%s]", err.Error())
@@ -373,9 +373,9 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 				}
 
 				if a.createAndSendNotification(found, emailContent, signerLanguage) {
-					a.logAudit(req, "signup confirmation re-sent", true)
+					a.logAudit(req, "signup confirmation re-sent")
 				} else {
-					a.logAudit(req, "signup confirmation failed to be sent", true)
+					a.logAudit(req, "signup confirmation failed to be sent")
 					log.Print("resendSignUp: Something happened trying to resend a signup email")
 					res.WriteHeader(http.StatusUnprocessableEntity)
 					return
@@ -478,7 +478,7 @@ func (a *Api) acceptSignUp(res http.ResponseWriter, req *http.Request, vars map[
 
 		found.UpdateStatus(models.StatusCompleted)
 		if a.addOrUpdateConfirmation(found, res) {
-			a.logAudit(req, "accept signup", true)
+			a.logAudit(req, "accept signup")
 		}
 
 		res.WriteHeader(http.StatusOK)
@@ -549,7 +549,7 @@ func (a *Api) getSignUp(res http.ResponseWriter, req *http.Request, vars map[str
 			a.sendModelAsResWithStatus(res, status.NewStatus(http.StatusNotFound, STATUS_SIGNUP_NOT_FOUND), http.StatusNotFound)
 			return
 		} else {
-			a.logAudit(req, "get signups", false)
+			a.logAudit(req, "get signups")
 			log.Printf("getSignUp found %d for user %s", len(signups), userId)
 			a.sendModelAsResWithStatus(res, signups, http.StatusOK)
 			return

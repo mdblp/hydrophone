@@ -85,7 +85,7 @@ func InitApi(
 	seagull commonClients.Seagull,
 	templates models.Templates,
 ) *Api {
-	logger := log.New(os.Stdout, CONFIRM_API_PREFIX, log.LstdFlags|log.Lshortfile)
+	logger := log.New(os.Stdout, CONFIRM_API_PREFIX, log.LstdFlags)
 	return &Api{
 		Store:          store,
 		Config:         cfg,
@@ -314,8 +314,15 @@ func (a *Api) token(res http.ResponseWriter, req *http.Request) *shoreline.Token
 }
 
 // logAudit Variatic log for audit trails
-func (a *Api) logAudit(req *http.Request, format string, isServer bool, args ...interface{}) {
+func (a *Api) logAudit(req *http.Request, format string, args ...interface{}) {
 	var prefix string
+	var isServer bool = false
+
+	// Get token from request
+	if token := req.Header.Get(TP_SESSION_TOKEN); token != "" {
+		td := a.sl.CheckToken(token)
+		isServer = td != nil && td.IsServer
+	}
 
 	if req.RemoteAddr != "" {
 		prefix = fmt.Sprintf("remoteAddr{%s}, ", req.RemoteAddr)
