@@ -3,9 +3,10 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords, initial signup, and invitations.
 
-## 0.8.1 - 2020-04-01
+## 0.8.1 - 2020-04-07
 ### Engineering use
 - PT-1214 integrate Crowdin live preview in HydroMail (email template preview webapp)
+- PT-1199 Remove Highwater (replace by log audits)
 
 ## 0.8.0 - 2020-03-30
 ### Added
@@ -13,7 +14,6 @@ This API sends notifications to users for things like forgotten passwords, initi
 - PT-995: Document the api using openApi and swaggo
 ### Changed
 - PT-414 Add switch to enable/disable sending of emails
-- PT-1199 Remove Highwater (replace by log audits)
 
 ### Changed
 - PT-1139: Add openapi generation and deployment in pipeline
