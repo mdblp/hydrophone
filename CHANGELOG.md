@@ -6,6 +6,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 ## Unreleased
 ### Changed
 - PT-1278 Integrate Tidepool master for hydrophone
+- PT-1341 Change signup link when invited
 
 ## 0.8.1 - 2020-04-07
 ### Engineering use
