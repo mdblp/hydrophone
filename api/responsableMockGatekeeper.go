@@ -16,6 +16,7 @@ type ResponsableMockGatekeeper struct {
 	UserInGroupResponses    []PermissionsResponse
 	UsersInGroupResponses   []UsersPermissionsResponse
 	SetPermissionsResponses []PermissionsResponse
+	GroupsForUserResponses  []UsersPermissionsResponse
 }
 
 func NewResponsableMockGatekeeper() *ResponsableMockGatekeeper {
@@ -50,6 +51,15 @@ func (c *ResponsableMockGatekeeper) UsersInGroup(groupID string) (clients.UsersP
 		return response.UsersPermissions, response.Error
 	}
 	panic("UsersInGroupResponses unavailable")
+}
+
+func (c *ResponsableMockGatekeeper) GroupsForUser(userID string) (clients.UsersPermissions, error) {
+	if len(c.GroupsForUserResponses) > 0 {
+		var response UsersPermissionsResponse
+		response, c.GroupsForUserResponses = c.GroupsForUserResponses[0], c.GroupsForUserResponses[1:]
+		return response.UsersPermissions, response.Error
+	}
+	panic("GroupsForUserResponses unavailable")
 }
 
 func (c *ResponsableMockGatekeeper) SetPermissions(userID, groupID string, permissions clients.Permissions) (clients.Permissions, error) {
