@@ -124,6 +124,8 @@ func (a *Api) buildPreview(res http.ResponseWriter, req *http.Request, vars map[
 		templateName = models.TemplateNamePatientPasswordReset
 	case "patient_information":
 		templateName = models.TemplateNamePatientInformation
+	case "patient_pin_reset":
+		templateName = models.TemplateNamePatientPinReset
 	case "signup_confirmation":
 		templateName = models.TemplateNameSignup
 	case "signup_clinic_confirmation":

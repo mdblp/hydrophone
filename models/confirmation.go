@@ -69,6 +69,7 @@ const (
 	TypeSignUp               Type = "signup_confirmation"
 	TypeNoAccount            Type = "no_account"
 	TypeInformation          Type = "patient_information"
+	TypePinReset             Type = "patient_pin_reset"
 )
 
 var (
