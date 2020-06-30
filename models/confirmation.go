@@ -23,6 +23,7 @@ type (
 		UserId       string       `json:"-" bson:"userId"`
 		Status       Status       `json:"-" bson:"status"`
 		Modified     time.Time    `json:"-" bson:"modified"`
+		ShortKey     string       `json:"shortKey" bson:"shortKey"`
 	}
 
 	//basic details for the creator of the confirmation
@@ -69,6 +70,7 @@ const (
 	TypeSignUp               Type = "signup_confirmation"
 	TypeNoAccount            Type = "no_account"
 	TypeInformation          Type = "patient_information"
+	shortKeyLength                = 8
 )
 
 var (
@@ -82,6 +84,7 @@ var (
 //New confirmation with just the basics
 func NewConfirmation(theType Type, templateName TemplateName, creatorId string) (*Confirmation, error) {
 
+	shortKey := generateShortKey(shortKeyLength)
 	if key, err := generateKey(); err != nil {
 		return nil, err
 	} else {
@@ -94,6 +97,7 @@ func NewConfirmation(theType Type, templateName TemplateName, creatorId string) 
 			Creator:      Creator{}, //set before sending back to client
 			Status:       StatusPending,
 			Created:      time.Now(),
+			ShortKey:     shortKey,
 		}
 
 		return conf, nil
@@ -195,6 +199,7 @@ func (c *Confirmation) ResetKey() error {
 	c.Status = StatusPending
 	c.Created = time.Now()
 	c.Modified = time.Time{}
+	c.ShortKey = generateShortKey(shortKeyLength)
 
 	return nil
 }
@@ -210,4 +215,15 @@ func generateKey() (string, error) {
 	} else {
 		return base64.URLEncoding.EncodeToString(rb), nil
 	}
+}
+
+const letterBytes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func generateShortKey(length int) string {
+	// b := make([]byte, length)
+	// for i := range b {
+	// 	b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	// }
+	// return string(b)
+	return letterBytes[:length]
 }

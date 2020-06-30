@@ -16,7 +16,7 @@ const (
 	STATUS_RESET_EXPIRED    = "Password reset confirmation has expired."
 	STATUS_RESET_ERROR      = "Error while resetting password; reset confirmation remains active until it expires."
 	STATUS_RESET_NO_ACCOUNT = "No matching account for the email was found."
-	STATUS_RESET_PATIENT    = "Patients are not allowed to reset their password."
+	STATUS_RESET_PATIENT    = "Patient reseting his password."
 )
 
 type (
@@ -69,8 +69,8 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 			log.Print(STATUS_RESET_PATIENT)
 			log.Printf("email used [%s]", email)
 			resetCnf, _ = models.NewConfirmation(models.TypePatientPasswordReset, models.TemplateNamePatientPasswordReset, "")
-			// a patient is not allowed to reset his password, close the request
-			resetCnf.UpdateStatus(models.StatusCompleted)
+			// // a patient is not allowed to reset his password, close the request
+			// resetCnf.UpdateStatus(models.StatusCompleted)
 		}
 
 		resetCnf.Email = email
@@ -102,8 +102,9 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 		a.logAudit(req, "reset confirmation created")
 
 		emailContent := map[string]interface{}{
-			"Key":   resetCnf.Key,
-			"Email": resetCnf.Email,
+			"Key":      resetCnf.Key,
+			"Email":    resetCnf.Email,
+			"ShortKey": resetCnf.ShortKey,
 		}
 
 		if a.createAndSendNotification(req, resetCnf, emailContent, reseterLanguage) {
