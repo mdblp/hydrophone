@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	mathRand "math/rand"
 	"time"
 )
 
@@ -71,6 +72,7 @@ const (
 	TypeNoAccount            Type = "no_account"
 	TypeInformation          Type = "patient_information"
 	shortKeyLength                = 8
+	letterBytes                   = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 var (
@@ -85,7 +87,10 @@ var (
 //New confirmation with just the basics
 func NewConfirmation(theType Type, templateName TemplateName, creatorId string) (*Confirmation, error) {
 
-	shortKey := generateShortKey(shortKeyLength)
+	shortKey := ""
+	if theType == TypePatientPasswordReset {
+		shortKey = generateShortKey(shortKeyLength)
+	}
 	if key, err := generateKey(); err != nil {
 		return nil, err
 	} else {
@@ -218,13 +223,12 @@ func generateKey() (string, error) {
 	}
 }
 
-const letterBytes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 func generateShortKey(length int) string {
-	// b := make([]byte, length)
-	// for i := range b {
-	// 	b[i] = letterBytes[rand.Intn(len(letterBytes))]
-	// }
-	// return string(b)
+
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = letterBytes[mathRand.Intn(len(letterBytes))]
+	}
+	return string(b)
 	return letterBytes[:length]
 }

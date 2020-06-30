@@ -71,6 +71,70 @@ func Test_NewConfirmation(t *testing.T) {
 
 }
 
+func Test_NewPatientPasswordResetConfirmation(t *testing.T) {
+
+	confirmation, _ := NewConfirmation(TypePatientPasswordReset, TemplateNamePatientPasswordReset, USERID)
+
+	if confirmation.Status != StatusPending {
+		t.Fatalf("Status should be [%s] but is [%s]", StatusPending, confirmation.Status)
+	}
+
+	if confirmation.Key == "" {
+		t.Fatal("There should be a generated key")
+	}
+
+	if confirmation.ShortKey == "" {
+		t.Fatal("There should be a generated short key")
+	}
+
+	if confirmation.Created.IsZero() {
+		t.Fatal("The created time should be set")
+	}
+
+	if confirmation.Modified.IsZero() == false {
+		t.Fatal("The modified time should NOT be set")
+	}
+
+	if confirmation.Type != TypePatientPasswordReset {
+		t.Fatalf("The type should be [%s] but is [%s]", TypePatientPasswordReset, confirmation.Type)
+	}
+
+	if confirmation.TemplateName != TemplateNamePatientPasswordReset {
+		t.Fatalf("The template type should be [%s] but is [%s]", TemplateNamePatientPasswordReset, confirmation.TemplateName)
+	}
+
+	if confirmation.UserId != "" {
+		t.Logf("expected '' actual [%s]", confirmation.UserId)
+		t.Fail()
+	}
+
+	if confirmation.CreatorId != USERID {
+		t.Logf("expected [%s] actual [%s]", USERID, confirmation.CreatorId)
+		t.Fail()
+	}
+
+	if confirmation.Creator.Profile != nil {
+		t.Logf("expected `nil` actual [%v]", confirmation.Creator.Profile)
+		t.Fail()
+	}
+
+	if confirmation.Creator.UserId != "" {
+		t.Logf("expected `` actual [%s]", confirmation.Creator.UserId)
+		t.Fail()
+	}
+
+	confirmation.UpdateStatus(StatusCompleted)
+
+	if confirmation.Status != StatusCompleted {
+		t.Fatalf("Status should be [%s] but is [%s]", StatusCompleted, confirmation.Status)
+	}
+
+	if confirmation.Modified.IsZero() != false {
+		t.Fatal("The modified time should have been set")
+	}
+
+}
+
 func Test_NewConfirmationWithContext(t *testing.T) {
 
 	confirmation, _ := NewConfirmationWithContext(TypePasswordReset, TemplateNamePasswordReset, USERID, contextData)
@@ -121,5 +185,19 @@ func TestConfirmationKey(t *testing.T) {
 
 	if len(key) != 32 {
 		t.Fatal("The generated key should be 32 chars: ", len(key))
+	}
+}
+
+func TestConfirmationShortKey(t *testing.T) {
+
+	keyLength := 8
+	key := generateShortKey(keyLength)
+
+	if key == "" {
+		t.Fatal("There should be a generated key")
+	}
+
+	if len(key) != keyLength {
+		t.Fatal("The generated key should be 8 chars: ", len(key))
 	}
 }
