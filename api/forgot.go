@@ -25,6 +25,7 @@ type (
 		Key      string `json:"key"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
+		ShortKey string `json:"shortKey"`
 	}
 )
 
@@ -168,6 +169,7 @@ func (a *Api) acceptPassword(res http.ResponseWriter, req *http.Request, vars ma
 
 	defer req.Body.Close()
 	var rb = &resetBody{}
+	resetCnf := &models.Confirmation{}
 	if err := json.NewDecoder(req.Body).Decode(rb); err != nil {
 		log.Printf("acceptPassword: error decoding reset details %v\n", err)
 		statusErr := &status.StatusError{status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)}
@@ -175,7 +177,12 @@ func (a *Api) acceptPassword(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	resetCnf := &models.Confirmation{Key: rb.Key, Email: rb.Email, Type: models.TypePasswordReset}
+	if rb.ShortKey != "" {
+		// patient reset
+		resetCnf = &models.Confirmation{Email: rb.Email, Type: models.TypePatientPasswordReset, ShortKey: rb.ShortKey, Status: "pending"}
+	} else {
+		resetCnf = &models.Confirmation{Key: rb.Key, Email: rb.Email, Type: models.TypePasswordReset}
+	}
 
 	if conf := a.findResetConfirmation(resetCnf, res); conf != nil {
 
