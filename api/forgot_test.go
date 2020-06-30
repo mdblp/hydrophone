@@ -39,6 +39,26 @@ func TestForgotResponds(t *testing.T) {
 			},
 		},
 		{
+			method:   "PUT",
+			url:      "/accept/patient/forgot",
+			respCode: 200,
+			body: testJSONObject{
+				"shortkey": "12345678",
+				"email":    "patient@myemail.com",
+				"password": "myN3wpa55w0rd",
+			},
+		},
+		{
+			method:   "PUT",
+			url:      "/accept/patient/forgot",
+			respCode: 404,
+			body: testJSONObject{
+				"shortkey": "00000000",
+				"email":    "expired@myemail.com",
+				"password": "myN3wpa55w0rd",
+			},
+		},
+		{
 			//no data given
 			method:   "PUT",
 			url:      "/accept/forgot",

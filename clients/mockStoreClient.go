@@ -50,8 +50,12 @@ func (d *MockStoreClient) FindConfirmation(notification *models.Confirmation) (r
 	if notification.Email == "email.resend@address.org" {
 		notification.TemplateName = models.TemplateNameSignup
 	}
-
-	notification.Created = time.Now().AddDate(0, 0, -3) // created three days ago
+	if notification.ShortKey == "12345678" {
+		onehour, _ := time.ParseDuration("1h")
+		notification.Created = time.Now().Add(onehour) // created three days ago
+	} else {
+		notification.Created = time.Now().AddDate(0, 0, -3) // created three days ago
+	}
 	return notification, nil
 }
 
