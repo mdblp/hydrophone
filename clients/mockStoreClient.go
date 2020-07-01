@@ -30,6 +30,12 @@ func (d *MockStoreClient) UpsertConfirmation(notification *models.Confirmation) 
 	if d.doBad {
 		return errors.New("UpsertConfirmation failure")
 	}
+	if notification.Email == "patient@myemail.com" && notification.Key != "" && notification.ShortKey != "" {
+		return nil
+	}
+	if notification.Email == "clinic@myemail.com" && notification.Key != "" && notification.ShortKey == "" {
+		return nil
+	}
 	return nil
 }
 
@@ -51,10 +57,13 @@ func (d *MockStoreClient) FindConfirmation(notification *models.Confirmation) (r
 		notification.TemplateName = models.TemplateNameSignup
 	}
 	if notification.ShortKey == "12345678" {
-		onehour, _ := time.ParseDuration("1h")
-		notification.Created = time.Now().Add(onehour) // created three days ago
+		thirtyminutes, _ := time.ParseDuration("30m")
+		notification.Created = time.Now().Add(thirtyminutes) // created 30 minutes ago
 	} else {
 		notification.Created = time.Now().AddDate(0, 0, -3) // created three days ago
+	}
+	if notification.ShortKey == "11111111" {
+		return nil, nil
 	}
 	return notification, nil
 }

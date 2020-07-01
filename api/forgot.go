@@ -70,8 +70,6 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 			log.Print(STATUS_RESET_PATIENT)
 			log.Printf("email used [%s]", email)
 			resetCnf, _ = models.NewConfirmation(models.TypePatientPasswordReset, models.TemplateNamePatientPasswordReset, "")
-			// // a patient is not allowed to reset his password, close the request
-			// resetCnf.UpdateStatus(models.StatusCompleted)
 		}
 
 		resetCnf.Email = email

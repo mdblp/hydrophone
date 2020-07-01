@@ -22,6 +22,20 @@ func TestForgotResponds(t *testing.T) {
 			respCode: 200,
 		},
 		{
+			// always returns a 200 for patient
+			// with shortKey
+			method:   "POST",
+			url:      "/send/forgot/patient@myemail.com",
+			respCode: 200,
+		},
+		{
+			// always returns a 200 for patient
+			// without shortKey
+			method:   "POST",
+			url:      "/send/forgot/clinic@myemail.com",
+			respCode: 200,
+		},
+		{
 			// always returns a 200 if properly formed
 			returnNone: true,
 			method:     "POST",
@@ -40,7 +54,7 @@ func TestForgotResponds(t *testing.T) {
 		},
 		{
 			method:   "PUT",
-			url:      "/accept/patient/forgot",
+			url:      "/accept/forgot",
 			respCode: 200,
 			body: testJSONObject{
 				"shortkey": "12345678",
@@ -50,11 +64,21 @@ func TestForgotResponds(t *testing.T) {
 		},
 		{
 			method:   "PUT",
-			url:      "/accept/patient/forgot",
+			url:      "/accept/forgot",
 			respCode: 404,
 			body: testJSONObject{
 				"shortkey": "00000000",
 				"email":    "expired@myemail.com",
+				"password": "myN3wpa55w0rd",
+			},
+		},
+		{
+			method:   "PUT",
+			url:      "/accept/forgot",
+			respCode: 404,
+			body: testJSONObject{
+				"shortkey": "11111111",
+				"email":    "doesnotexist@myemail.com",
 				"password": "myN3wpa55w0rd",
 			},
 		},

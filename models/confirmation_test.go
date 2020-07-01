@@ -1,6 +1,9 @@
 package models
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 const USERID = "1234-555"
 
@@ -10,6 +13,15 @@ type Extras struct {
 }
 
 var contextData = &Extras{Blah: "stuff", Email: "test@user.org"}
+
+func contains(source string, compared string) bool {
+	for _, char := range source {
+		if !strings.Contains(compared, string(char)) {
+			return false
+		}
+	}
+	return true
+}
 
 func Test_NewConfirmation(t *testing.T) {
 
@@ -200,4 +212,9 @@ func TestConfirmationShortKey(t *testing.T) {
 	if len(key) != keyLength {
 		t.Fatal("The generated key should be 8 chars: ", len(key))
 	}
+
+	if !contains(key, letterBytes) {
+		t.Fatal("The key should only contain authorized characters")
+	}
+
 }

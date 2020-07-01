@@ -80,7 +80,7 @@ var (
 		TypeCareteamInvite:       7 * 24 * time.Hour,
 		TypePasswordReset:        7 * 24 * time.Hour,
 		TypeSignUp:               31 * 24 * time.Hour,
-		TypePatientPasswordReset: 24 * time.Hour,
+		TypePatientPasswordReset: 1 * time.Hour,
 	}
 )
 
