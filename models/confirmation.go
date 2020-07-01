@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	mathRand "math/rand"
 	"time"
 )
 
@@ -88,8 +87,11 @@ var (
 func NewConfirmation(theType Type, templateName TemplateName, creatorId string) (*Confirmation, error) {
 
 	shortKey := ""
+	var err error = nil
 	if theType == TypePatientPasswordReset {
-		shortKey = generateShortKey(shortKeyLength)
+		if shortKey, err = generateShortKey(shortKeyLength); err != nil {
+			return nil, err
+		}
 	}
 	if key, err := generateKey(); err != nil {
 		return nil, err
@@ -200,35 +202,43 @@ func (c *Confirmation) ResetKey() error {
 	if err != nil {
 		return err
 	}
+	shortKey, err := generateShortKey(shortKeyLength)
+	if err != nil {
+		return err
+	}
 
 	c.Key = key
 	c.Status = StatusPending
 	c.Created = time.Now()
 	c.Modified = time.Time{}
-	c.ShortKey = generateShortKey(shortKeyLength)
+	c.ShortKey = shortKey
 
 	return nil
 }
 
-func generateKey() (string, error) {
-
-	length := 24 // change the length of the generated random string here
-
+func GenerateRandomBytes(length int) ([]byte, error) {
 	rb := make([]byte, length)
 	if _, err := rand.Read(rb); err != nil {
 		log.Println(err)
-		return "", err
+		return nil, err
 	} else {
-		return base64.URLEncoding.EncodeToString(rb), nil
+		return rb, nil
 	}
 }
 
-func generateShortKey(length int) string {
+func generateKey() (string, error) {
+	length := 24 // change the length of the generated random string here
+	rb, err := GenerateRandomBytes(length)
+	return base64.URLEncoding.EncodeToString(rb), err
+}
 
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = letterBytes[mathRand.Intn(len(letterBytes))]
+func generateShortKey(length int) (string, error) {
+	bytes, err := GenerateRandomBytes(length)
+	if err != nil {
+		return "", err
 	}
-	return string(b)
-	return letterBytes[:length]
+	for i, b := range bytes {
+		bytes[i] = letterBytes[b%byte(len(letterBytes))]
+	}
+	return string(bytes), nil
 }

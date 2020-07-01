@@ -203,7 +203,7 @@ func TestConfirmationKey(t *testing.T) {
 func TestConfirmationShortKey(t *testing.T) {
 
 	keyLength := 8
-	key := generateShortKey(keyLength)
+	key, _ := generateShortKey(keyLength)
 
 	if key == "" {
 		t.Fatal("There should be a generated key")
