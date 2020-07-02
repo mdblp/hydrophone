@@ -171,6 +171,7 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 		"CareteamName": "John Doe",
 		"WebPath":      "login",
 		"ShortKey":     "12345678",
+		"OTP":          "165236984",
 	}
 	// Content collection is here to replace placeholders in template body/content
 	content["CreatorName"] = "John Doe"

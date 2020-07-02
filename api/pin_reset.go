@@ -37,7 +37,7 @@ const (
 // @Failure 403 {object} status.Status "only authorized for patients, not clinicians nor server token"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailing service)"
 // @Failure 500 {object} status.Status "Internal error while processing the request, detailed error returned in the body"
-// @Router /send/pin_reset/{userid} [post]
+// @Router /send/pin-reset/{userid} [post]
 func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 
 	// by default, language is EN. It will be overriden if prefered language is found later

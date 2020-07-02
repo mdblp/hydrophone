@@ -40,7 +40,7 @@ func TestPinResetResponds(t *testing.T) {
 			test: toTest{
 				returnNone: true,
 				method:     "POST",
-				url:        "/send/pin_reset",
+				url:        "/send/pin-reset",
 				token:      testing_token_uid1,
 				respCode:   404,
 			},
@@ -50,7 +50,7 @@ func TestPinResetResponds(t *testing.T) {
 			test: toTest{
 				returnNone: true,
 				method:     "POST",
-				url:        "/send/pin_reset/" + testing_uid1,
+				url:        "/send/pin-reset/" + testing_uid1,
 				respCode:   403,
 			},
 		},
@@ -60,7 +60,7 @@ func TestPinResetResponds(t *testing.T) {
 
 				returnNone: true,
 				method:     "POST",
-				url:        "/send/pin_reset/NotFound",
+				url:        "/send/pin-reset/NotFound",
 				token:      testing_token_uid1,
 				respCode:   400,
 			},
@@ -70,7 +70,7 @@ func TestPinResetResponds(t *testing.T) {
 			test: toTest{
 				returnNone: true,
 				method:     "POST",
-				url:        "/send/pin_reset/" + testing_uid1,
+				url:        "/send/pin-reset/" + testing_uid1,
 				token:      testing_token_uid1,
 				respCode:   500,
 			},
@@ -81,7 +81,7 @@ func TestPinResetResponds(t *testing.T) {
 			test: toTest{
 				returnNone: true,
 				method:     "POST",
-				url:        "/send/pin_reset/" + testing_uid1,
+				url:        "/send/pin-reset/" + testing_uid1,
 				token:      testing_token_uid1,
 				respCode:   500,
 			},
@@ -96,7 +96,7 @@ func TestPinResetResponds(t *testing.T) {
 			test: toTest{
 				returnNone: true,
 				method:     "POST",
-				url:        "/send/pin_reset/" + testing_uid1,
+				url:        "/send/pin-reset/" + testing_uid1,
 				token:      testing_token_uid1,
 				respCode:   200,
 			},

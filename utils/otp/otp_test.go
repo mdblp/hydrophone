@@ -78,7 +78,7 @@ func TestTOTPLength(t *testing.T) {
 }
 
 func TestTOTPRotation(t *testing.T) {
-	// Ensure TOTP generated at the next and previous intervals are different
+	// Ensure TOTP generated just before and just after are different from current
 	timeStep := randomTimeStep()
 	startTime := randomTimestamp()
 	secret := randomSecret(64)

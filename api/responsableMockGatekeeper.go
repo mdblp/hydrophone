@@ -70,7 +70,3 @@ func (c *ResponsableMockGatekeeper) SetPermissions(userID, groupID string, permi
 	}
 	panic("SetPermissionsResponses unavailable")
 }
-
-func (c *ResponsableMockGatekeeper) GroupsForUser(userID string) (clients.UsersPermissions, error) {
-	panic("GroupsForUser unavailable")
-}
