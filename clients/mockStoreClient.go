@@ -30,6 +30,12 @@ func (d *MockStoreClient) UpsertConfirmation(notification *models.Confirmation) 
 	if d.doBad {
 		return errors.New("UpsertConfirmation failure")
 	}
+	if notification.Email == "patient@myemail.com" && notification.ShortKey == "" {
+		return errors.New("password reset for a patient should contain a short key")
+	}
+	if notification.Email == "clinic@myemail.com" && notification.ShortKey != "" {
+		return errors.New("password reset for a clinician should NOT contain a short key")
+	}
 	if notification.Email == "patient@myemail.com" && notification.Key != "" && notification.ShortKey != "" {
 		return nil
 	}
