@@ -32,6 +32,7 @@ const (
 // @Param userid path string true "user id"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "userId was not provided"
+// @Failure 401 {object} status.Status "only authorized for token bearers"
 // @Failure 403 {object} status.Status "only authorized for patients, not clinicians nor server token"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailing service)"
 // @Failure 500 {object} status.Status "Internal error while processing the request, detailed error returned in the body"
