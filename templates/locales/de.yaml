@@ -2,7 +2,7 @@
 #Footer
 #(for all emails)
 FooterGetSupport: "SUPPORT"
-FooterSincerely: "Mit freundlichen Grüßen,"
+FooterSincerely: "Mit freundlichen Grüßen"
 FooterSignature: "das Diabeloop Team"
 #No account
 #(email for those that requested password reset but did not create their account before)
