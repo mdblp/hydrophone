@@ -21,7 +21,7 @@ PasswordResetOtherwise: "Otherwise, click the link below."
 PasswordResetClick: "Reset Password"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Password reset for your YourLoops account"
+PatientPasswordResetSubject: "Password reset instructions"
 PatientPasswordResetHello: "Hello,"
 PatientPasswordResetRequest: "You requested to reset your YourLoops account password."
 PatientPasswordResetInstructions: "Please follow the instructions on your Diabeloop handset and enter this key:"
