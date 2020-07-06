@@ -6,24 +6,24 @@ FooterSincerely: "Sincerely,"
 FooterSignature: "The Diabeloop Team"
 #No account
 #(email for those that requested password reset but did not create their account before)
-NoAccountSubject: "Unknown account"
+NoAccountSubject: "Password reset for your YourLoops account"
 NoAccountHello: "Hello,"
 NoAccountNoAccount: "You asked to change your YourLoops password but no account has been created yet with this email address. :("
 NoAccountClick: "Please click on the link below if you would like to create an account."
 NoAccountSignUp: "SIGN UP"
 #Password Reset
 #(email for those that requested password reset)
-PasswordResetSubject: "Password reset"
+PasswordResetSubject: "Password reset for your YourLoops account"
 PasswordResetHello: "Hello,"
-PasswordResetRequest: "You requested a password reset for your YourLoops account."
+PasswordResetRequest: "You requested a password reset."
 PasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
-PasswordResetOtherwise: "Click on the link below to choose a new one."
+PasswordResetOtherwise: "Otherwise, click the link below."
 PasswordResetClick: "Reset Password"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Password reset instructions"
+PatientPasswordResetSubject: "Password reset for your YourLoops account"
 PatientPasswordResetHello: "Hello,"
-PatientPasswordResetRequest: "You requested a password reset for your YourLoops account."
+PatientPasswordResetRequest: "You requested to reset your YourLoops account password."
 PatientPasswordResetInstructions: "Please follow the instructions on your Diabeloop handset and enter this key:"
 PatientPasswordResetExplainKey: "The key is valid for 1h. If it has expired, please request a new one on your handset."
 PatientPasswordResetDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
