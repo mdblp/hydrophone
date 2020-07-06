@@ -23,11 +23,10 @@ PasswordResetClick: "Passwort zurücksetzen"
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Passwort zurücksetzen für Ihr Konto."
 PatientPasswordResetHello: "Hallo,"
-PatientPasswordResetRequest: "Du hast einen Passwort-Reset angefordert."
-PatientPasswordResetDidNotRequest: "Wenn Du dies nicht gewünscht hast, ignoriere  bitte diese E-Mail."
-PatientPasswordResetByDevice: "Das Zurücksetzen des Passworts muss auf Deinem Diabeloop-Gerät erfolgen."
-PatientPasswordResetExplainKey: "Follow the instructions with the below key on on your Diabeloop device."
-PatientPasswordResetClick: "Bitte klicke hier, um die detaillierte Anleitung zu sehen."
+PatientPasswordResetRequest: "You requested to reset your YourLoops account password."
+PatientPasswordResetInstructions: "Please follow the instructions on your Diabeloop handset and enter this key:"
+PatientPasswordResetExplainKey: "The key is valid for 1h. If it has expired, please request a new one on your handset."
+PatientPasswordResetDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Einladung Diabetes Care Team."
