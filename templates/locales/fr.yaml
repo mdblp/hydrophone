@@ -21,7 +21,7 @@ PasswordResetOtherwise: "Sinon, veuillez cliquer sur le lien ci-dessous."
 PasswordResetClick: "Réinitialiser le mot de passe"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Réinitialisation de votre mot de passe YourLoops"
+PatientPasswordResetSubject: "Réinitialisation du mot de passe"
 PatientPasswordResetHello: "Bonjour,"
 PatientPasswordResetRequest: "Vous avez demandé la réinitialisation de votre mot de passe YourLoops."
 PatientPasswordResetInstructions: "Veuillez suivre les instructions sur votre terminal Diabeloop et entrer la clé suivante :"
