@@ -1,11 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
-	"strings"
 
 	otp "github.com/tidepool-org/hydrophone/utils/otp"
 
@@ -34,10 +32,12 @@ const (
 // @Param userid path string true "user id"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "userId was not provided"
+// @Failure 401 {object} status.Status "only authorized for token bearers"
 // @Failure 403 {object} status.Status "only authorized for patients, not clinicians nor server token"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailing service)"
 // @Failure 500 {object} status.Status "Internal error while processing the request, detailed error returned in the body"
 // @Router /send/pin-reset/{userid} [post]
+// @security TidepoolAuth
 func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 
 	// by default, language is EN. It will be overriden if prefered language is found later
@@ -46,10 +46,9 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 	var usrDetails *shoreline.UserData
 	var err error
 
-	var token = req.Header.Get(TP_SESSION_TOKEN)
-
-	td := a.sl.CheckToken(token)
-	if td == nil || td.IsServer {
+	if token := a.token(res, req); token == nil {
+		return
+	} else if token.IsServer {
 		a.sendError(res, http.StatusForbidden, statusPinResetNoServer)
 		return
 	}
@@ -84,7 +83,8 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 	// first get the IMEI of the patient's handset
 	var patientConfig *portal.PatientConfig
 
-	if patientConfig, err = a.portal.GetPatientConfig(token); err != nil {
+	// actual token value is needed to call portal client: we know it does exist and is a user one
+	if patientConfig, err = a.portal.GetPatientConfig(req.Header.Get(TP_SESSION_TOKEN)); err != nil {
 		a.sendError(res, http.StatusInternalServerError, statusPinResetErr, "error getting patient config: ", err.Error())
 		return
 	}
@@ -123,13 +123,9 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 
 	var templateName = models.TemplateNamePatientPinReset
 
-	// Support address configuration contains the mailto we want to strip out
-	suppAddr := fmt.Sprintf("<a href=%s>%s</a>", a.Config.SupportURL, strings.Replace(a.Config.SupportURL, "mailto:", "", 1))
-
 	emailContent := map[string]interface{}{
-		"Email":        usrDetails.Emails[0],
-		"OTP":          re.ReplaceAllString(totp.OTP, `$1-$2-$3`),
-		"SupportEmail": suppAddr,
+		"Email": usrDetails.Emails[0],
+		"OTP":   re.ReplaceAllString(totp.OTP, `$1-$2-$3`),
 	}
 
 	// Create new confirmation with context data = totp
