@@ -23,10 +23,10 @@ PasswordResetClick: "Réinitialiser le mot de passe"
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Réinitialisation de votre mot de passe YourLoops"
 PatientPasswordResetHello: "Bonjour,"
-PatientPasswordResetRequest: "You requested to reset your YourLoops account password."
-PatientPasswordResetInstructions: "Please follow the instructions on your Diabeloop handset and enter this key:"
-PatientPasswordResetExplainKey: "The key is valid for 1h. If it has expired, please request a new one on your handset."
-PatientPasswordResetDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
+PatientPasswordResetRequest: "Vous avez demandé la réinitialisation de votre mot de passe YourLoops."
+PatientPasswordResetInstructions: "Veuillez suivre les instructions sur votre terminal Diabeloop et entrer la clé suivante :"
+PatientPasswordResetExplainKey: "Cette clé est valable une heure. En cas d'expiration, veuillez renouveler la demande sur votre terminal."
+PatientPasswordResetDidNotRequest: "Si vous n'êtes pas à l'origine de cette demande, merci de contacter notre support à {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Invitation à rejoindre une équipe de suivi"
