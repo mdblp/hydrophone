@@ -13,15 +13,15 @@ NoAccountClick: "Please click on the link below if you would like to create an a
 NoAccountSignUp: "SIGN UP"
 #Password Reset
 #(email for those that requested password reset)
-PasswordResetSubject: "Password reset"
+PasswordResetSubject: "Password reset for your YourLoops account"
 PasswordResetHello: "Hello,"
-PasswordResetRequest: "You requested to reset your YourLoops password."
+PasswordResetRequest: "You requested a password reset."
 PasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
 PasswordResetOtherwise: "Otherwise, click the link below."
 PasswordResetClick: "Reset Password"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Password reset instructions"
+PatientPasswordResetSubject: "Password reset for your YourLoops account"
 PatientPasswordResetHello: "Hello,"
 PatientPasswordResetRequest: "You requested to reset your YourLoops account password."
 PatientPasswordResetInstructions: "Please follow the instructions on your Diabeloop handset and enter this key:"
