@@ -46,7 +46,7 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 	var usrDetails *shoreline.UserData
 	var err error
 
-	if td := a.token(res, req); td == nil {
+	if token := a.token(res, req); token == nil {
 		return
 	} else if td.IsServer {
 		a.sendError(res, http.StatusForbidden, statusPinResetNoServer)
