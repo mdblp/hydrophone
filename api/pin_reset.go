@@ -48,7 +48,7 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 
 	if token := a.token(res, req); token == nil {
 		return
-	} else if td.IsServer {
+	} else if token.IsServer {
 		a.sendError(res, http.StatusForbidden, statusPinResetNoServer)
 		return
 	}
