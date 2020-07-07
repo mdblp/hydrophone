@@ -6,24 +6,24 @@ FooterSincerely: "Sincerely,"
 FooterSignature: "The Diabeloop Team"
 #No account
 #(email for those that requested password reset but did not create their account before)
-NoAccountSubject: "Password reset for your YourLoops account"
+NoAccountSubject: "Unknown account"
 NoAccountHello: "Hello,"
-NoAccountNoAccount: "You asked to change your YourLoops password but no account has been created yet with this email address. :("
-NoAccountClick: "Please click on the link below if you would like to create an account."
-NoAccountSignUp: "SIGN UP"
+NoAccountNoAccount: "You requested to reset your YourLoops password but no account has been created with this email address yet."
+NoAccountClick: "If you already use a Diabeloop device, login with the email and password you entered when setting up your handset. If you’re a healthcare professional and wish to create an account, please click on the link below."
+NoAccountSignUp: "Create Professional Account"
 #Password Reset
 #(email for those that requested password reset)
-PasswordResetSubject: "Password reset for your YourLoops account"
+PasswordResetSubject: "Password reset"
 PasswordResetHello: "Hello,"
-PasswordResetRequest: "You requested a password reset."
+PasswordResetRequest: "You requested to reset your YourLoops password."
 PasswordResetDidNotRequest: "If you didn't request this, please ignore this email."
-PasswordResetOtherwise: "Otherwise, click the link below."
-PasswordResetClick: "Reset Password"
+PasswordResetOtherwise: "Click on the link below to choose a new one."
+PasswordResetClick: "Reset password"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Password reset for your YourLoops account"
+PatientPasswordResetSubject: "Password reset instructions"
 PatientPasswordResetHello: "Hello,"
-PatientPasswordResetRequest: "You requested to reset your YourLoops account password."
+PatientPasswordResetRequest: "You requested a password reset for your YourLoops account."
 PatientPasswordResetInstructions: "Please follow the instructions on your Diabeloop handset and enter this key:"
 PatientPasswordResetExplainKey: "The key is valid for 1h. If it has expired, please request a new one on your handset."
 PatientPasswordResetDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
@@ -36,18 +36,18 @@ CareTeamInviteClick: "Please click the link below to accept and see {{ .Careteam
 CareTeamInviteJoin: "Join {{ .CareteamName }}'s Care Team"
 #Signup
 #(email to ask patient for verification of email)
-SignupConfirmationSubject: "Verify your YourLoops account"
+SignupConfirmationSubject: "Verify your email address"
 SignupHello: "Hello,"
-SignupCongrats: "Congrats on creating your YourLoops account!"
-SignupAction: "We just need one last thing from you (promised):"
+SignupCongrats: "Verify your email address to activate your YourLoops account."
+SignupAction: "You created a healthcare professional account on YourLoops. To confirm your identity and complete your profile, please click on the link below:"
 SignupVerify: "Verify Your Account"
 #Signup Clinic
 #(email to ask clinician for verification of email)
-SignupClinicConfirmationSubject: "Verify your YourLoops account"
+SignupClinicConfirmationSubject: "Verify your email address"
 SignupClinicHello: "Hello,"
-SignupClinicCongrats: "Congrats on creating your YourLoops account!"
-SignupClinicAction: "We just need one last thing from you (promised):"
-SignupClinicVerify: "Verify Your Account"
+SignupClinicCongrats: "Verify your email address to activate your YourLoops account."
+SignupClinicAction: "Verify your account and complete your profile:"
+SignupClinicVerify: "Activate my account"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialConfirmationSubject: "Verify your YourLoops account"
