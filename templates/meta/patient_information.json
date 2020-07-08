@@ -4,12 +4,12 @@
     "templateFilename": "patient_information.html",
     "subject": "InformationSubject",
     "contentParts":[
-        "SignupHello",
-        "PatientInformation",
+        "PatientHeadline",
+        "PatientBody",
+        "PatientBody2",
+        "PatientBody3",
         "PatientLogin",
-        "FooterGetSupport",
-        "FooterSincerely",
-        "FooterSignature"
+        "FooterGetSupport"
     ],
     "escapeContentParts":[]
 }
