@@ -29,11 +29,10 @@ PatientPasswordResetExplainKey: "The key is valid for 1h. If it has expired, ple
 PatientPasswordResetDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
-PatientPasswordInfoSubject: "Password reset for your YourLoops account"
-PatientPasswordInfoHello: "Hello,"
-PatientPasswordInfoRequest: "PatientPasswordInfoRequest."
-PatientPasswordInfoInstructions: "PatientPasswordInfoInstructions:"
-PatientPasswordInfoDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
+PatientPasswordInfoSubject: "Password reset"
+PatientPasswordInfoHeadline: "You requested to reset your YourLoops password from YourLoops. However, for safety reasons, you have to request the change from your Diabeloop handset."
+PatientPasswordInfoBody: "Go to Settings > YourLoops and follow the instructions on your handset."
+PatientPasswordInfoBody2: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Diabetes care team invitation"
