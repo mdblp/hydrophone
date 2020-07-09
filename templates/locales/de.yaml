@@ -26,7 +26,7 @@ PatientPasswordResetHello: "Hallo,"
 PatientPasswordResetRequest: "Sie haben darum gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen.\n"
 PatientPasswordResetInstructions: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:"
 PatientPasswordResetExplainKey: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen auf Ihrem Handset an.\n"
-PatientPasswordResetDidNotRequest: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
+PatientPasswordResetDidNotRequest: "Wenn diese E-Mail Sie irrtümlich erreicht hat, wenden Sie sich bitte an unseren Kundensupport unter{{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Einladung Diabetes Care Team."
@@ -67,9 +67,9 @@ PatientInformation: "Herzlichen Glückwunsch vom Team zur Aktivierung Deines Med
 PatientLogin: "Melde Dich bei YourLoops an."
 #Pin Reset Request
 #(email for those that requested a one-time password for PIN Reset)
-PatientPinResetSubject: "PIN reset instructions"
-PatientPinResetRequest: "You requested to reset your Diabeloop handset PIN."
-PatientPinResetTempCode: "Here is your temporary code:"
-PatientPinResetExpireSoon: "The code will expire in 30 minutes or as soon as you change your PIN."
-PatientPinResetExpired: "If the code has expired, please request a new one on your handset."
+PatientPinResetSubject: "Anweisung zum zurücksetzen der PIN"
+PatientPinResetRequest: "Sie haben beantragt, die PIN Ihres Diabeloop-Handsets zurückzusetzen."
+PatientPinResetTempCode: "Hier ist Ihr vorläufiger Code:"
+PatientPinResetExpireSoon: "Der Code verfällt in 30 Minuten oder sobald Sie Ihre PIN ändern.\n"
+PatientPinResetExpired: "Wenn der Code abgelaufen ist, fordern Sie bitte einen neuen Code auf Ihrem Mobiltelefon an."
 PatientPinResetWrongReach: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
