@@ -26,7 +26,7 @@ PatientPasswordResetHello: "Hallo,"
 PatientPasswordResetRequest: "Sie haben darum gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen.\n"
 PatientPasswordResetInstructions: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:"
 PatientPasswordResetExplainKey: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen auf Ihrem Handset an.\n"
-PatientPasswordResetDidNotRequest: "Wenn diese E-Mail Sie irrtümlich erreicht hat, wenden Sie sich bitte an unseren Kundensupport unter{{ .SupportEmail }}."
+PatientPasswordResetDidNotRequest: "Wenn diese E-Mail Sie irrtümlich erreicht hat, wenden Sie sich bitte an unseren Kundensupport unter {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Einladung Diabetes Care Team."
@@ -38,7 +38,7 @@ CareTeamInviteJoin: "Trete dem Team von {{ .CareteamName }} bei."
 #(email to ask patient for verification of email)
 SignupConfirmationSubject: "Überprüfe Dein Konto."
 SignupHello: "Hallo,"
-SignupCongrats: "Herzlichen Glückwunsch zur Erstellung Deines Kontos!"
+SignupCongrats: "Herzlichen Glückwunsch zur Erstellung Ihres Kontos!"
 SignupAction: "Wir brauchen nur noch eine letzte Sache von dir (versprochen)."
 SignupVerify: "Überprüfe Dein Konto."
 #Signup Clinic
