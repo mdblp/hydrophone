@@ -16,7 +16,7 @@ NoAccountSignUp: "ANMELDEN"
 PasswordResetSubject: "Passwort zurücksetzen für Ihr Konto."
 PasswordResetHello: "Hallo,"
 PasswordResetRequest: "Du hast einen Passwort-Reset angefordert."
-PasswordResetDidNotRequest: "Wenn Du dies nicht gewünscht hast, ignoriere  bitte diese E-Mail."
+PasswordResetDidNotRequest: "Wenn Du dies nicht gewünscht hast, ignoriere bitte diese E-Mail."
 PasswordResetOtherwise: "Andernfalls klicke auf den untenstehenden Link."
 PasswordResetClick: "Passwort zurücksetzen"
 #Patient Password Reset
