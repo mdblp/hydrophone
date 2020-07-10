@@ -27,7 +27,7 @@ PatientPasswordResetBody2: "The key is valid for 1h. If it has expired, please r
 PatientPasswordInfoSubject: "Password reset"
 PatientPasswordInfoHeadline: "You requested to reset your YourLoops password from YourLoops. However, for safety reasons, you have to request the change from your Diabeloop handset."
 PatientPasswordInfoBody: "Go to Settings > YourLoops and follow the instructions on your handset."
-PatientPasswordInfoBody2: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
+PatientPasswordInfoBody2: "Si vous n'êtes pas à l'origine de cette demande, merci de contacter notre équipe d'assistance {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Invitation à rejoindre une équipe de suivi"
