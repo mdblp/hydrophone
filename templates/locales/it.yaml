@@ -27,6 +27,12 @@ PatientPasswordResetRequest: "crwdns40326:0crwdne40326:0"
 PatientPasswordResetInstructions: "crwdns40328:0crwdne40328:0"
 PatientPasswordResetExplainKey: "crwdns40330:0crwdne40330:0"
 PatientPasswordResetDidNotRequest: "crwdns40332:0{{ .SupportEmail }}crwdne40332:0"
+#Patient Password Reset request from web app
+#(email for patients that requested password reset)
+PatientPasswordInfoSubject: "crwdns40334:0crwdne40334:0"
+PatientPasswordInfoHeadline: "crwdns40336:0crwdne40336:0"
+PatientPasswordInfoBody: "crwdns40338:0crwdne40338:0"
+PatientPasswordInfoBody2: "crwdns40340:0{{ .SupportEmail }}crwdne40340:0"
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "crwdns40260:0crwdne40260:0"
