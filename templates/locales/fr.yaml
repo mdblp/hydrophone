@@ -27,6 +27,12 @@ PatientPasswordResetRequest: "Vous avez demandé la réinitialisation de votre m
 PatientPasswordResetInstructions: "Veuillez suivre les instructions sur votre terminal Diabeloop et entrer la clé suivante :"
 PatientPasswordResetExplainKey: "Cette clé est valable une heure. En cas d'expiration, veuillez renouveler la demande sur votre terminal."
 PatientPasswordResetDidNotRequest: "Si vous n'êtes pas à l'origine de cette demande, merci de contacter notre support à {{ .SupportEmail }}."
+#Patient Password Reset request from web app
+#(email for patients that requested password reset)
+PatientPasswordInfoSubject: "Password reset"
+PatientPasswordInfoHeadline: "You requested to reset your YourLoops password from YourLoops. However, for safety reasons, you have to request the change from your Diabeloop handset."
+PatientPasswordInfoBody: "Go to Settings > YourLoops and follow the instructions on your handset."
+PatientPasswordInfoBody2: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Invitation à rejoindre une équipe de suivi"
