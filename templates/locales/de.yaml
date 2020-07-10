@@ -7,21 +7,21 @@ FooterGetSupport: "SUPPORT"
 #No account
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Passwort zurücksetzen für Ihr Konto."
-NoAccountHeadline: "You asked to change your YourLoops password but no account has been created yet with this email address. :("
-NoAccountBody: "Please click on the link below if you would like to create an account."
+NoAccountHeadline: "Sie haben darum gebeten, Ihr YourLoops-Passwort zu ändern, aber es wurde noch kein Konto mit dieser E-Mail-Adresse erstellt. :(\n"
+NoAccountBody: "Bitte klicken Sie auf den unten stehenden Link, wenn Sie ein Konto erstellen möchten."
 NoAccountSignUp: "ANMELDEN"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "Passwort zurücksetzen für Ihr Konto."
-PasswordResetHeadline: "You requested a password reset."
-PasswordResetBody: "Click the link below."
-PasswordResetReset: "Reset Password"
+PasswordResetHeadline: "Sie haben eine Passwort-Zurücksetzung beantragt."
+PasswordResetBody: "Klicken Sie auf den unten stehenden Link."
+PasswordResetReset: "Passwort zurücksetzen"
 #Patient Password Reset
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Passwort zurücksetzen für Ihr Konto."
-PatientPasswordResetHeadline: "You requested to reset your YourLoops account password."
-PatientPasswordResetBody: "Please follow the instructions on your Diabeloop handset and enter this key:"
-PatientPasswordResetBody2: "The key is valid for 1h. If it has expired, please request a new one on your handset."
+PatientPasswordResetHeadline: "Sie haben darum gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen.\n"
+PatientPasswordResetBody: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:\n"
+PatientPasswordResetBody2: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen Schlüssel auf Ihrem Handset an."
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Passwort zurücksetzen"
