@@ -27,6 +27,12 @@ PatientPasswordResetRequest: "Sie haben darum gebeten, Ihr Passwort für Ihr You
 PatientPasswordResetInstructions: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:"
 PatientPasswordResetExplainKey: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen auf Ihrem Handset an.\n"
 PatientPasswordResetDidNotRequest: "Wenn diese E-Mail Sie irrtümlich erreicht hat, wenden Sie sich bitte an unseren Kundensupport unter {{ .SupportEmail }}."
+#Patient Password Reset request from web app
+#(email for patients that requested password reset)
+PatientPasswordInfoSubject: "Password reset"
+PatientPasswordInfoHeadline: "You requested to reset your YourLoops password from YourLoops. However, for safety reasons, you have to request the change from your Diabeloop handset."
+PatientPasswordInfoBody: "Go to Settings > YourLoops and follow the instructions on your handset."
+PatientPasswordInfoBody2: "If this email has reached you in error, please contact our customer support at {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Einladung Diabetes Care Team."
