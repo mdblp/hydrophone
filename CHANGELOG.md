@@ -5,6 +5,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 
 ## Unreleased
 ### Changed
+- PT-1410 Password reset: distinguish information message and reset message containing key for patient
 - PT-1412 Update hydrophone email layout and strings
 
 ## 0.10.1 - 2020-07-06
