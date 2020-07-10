@@ -66,11 +66,12 @@ const (
 	//Available Type's
 	TypePasswordReset        Type = "password_reset"
 	TypePatientPasswordReset Type = "patient_password_reset"
+	TypePatientPasswordInfo  Type = "patient_password_info"
 	TypeCareteamInvite       Type = "careteam_invitation"
 	TypeSignUp               Type = "signup_confirmation"
 	TypeNoAccount            Type = "no_account"
 	TypeInformation          Type = "patient_information"
-	TypePinReset             Type = "patient_pin_reset"
+	TypePatientPinReset      Type = "patient_pin_reset"
 	shortKeyLength                = 8
 	letterBytes                   = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
@@ -88,11 +89,17 @@ var (
 func NewConfirmation(theType Type, templateName TemplateName, creatorId string) (*Confirmation, error) {
 
 	shortKey := ""
+	status := StatusPending
 	var err error = nil
-	if theType == TypePatientPasswordReset {
+
+	switch theType {
+	case TypePatientPasswordReset:
 		if shortKey, err = generateShortKey(shortKeyLength); err != nil {
 			return nil, err
 		}
+	case TypePatientPasswordInfo:
+		status = StatusCompleted
+	default:
 	}
 	if key, err := generateKey(); err != nil {
 		return nil, err
@@ -104,7 +111,7 @@ func NewConfirmation(theType Type, templateName TemplateName, creatorId string) 
 			TemplateName: templateName,
 			CreatorId:    creatorId,
 			Creator:      Creator{}, //set before sending back to client
-			Status:       StatusPending,
+			Status:       status,
 			Created:      time.Now(),
 			ShortKey:     shortKey,
 		}
