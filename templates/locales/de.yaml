@@ -32,7 +32,7 @@ PatientPasswordInfoBody2: "Wenn diese E-Mail Sie irrtümlich erreicht hat, wende
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Einladung Diabetes Care Team."
 #CareTeamInviteHello: "Hello,"
-CareTeamInviteHeadline: "{{ .CareteamName }} invited you to be on his/her care team."
+CareTeamInviteHeadline: "{{ .CareteamName }} lud Sie ein, in seinem Diabetesteam mitzuarbeiten."
 CareTeamInviteBody: "Bitte klicken Sie auf den Link unten, um zu akzeptieren und {{ .CareteamName }}Daten. zu sehen "
 CareTeamInviteJoin: "Trete dem Team von {{ .CareteamName }} bei."
 #Signup
@@ -75,4 +75,4 @@ PatientPinResetSubject: "Anweisung zum zurücksetzen der PIN"
 PatientPinResetHeadline: "Sie haben beantragt, die PIN Ihres Diabeloop-Handsets zurückzusetzen."
 PatientPinResetBody: "Hier ist Ihr temporärer Code:"
 PatientPinResetBody2: "Der Code läuft in 30 Minuten ab, oder sobald Sie Ihre PIN ändern."
-PatientPinResetBody3: "If the code has expired, please request a new one on your handset."
+PatientPinResetBody3: "Wenn der Code abgelaufen ist, fordern Sie bitte einen neuen Code auf Ihrem Handset an."
