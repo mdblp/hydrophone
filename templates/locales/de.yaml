@@ -6,8 +6,8 @@ FooterGetSupport: "SUPPORT"
 #FooterSignature: "The Diabeloop Team"
 #No account
 #(email for those that requested password reset but did not create their account before)
-NoAccountSubject: "Passwort zurücksetzen für Ihr Konto."
-NoAccountHeadline: "Sie haben darum gebeten, Ihr YourLoops-Passwort zu ändern, aber es wurde noch kein Konto mit dieser E-Mail-Adresse erstellt. :(\n"
+NoAccountSubject: "Unbekannte E-Mail-Adresse"
+NoAccountHeadline: "Sie haben darum gebeten, Ihr YourLoops-Passwort zu ändern, aber es wurde noch kein Konto mit dieser E-Mail-Adresse erstellt."
 NoAccountBody: "Bitte klicken Sie auf den unten stehenden Link, wenn Sie ein Konto erstellen möchten."
 NoAccountSignUp: "ANMELDEN"
 #Password Reset
