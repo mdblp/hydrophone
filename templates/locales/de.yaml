@@ -8,12 +8,12 @@ FooterGetSupport: "SUPPORT"
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Unbekannte E-Mail-Adresse"
 NoAccountHeadline: "Sie haben darum gebeten, Ihr YourLoops-Passwort zu ändern, aber es wurde noch kein Konto mit dieser E-Mail-Adresse erstellt."
-NoAccountBody: "Bitte klicken Sie auf den unten stehenden Link, wenn Sie ein Konto erstellen möchten."
-NoAccountSignUp: "ANMELDEN"
+NoAccountBody: "Wenn Sie bereits ein Diabeloop Gerät verwenden, melden Sie sich mit der E-Mail und dem Passwort an, das Sie bei der Einrichtung Ihres Handsets eingegeben haben.\nWenn Sie ein Arzt sind und ein Konto erstellen möchten, klicken Sie bitte auf den Link unten.\n"
+NoAccountSignUp: "Arzt-Konto erstellen"
 #Password Reset
 #(email for those that requested password reset)
-PasswordResetSubject: "Passwort zurücksetzen für Ihr Konto."
-PasswordResetHeadline: "Sie haben eine Passwort-Zurücksetzung beantragt."
+PasswordResetSubject: "Passwort zurücksetzen"
+PasswordResetHeadline: "Sie haben darum gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen."
 PasswordResetBody: "Klicken Sie auf den unten stehenden Link."
 PasswordResetReset: "Passwort zurücksetzen"
 #Patient Password Reset
