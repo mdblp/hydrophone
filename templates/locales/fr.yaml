@@ -33,21 +33,21 @@ PatientPasswordInfoBody2: "Si vous n’êtes pas à l’origine de cette demande
 CareTeamInvitationSubject: "Invitation patient"
 #CareTeamInviteHello: "Hello,"
 CareTeamInviteHeadline: "{{ .CareteamName }} souhaite partager ses données avec vous sur YourLoops."
-CareTeamInviteBody: "Please click the link below to accept and see {{ .CareteamName }}'s data."
-CareTeamInviteJoin: "Rejoindre l'équipe"
+CareTeamInviteBody: "YourLoops est une plateforme web qui permet de visualiser les données collectées par un terminal Diabeloop sous forme de graphiques et de statistiques.\nVotre patient {{ .CareteamName }} a choisi de vous donner accès à ses données. Pour y accéder, créez votre compte ou connectez-vous en cliquant sur le bouton ci-dessous."
+CareTeamInviteJoin: "Voir les données"
 #Signup
 #(email to ask patient for verification of email)
-SignupConfirmationSubject: "Vérification de votre compte YourLoops"
+SignupConfirmationSubject: "Vérification de votre adresse email"
 #SignupHello: "Hello,"
 SignupHeadline: "Congrats on creating your YourLoops account!"
 SignupBody: "We just need one last thing from you (promised):"
-SignupVerify: "Vérifier votre compte"
+SignupVerify: "Activer mon compte"
 #Signup Clinic
 #(email to ask clinician for verification of email)
-SignupClinicConfirmationSubject: "Vérification de votre compte YourLoops"
+SignupClinicConfirmationSubject: "Vérification de votre adresse email"
 #SignupClinicHello: "Hello,"
-SignupClinicHeadline: "Congrats on creating your YourLoops account!"
-SignupClinicBody: "We just need one last thing from you (promised):"
+SignupClinicHeadline: "Vérifiez votre adresse email pour activer votre compte YourLoops."
+SignupClinicBody: "Vous souhaitez créer un compte professionnel de santé sur YourLoops. Pour confirmer qu’il s’agit bien de votre adresse email et finaliser votre inscription, veuillez cliquer sur le bouton ci-dessous."
 SignupClinicVerify: "Vérifier votre compte"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
@@ -63,12 +63,12 @@ SignupCustodialClinicAccount: "{{ .CreatorName }} a créé pour vous un compte Y
 SignupCustodialClinicOwnership: "Vous pouvez réclamer votre compte gratuit pour voir et charger vos données depuis la maison."
 SignupCustodialClinicClaim: "Réclamer mon compte"
 #Patient Information
-PatientInfoSubject: "YourLoops Information"
-PatientInfoHeadline: "Congrats from Diabeloop team on activating your medical device and creating your YourLoops account."
+PatientInfoSubject: "Bienvenue sur YourLoops !"
+PatientInfoHeadline: "Connectez-vous pour consulter les données de votre terminal Diabeloop."
 PatientInfoBody: "YourLoops est une plateforme web dédiée à la gestion de votre diabète."
 PatientInfoBody2: "Vous y trouverez toutes les données collectées par votre terminal Diabeloop (glycémie, insuline, glucides…) sous forme de graphiques et de statistiques."
 PatientInfoBody3: "Pour vous connecter, munissez-vous de l’identifiant et du mot de passe saisis lors de l’initialisation de votre terminal et cliquez sur le bouton ci-dessous."
-PatientInfoLogin: "Login to YourLoops"
+PatientInfoLogin: "Voir mes données"
 #Pin Reset Request
 #(email for those that requested a one-time password for PIN Reset)
 PatientPinResetSubject: "Réinitialisation du code PIN"
