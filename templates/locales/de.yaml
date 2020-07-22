@@ -18,9 +18,9 @@ PasswordResetBody: "Klicken Sie auf den unten stehenden Link."
 PasswordResetReset: "Passwort zurücksetzen"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Passwort zurücksetzen für Ihr Konto."
-PatientPasswordResetHeadline: "Sie haben darum gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen.\n"
-PatientPasswordResetBody: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:\n"
+PatientPasswordResetSubject: "Anleitung zum Zurücksetzen des Passworts"
+PatientPasswordResetHeadline: "Sie haben gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen."
+PatientPasswordResetBody: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:"
 PatientPasswordResetBody2: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen Schlüssel auf Ihrem Handset an."
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
