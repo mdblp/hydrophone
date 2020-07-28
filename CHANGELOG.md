@@ -3,7 +3,7 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords, initial signup, and invitations.
 
-## 1.0.0
+## 1.0.0 - 2020-07-28
 ### Changed
 - PT-1410 Password reset: distinguish information message and reset message containing key for patient
 - PT-1412 Update hydrophone email layout and strings
