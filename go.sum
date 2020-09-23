@@ -55,6 +55,8 @@ github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2/go.mod h1:Ld9puTsI
 github.com/markbates/safe v1.0.1/go.mod h1:nAqgmRi7cY2nqMc92/bSEeQA+R4OheNU2T1kNSCBdG0=
 github.com/mdblp/go-common v0.6.0-rc2 h1:qrGLVmbRiYniICFjtp83u8AA1MKZfCLIkrU6SRVJm+w=
 github.com/mdblp/go-common v0.6.0-rc2/go.mod h1:Rzxq2ZCp+WpeRu/sbVyNgSQjHqa3Nu1MbBXFnGsmTwY=
+github.com/mdblp/go-common v0.6.0 h1:GxHB7xG+dAY8hKwW/+tfED4MoXLYV+U7gL5zvuVhPXw=
+github.com/mdblp/go-common v0.6.0/go.mod h1:Rzxq2ZCp+WpeRu/sbVyNgSQjHqa3Nu1MbBXFnGsmTwY=
 github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe/go.mod h1:wL8QJuTMNUDYhXwkmfOly8iTdp5TEcJFWZD2D7SIkUc=
 github.com/nicksnyder/go-i18n/v2 v2.0.3 h1:ks/JkQiOEhhuF6jpNvx+Wih1NIiXzUnZeZVnJuI8R8M=
 github.com/nicksnyder/go-i18n/v2 v2.0.3/go.mod h1:oDab7q8XCYMRlcrBnaY/7B1eOectbvj6B1UPBT+p5jo=
