@@ -143,12 +143,13 @@ func main() {
 		/*
 		 * hydrophone setup
 		 */
-	storage, err := sc.NewStore(&config.Mongo, logger)
-	if err != nil {
+	store, err := sc.NewStore(&config.Mongo, logger)
+      /* Check that database configuration is valid. It does not check database availability */
+   if err != nil {
 		logger.Fatal(err)
 	}
-	defer storage.Close()
-	storage.Start()
+	defer store.Close()
+	store.Start()
 	// Create a notifier based on configuration
 	var mail sc.Notifier
 	var mailErr error
@@ -186,7 +187,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, storage, mail, shoreline, gatekeeper, seagull, portal, emailTemplates)
+	api := api.InitApi(config.Api, store, mail, shoreline, gatekeeper, seagull, portal, emailTemplates)
 	api.SetHandlers("", rtr)
 
 	/*
@@ -219,7 +220,7 @@ func main() {
 			logger.Printf("Got signal [%s]", sig)
 
 			if sig == syscall.SIGINT || sig == syscall.SIGTERM {
-				storage.Close()
+				store.Close()
 				server.Close()
 				done <- true
 			}
