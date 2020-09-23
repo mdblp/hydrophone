@@ -2,7 +2,7 @@ module github.com/tidepool-org/hydrophone
 
 go 1.12.7
 
-replace github.com/tidepool-org/go-common => github.com/mdblp/go-common v0.6.0
+replace github.com/tidepool-org/go-common => github.com/mdblp/go-common v0.6.1
 
 require (
 	github.com/aws/aws-sdk-go v1.34.24
