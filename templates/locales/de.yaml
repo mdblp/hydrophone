@@ -8,7 +8,7 @@ FooterGetSupport: "SUPPORT"
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Unbekannte E-Mail-Adresse"
 NoAccountHeadline: "Sie haben darum gebeten, Ihr YourLoops-Passwort zu ändern, aber es wurde noch kein Konto mit dieser E-Mail-Adresse erstellt."
-NoAccountBody: "Wenn Sie bereits ein Diabeloop Gerät verwenden, melden Sie sich mit der E-Mail und dem Passwort an, das Sie bei der Einrichtung Ihres Handsets eingegeben haben.\nWenn Sie ein Arzt sind und ein Konto erstellen möchten, klicken Sie bitte auf den Link unten.\n"
+NoAccountBody: "If you already use a Diabeloop device, login with the email and password you entered when setting up your DBL.\nIf you’re a healthcare professional and wish to create an account, please click on the link below.\n"
 NoAccountSignUp: "Arzt-Konto erstellen"
 #Password Reset
 #(email for those that requested password reset)
@@ -20,20 +20,20 @@ PasswordResetReset: "Passwort zurücksetzen"
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Anleitung zum Zurücksetzen des Passworts"
 PatientPasswordResetHeadline: "Sie haben gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen."
-PatientPasswordResetBody: "Bitte folgen Sie den Anweisungen auf Ihrem Diabeloop-Handset und geben Sie diesen Schlüssel ein:"
-PatientPasswordResetBody2: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen Schlüssel auf Ihrem Handset an."
+PatientPasswordResetBody: "Please follow the instructions on your DBL and enter this key:"
+PatientPasswordResetBody2: "The key is valid for 1h. If it has expired, please request a new one on your DBL."
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Passwort zurücksetzen"
-PatientPasswordInfoHeadline: "Sie haben gebeten, Ihr YourLoops-Passwort von YourLoops aus zurückzusetzen. Aus Sicherheitsgründen müssen Sie die Änderung jedoch von Ihrem Diabeloop-Handset aus anfordern."
-PatientPasswordInfoBody: "Gehen Sie zu Einstellungen > YourLoops und folgen Sie den Anweisungen auf Ihrem Handset."
+PatientPasswordInfoHeadline: "You requested to reset your YourLoops password from YourLoops. However, for safety reasons, you have to request the change from your DBL."
+PatientPasswordInfoBody: "Go to Settings > YourLoops and follow the instructions on your DBL."
 PatientPasswordInfoBody2: "Wenn Sie diese E-Mail irrtümlich erhalten, wenden Sie sich bitte an unseren Kundenservice unter {{ .SupportEmail }}."
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Einladung Diabetes Care Team"
 #CareTeamInviteHello: "Hello,"
 CareTeamInviteHeadline: "{{ .CareteamName }} möchte seine Diabetes-Daten mit Ihnen auf YourLoops teilen."
-CareTeamInviteBody: "YourLoops ist eine Visualisierungsplattform für Diabetes-Management und -Reporting.\nSie finden sämtliche Daten, die vom Diabeloop Handset erhoben werden, in Grafiken und Diagrammen dargestellt.\nIhr Patient {{ .CareteamName }} hat sich entschieden, seine Daten mit Ihnen zu teilen. Um seine Einladung anzunehmen, klicken Sie bitte auf den unten stehenden Link."
+CareTeamInviteBody: "YourLoops is a visualization platform for diabetes management and reporting. You’ll find all the data captured by a DBL displayed into charts and graphs. \nYour patient {{ .CareteamName }}' chose to share their data with you. To accept their invitation, click on the link below."
 CareTeamInviteJoin: "Daten anzeigen"
 #Signup
 #(email to ask patient for verification of email)
@@ -64,15 +64,15 @@ SignupCustodialClinicOwnership: "Du kannst Dein kostenloses Konto in Anspruch ne
 SignupCustodialClinicClaim: "Fordere Dein Konto an"
 #Patient Information
 PatientInfoSubject: "Willkommen bei YourLoops!"
-PatientInfoHeadline: "Melden Sie sich an, um Ihre Diabeloop-Daten anzuzeigen."
+PatientInfoHeadline: "Login to view your DBL data."
 PatientInfoBody: "YourLoops ist eine Visualisierungsplattform für Diabetes-Management."
-PatientInfoBody2: "Sie finden alle von Ihrem Diabeloop-Handset erfassten Daten (Glukosetrends, Insulinverbrauch, aufgezeichnete Kohlenhydrate...) in Diagrammen und Grafiken dargestellt."
-PatientInfoBody3: "Verwenden Sie die E-Mail und das Passwort, die Sie bei der Einrichtung Ihres Handsets eingegeben haben, wenn Sie auf den unten stehenden Link klicken, um sich anzumelden."
+PatientInfoBody2: "You’ll find all the data captured by your DBL (glucose trends, insulin usage, recorded carbs..) displayed into charts and graphs."
+PatientInfoBody3: "Use the email and password you entered when setting up your DBL when you click on the link below to login."
 PatientInfoLogin: "Anmeldung bei YourLoops"
 #Pin Reset Request
 #(email for those that requested a one-time password for PIN Reset)
 PatientPinResetSubject: "Anweisung zum Zurücksetzen der PIN"
-PatientPinResetHeadline: "Sie haben beantragt, die PIN Ihres Diabeloop-Handsets zurückzusetzen."
+PatientPinResetHeadline: "You requested to reset your DBL PIN."
 PatientPinResetBody: "Hier ist Ihr temporärer Code:"
 PatientPinResetBody2: "Der Code läuft in 30 Minuten ab, oder sobald Sie Ihre PIN ändern."
-PatientPinResetBody3: "Wenn der Code abgelaufen ist, fordern Sie bitte einen neuen Code auf Ihrem Handset an."
+PatientPinResetBody3: "If the code has expired, please request a new one on your DBL."
