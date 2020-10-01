@@ -8,7 +8,7 @@ FooterGetSupport: "SUPPORT"
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Unbekannte E-Mail-Adresse"
 NoAccountHeadline: "Sie haben darum gebeten, Ihr YourLoops-Passwort zu ändern, aber es wurde noch kein Konto mit dieser E-Mail-Adresse erstellt."
-NoAccountBody: "If you already use a Diabeloop device, login with the email and password you entered when setting up your DBL.\nIf you’re a healthcare professional and wish to create an account, please click on the link below.\n"
+NoAccountBody: "Wenn Sie bereits ein Diabeloop-Gerät verwenden, melden Sie sich mit der E-Mail und dem Passwort an, das Sie beim Einrichten Ihres DBL eingegeben haben.\nWenn Sie dem medizinischen Fachpersonal angehören und ein Konto erstellen möchten, klicken Sie bitte auf den untenstehenden Link."
 NoAccountSignUp: "Arzt-Konto erstellen"
 #Password Reset
 #(email for those that requested password reset)
@@ -20,8 +20,8 @@ PasswordResetReset: "Passwort zurücksetzen"
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Anleitung zum Zurücksetzen des Passworts"
 PatientPasswordResetHeadline: "Sie haben gebeten, Ihr Passwort für Ihr YourLoops-Konto zurückzusetzen."
-PatientPasswordResetBody: "Please follow the instructions on your DBL and enter this key:"
-PatientPasswordResetBody2: "The key is valid for 1h. If it has expired, please request a new one on your DBL."
+PatientPasswordResetBody: "Bitte folgen Sie den Anweisungen auf Ihres DBL und geben Sie diesen Schlüssel ein:"
+PatientPasswordResetBody2: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen ist, fordern Sie bitte einen neuen Schlüssel auf Ihrem DBL an."
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Passwort zurücksetzen"
