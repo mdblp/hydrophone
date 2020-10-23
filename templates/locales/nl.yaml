@@ -44,9 +44,9 @@ SignupBody: "Je hebt een account aangemaakt op YourLoops. Klik op de onderstaand
 SignupVerify: "Mijn account activeren"
 #Signup Clinic
 #(email to ask clinician for verification of email)
-SignupClinicConfirmationSubject: "Verifieer je e-mailadres"
+SignupClinicConfirmationSubject: "Controleer je e-mailadres"
 #SignupClinicHello: "Hello,"
-SignupClinicHeadline: "Verifieer je e-mailadres om je YourLoops-account te activeren."
+SignupClinicHeadline: "Controleer je e-mailadres om je YourLoops-account te activeren."
 SignupClinicBody: "Je hebt een account voor zorgverleners aangemaakt op YourLoops. Klik op de onderstaande link om je identiteit te bevestigen en je profiel te voltooien."
 SignupClinicVerify: "Mijn account activeren"
 #Signup Custodial => SUPPRIMER
