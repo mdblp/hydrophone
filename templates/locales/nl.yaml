@@ -8,7 +8,7 @@ FooterGetSupport: "SUPPORT"
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Onbekend e-mailadres"
 NoAccountHeadline: "Je hebt gevraagd om je YourLoops-wachtwoord opnieuw in te stellen, maar er is nog geen account aangemaakt met dit e-mailadres."
-NoAccountBody: "Als je al een Diabeloop-apparaat gebruikt, log dan in met het e-mailadres en wachtwoord dat je hebt ingevoerd bij het instellen van je DBL.\nAls je een zorgverlener bent en je wil een account maken, klik dan op de onderstaande link.\n"
+NoAccountBody: "Als je al een Diabeloop-sytem gebruikt, log dan in met het e-mailadres en wachtwoord dat je hebt ingevoerd bij het instellen van je DBL.\nAls je een zorgverlener bent en je wil een account maken, klik dan op de onderstaande link.\n"
 NoAccountSignUp: "Professioneel account aanmaken"
 #Password Reset
 #(email for those that requested password reset)
