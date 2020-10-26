@@ -15,7 +15,7 @@ $GOPATH/bin/swag init --generalInfo hydrophone.go --output docs
 # It is stored in a new directory that will be used as source by the Travis deploy step
 if [ -n "${TRAVIS_TAG:-}" ]; then
     APP="${TRAVIS_REPO_SLUG#*/}"
-    APP_TAG="${APP}-${TRAVIS_TAG}"
+    APP_TAG="${APP}-${TRAVIS_TAG/dblp./}"
     mkdir docs/openapi
     mv docs/swagger.json docs/openapi/${APP_TAG}-swagger.json
     # If this is not a release candidate but a "true" release, we consider this doc is the latest
