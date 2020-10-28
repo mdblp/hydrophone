@@ -9,7 +9,7 @@ if [ ! -x "$GOPATH/bin/swag" ]; then
 fi
 
 $GOPATH/bin/swag --version
-$GOPATH/bin/swag init --generalInfo hydrophone.go --output docs
+$GOPATH/bin/swag init --parseDependency --generalInfo hydrophone.go --output docs
 
 # When tag is present, openapi doc is renamed before being deployed to S3
 # It is stored in a new directory that will be used as source by the Travis deploy step
