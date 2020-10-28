@@ -5,10 +5,10 @@ dist: focal
 language: go
 
 go:
-  - 1.12.7
+  - 1.14.10
 
 env:
-  global: 
+  global:
     - GO111MODULE=on
     - BUILD_OPENAPI_DOC=true
     - BUILD_SOUP=true
@@ -17,7 +17,7 @@ go_import_path: github.com/tidepool-org/hydrophone
 
 before_install:
   # MongoDb 4.2 docker container
-  - docker container run -d -p 27017:27017 mongo:4.2 
+  - docker container run -d -p 27017:27017 mongo:4.2
 
 install:
   - ./build.sh
