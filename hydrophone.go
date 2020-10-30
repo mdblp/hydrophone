@@ -2,7 +2,7 @@
 // @version 1.2.2
 // @description The purpose of this API is to send notifications to users: forgotten passwords, initial signup, invitations and more
 // @license.name BSD 2-Clause "Simplified" License
-// @host localhost
+// @host api.android-qa.your-loops.dev
 // @BasePath /confirm
 // @accept json
 // @produce json
