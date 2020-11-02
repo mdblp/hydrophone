@@ -20,7 +20,7 @@ if [ -n "${TRAVIS_TAG:-}" ]; then
     mv docs/swagger.json docs/openapi/${APP_TAG}-swagger.json
     # If this is not a release candidate but a "true" release, we consider this doc is the latest
     # we create a copy named "latest" to be consumed by documentation website using SwaggerUI
-    if [[ ! ${TRAVIS_TAG} =~ rc[0-9] ]]; then
+    if [[ ${TRAVIS_TAG} =~ [0-9]+\.[0-9]+\.[0-9]+$ ]]; then
       cp docs/openapi/${APP_TAG}-swagger.json docs/openapi/${APP}-latest-swagger.json
     fi
 fi
