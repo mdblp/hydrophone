@@ -283,11 +283,15 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 						emailContent["CreatorName"] = newSignUp.Creator.Profile.FullName
 					}
 
-					// although technically there exists a profile at the signup stage, the preferred language would always be empty here
-					// as it is set in the app and once the signup procedure is complete (after signup email has been confirmed)
-					// -> get browser's or "en" for English in case there is no browser's
-					if signerLanguage = GetBrowserPreferredLanguage(req); signerLanguage == "" {
-						signerLanguage = "en"
+					// on the signup page in Blip, the preferred language is now selected by listbox
+					// even if not selected there is one by default so we should normally always end up with
+					// a value in GetUserChosenLanguage
+					// however, just to play it safe, we can continue taking the browser preferred language
+					// or ENglish as default values
+					if signerLanguage = GetUserChosenLanguage(req); signerLanguage == "" {
+						if signerLanguage = GetBrowserPreferredLanguage(req); signerLanguage == "" {
+							signerLanguage = "en"
+						}
 					}
 
 					if a.createAndSendNotification(req, newSignUp, emailContent, signerLanguage) {
