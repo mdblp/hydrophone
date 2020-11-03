@@ -6,7 +6,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 ## 1.2.2 - 2020-10-29
 ### Engineering
 - YLP-242 Review openapi generation so we can serve it through a website
-- Update to Go 1.14
+- Update to Go 1.15
 
 ## 1.2.1 - 2020-09-25
 ### Fixed
