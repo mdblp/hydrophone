@@ -49,14 +49,14 @@ type (
 // @Router /send/forgot/{useremail} [post]
 func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	var resetCnf *models.Confirmation
-	var reseterLanguage string
+	var resetterLanguage string
 
 	// on the "forgot password" page in Blip, the preferred language is now selected by listbox
 	// even if not selected there is one by default so we should normally always end up with
 	// a value in GetUserChosenLanguage()
 	// however, just to play it safe, we can continue taking the browser preferred language
 	// or ENglish as default values
-	// In case the reseter is found a known user and has a language set, the language will be overriden in a later step
+	// In case the resetter is found a known user and has a language set, the language will be overridden in a later step
 	if reseterLanguage = GetUserChosenLanguage(req); reseterLanguage == "" {
 		if reseterLanguage = GetBrowserPreferredLanguage(req); reseterLanguage == "" {
 			reseterLanguage = "en"
