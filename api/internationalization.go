@@ -16,16 +16,12 @@ const (
 	USER_LANGUAGE   = "x-tidepool-language"
 )
 
-//GetUserChosenLanguage returns the preferred language extracted from the request browser
+//GetUserChosenLanguage returns the chosen language passed as a custom header
 func GetUserChosenLanguage(req *http.Request) string {
-
 	if userlng := req.Header.Get(USER_LANGUAGE); userlng == "" {
 		return ""
-	} else if languages := parseAcceptLanguage(userlng); languages == nil {
-		return ""
 	} else {
-		// if at least 1 lang is found, we return the 2 first characters of the first lang
-		return languages[0].Lang[0:2]
+		return userlng
 	}
 }
 

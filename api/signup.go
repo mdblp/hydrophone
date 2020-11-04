@@ -163,10 +163,14 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 // @Description  This post is sent by the signup logic. In this state, the user account has been created but has a flag that
 // @Description  forces the user to the confirmation-required page until the signup has been confirmed.
 // @Description  It sends an email that contains a random confirmation link
+// @Description  The email is sent in the language defined by "x-tidepool-language" header
+// @Description  Otherwise if null "Accept-Language" header otherwise if null "ENglish"
 // @ID hydrophone-api-sendSignUp
 // @Accept  json
 // @Produce  json
 // @Param userid path string true "user id"
+// @Param x-tidepool-language header string false "User chosen language on 2 characters"
+// @Param Accept-Language header string false "Browser defined languages as array of languages such as fr-FR"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "userId was not provided, return:\"Required userid is missing\" "
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
@@ -283,9 +287,9 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 						emailContent["CreatorName"] = newSignUp.Creator.Profile.FullName
 					}
 
-					// on the signup page in Blip, the preferred language is now selected by listbox
+					// on the "signup" page in Blip, the preferred language is now selected by listbox
 					// even if not selected there is one by default so we should normally always end up with
-					// a value in GetUserChosenLanguage
+					// a value in GetUserChosenLanguage()
 					// however, just to play it safe, we can continue taking the browser preferred language
 					// or ENglish as default values
 					if signerLanguage = GetUserChosenLanguage(req); signerLanguage == "" {

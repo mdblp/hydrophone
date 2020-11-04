@@ -40,6 +40,8 @@ type (
 // @Accept  json
 // @Produce  json
 // @Param useremail path string true "user email"
+// @Param x-tidepool-language header string false "User chosen language on 2 characters"
+// @Param Accept-Language header string false "Browser defined languages as array of languages such as fr-FR"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "useremail was not provided"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
@@ -49,10 +51,16 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 	var resetCnf *models.Confirmation
 	var reseterLanguage string
 
-	// By default, the reseter language will be his browser's or "en" for Englih
+	// on the "forgot password" page in Blip, the preferred language is now selected by listbox
+	// even if not selected there is one by default so we should normally always end up with
+	// a value in GetUserChosenLanguage()
+	// however, just to play it safe, we can continue taking the browser preferred language
+	// or ENglish as default values
 	// In case the reseter is found a known user and has a language set, the language will be overriden in a later step
-	if reseterLanguage = GetBrowserPreferredLanguage(req); reseterLanguage == "" {
-		reseterLanguage = "en"
+	if reseterLanguage = GetUserChosenLanguage(req); reseterLanguage == "" {
+		if reseterLanguage = GetBrowserPreferredLanguage(req); reseterLanguage == "" {
+			reseterLanguage = "en"
+		}
 	}
 
 	email := vars["useremail"]
