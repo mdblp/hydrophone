@@ -57,9 +57,9 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 	// however, just to play it safe, we can continue taking the browser preferred language
 	// or ENglish as default values
 	// In case the resetter is found a known user and has a language set, the language will be overridden in a later step
-	if reseterLanguage = GetUserChosenLanguage(req); reseterLanguage == "" {
-		if reseterLanguage = GetBrowserPreferredLanguage(req); reseterLanguage == "" {
-			reseterLanguage = "en"
+	if resetterLanguage = GetUserChosenLanguage(req); resetterLanguage == "" {
+		if resetterLanguage = GetBrowserPreferredLanguage(req); resetterLanguage == "" {
+			resetterLanguage = "en"
 		}
 	}
 
@@ -74,7 +74,7 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 		info = nil
 	}
 
-	// if the reseter is already registered we can use his preferences
+	// if the resetter is already registered we can use his preferences
 	if resetUsr := a.findExistingUser(email, a.sl.TokenProvide()); resetUsr != nil {
 		if resetUsr.IsClinic() || a.Config.AllowPatientResetPassword {
 			resetCnf, _ = models.NewConfirmation(models.TypePasswordReset, models.TemplateNamePasswordReset, "")
@@ -93,18 +93,18 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 		resetCnf.Email = email
 		resetCnf.UserId = resetUsr.UserID
 
-		// let's get the reseter user preferences
-		reseterPreferences := &models.Preferences{}
-		if err := a.seagull.GetCollection(resetCnf.UserId, "preferences", a.sl.TokenProvide(), reseterPreferences); err != nil {
+		// let's get the resetter user preferences
+		resetterPreferences := &models.Preferences{}
+		if err := a.seagull.GetCollection(resetCnf.UserId, "preferences", a.sl.TokenProvide(), resetterPreferences); err != nil {
 			a.sendError(res, http.StatusInternalServerError,
 				STATUS_ERR_FINDING_USR,
-				"forgot password: error getting reseter user preferences: ",
+				"forgot password: error getting resetter user preferences: ",
 				err.Error())
 			return
 		}
-		// if reseter has a profile and a language we override the previously set language (browser's or "en")
-		if reseterPreferences.DisplayLanguage != "" {
-			reseterLanguage = reseterPreferences.DisplayLanguage
+		// if resetter has a profile and a language we override the previously set language (browser's or "en")
+		if resetterPreferences.DisplayLanguage != "" {
+			resetterLanguage = resetterPreferences.DisplayLanguage
 		}
 	} else {
 		log.Print(statusResetNoAccount)
@@ -123,7 +123,7 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 			"ShortKey": resetCnf.ShortKey,
 		}
 
-		if a.createAndSendNotification(req, resetCnf, emailContent, reseterLanguage) {
+		if a.createAndSendNotification(req, resetCnf, emailContent, resetterLanguage) {
 			a.logAudit(req, "reset confirmation sent")
 		} else {
 			a.logAudit(req, "reset confirmation failed to be sent")
