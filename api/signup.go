@@ -373,9 +373,12 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 
 				// although technically there exists a profile at the signup stage, the preferred language would always be empty here
 				// as it is set in the app and once the signup procedure is complete (after signup email has been confirmed)
-				// -> get browser's or "en" for English in case there is no browser's
-				if signerLanguage = GetBrowserPreferredLanguage(req); signerLanguage == "" {
-					signerLanguage = "en"
+				// so we rely on the language chosen by the user on the page through the list box
+				// otherwise if null it will be browser preferences otherwise EN
+				if signerLanguage = GetUserChosenLanguage(req); signerLanguage == "" {
+					if signerLanguage = GetBrowserPreferredLanguage(req); signerLanguage == "" {
+						signerLanguage = "en"
+					}
 				}
 
 				if a.createAndSendNotification(req, found, emailContent, signerLanguage) {
