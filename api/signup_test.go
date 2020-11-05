@@ -35,7 +35,7 @@ func TestSignupResponds(t *testing.T) {
 			// testing language preferences
 			returnNone:   true,
 			method:       "POST",
-			url:          "/send/signup/FrenchUserID",
+			url:          "/send/signup/EnglishUserID",
 			token:        testing_token_uid1,
 			emailSubject: "Verify your email address",
 			customHeaders: map[string]string{
@@ -89,8 +89,39 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// no token is all good
-			method:   "POST",
-			url:      "/resend/signup/email.resend@address.org",
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Verify your email address",
+			respCode:     200,
+		},
+		{
+			// testing language preferences
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"Accept-Language": "en",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Vérification de votre adresse email",
+			customHeaders: map[string]string{
+				"Accept-Language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Vérification de votre adresse email",
+			customHeaders: map[string]string{
+				"Accept-Language": "en", "x-tidepool-language": "fr",
+			},
 			respCode: 200,
 		},
 		{
