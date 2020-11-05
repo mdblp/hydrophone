@@ -23,7 +23,8 @@ func TestSignupResponds(t *testing.T) {
 			respCode: 404,
 		},
 		{
-			// first time you ask, it does it. Default to english
+			// first time you ask, it does it
+			// no language header -> default to EN
 			returnNone:   true,
 			method:       "POST",
 			url:          "/send/signup/NewUserID",
@@ -33,6 +34,7 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// testing language preferences
+			// follow standard header -> EN
 			returnNone:   true,
 			method:       "POST",
 			url:          "/send/signup/EnglishUserID",
@@ -45,6 +47,7 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// testing language preferences
+			// follow standard header -> FR
 			returnNone:   true,
 			method:       "POST",
 			url:          "/send/signup/FrenchUserID",
@@ -57,6 +60,46 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// testing language preferences
+			// standard header not supported language -> EN
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"Accept-Language": "gr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// follow custom header -> FR
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Vérification de votre adresse email",
+			customHeaders: map[string]string{
+				"x-tidepool-language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header not supported language -> EN
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"x-tidepool-language": "gr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header takes precedence over standard -> FR
 			returnNone:   true,
 			method:       "POST",
 			url:          "/send/signup/FrenchUserID",
@@ -64,6 +107,19 @@ func TestSignupResponds(t *testing.T) {
 			emailSubject: "Vérification de votre adresse email",
 			customHeaders: map[string]string{
 				"Accept-Language": "en", "x-tidepool-language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header takes precedence over standard but language does not exist -> EN
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"Accept-Language": "fr", "x-tidepool-language": "gr",
 			},
 			respCode: 200,
 		},
@@ -96,6 +152,7 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// testing language preferences
+			// follow standard header -> EN
 			method:       "POST",
 			url:          "/resend/signup/email.resend@address.org",
 			emailSubject: "Verify your email address",
@@ -106,6 +163,7 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// testing language preferences
+			// follow standard header -> FR
 			method:       "POST",
 			url:          "/resend/signup/email.resend@address.org",
 			emailSubject: "Vérification de votre adresse email",
@@ -116,11 +174,56 @@ func TestSignupResponds(t *testing.T) {
 		},
 		{
 			// testing language preferences
+			// standard header not supported language -> EN
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"Accept-Language": "gr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// follow custom header -> FR
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Vérification de votre adresse email",
+			customHeaders: map[string]string{
+				"x-tidepool-language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header not supported language -> EN
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"x-tidepool-language": "gr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header takes precedence over standard -> FR
 			method:       "POST",
 			url:          "/resend/signup/email.resend@address.org",
 			emailSubject: "Vérification de votre adresse email",
 			customHeaders: map[string]string{
 				"Accept-Language": "en", "x-tidepool-language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header takes precedence over standard but language does not exist -> EN
+			method:       "POST",
+			url:          "/resend/signup/email.resend@address.org",
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"Accept-Language": "fr", "x-tidepool-language": "gr",
 			},
 			respCode: 200,
 		},

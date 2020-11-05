@@ -17,13 +17,15 @@ func TestForgotResponds(t *testing.T) {
 	tests := []toTest{
 		{
 			// always returns a 200 if properly formed
+			// no language header -> default to EN
 			method:       "POST",
 			url:          "/send/forgot/me@myemail.com",
 			emailSubject: "Password reset instructions",
 			respCode:     200,
 		},
 		{
-			// test language prefs en
+			// testing language preferences
+			// follow standard header -> EN
 			method:       "POST",
 			url:          "/send/forgot/me@myemail.com",
 			emailSubject: "Password reset instructions",
@@ -33,7 +35,8 @@ func TestForgotResponds(t *testing.T) {
 			respCode: 200,
 		},
 		{
-			// test language prefs fr
+			// testing language preferences
+			// follow standard header -> FR
 			method:       "POST",
 			url:          "/send/forgot/me@myemail.com",
 			emailSubject: "Réinitialisation du mot de passe",
@@ -43,12 +46,57 @@ func TestForgotResponds(t *testing.T) {
 			respCode: 200,
 		},
 		{
-			// test language prefs fr
+			// testing language preferences
+			// standard header not supported language -> EN
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Password reset instructions",
+			customHeaders: map[string]string{
+				"Accept-Language": "gr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// follow custom header -> FR
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Réinitialisation du mot de passe",
+			customHeaders: map[string]string{
+				"x-tidepool-language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header not supported language -> EN
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Password reset instructions",
+			customHeaders: map[string]string{
+				"x-tidepool-language": "gr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header takes precedence over standard -> FR
 			method:       "POST",
 			url:          "/send/forgot/me@myemail.com",
 			emailSubject: "Réinitialisation du mot de passe",
 			customHeaders: map[string]string{
 				"Accept-Language": "en", "x-tidepool-language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			// custom header takes precedence over standard but language does not exist -> EN
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Password reset instructions",
+			customHeaders: map[string]string{
+				"Accept-Language": "en", "x-tidepool-language": "gr",
 			},
 			respCode: 200,
 		},
