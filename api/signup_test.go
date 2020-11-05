@@ -348,7 +348,6 @@ func TestSignupResponds(t *testing.T) {
 
 		if test.emailSubject != "" {
 			if emailSubjectSent := mockNotifier.GetLastEmailSubject(); emailSubjectSent != test.emailSubject {
-				t.Fatalf("Test %d url: '%s'\n\t%s\n", idx, test.url, emailSubjectSent)
 				t.Fatalf("Test %d url: '%s'\nNon-expected email subject %s (expected %s)",
 					idx, test.url, emailSubjectSent, test.emailSubject)
 			}

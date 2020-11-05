@@ -17,8 +17,39 @@ func TestForgotResponds(t *testing.T) {
 	tests := []toTest{
 		{
 			// always returns a 200 if properly formed
-			method:   "POST",
-			url:      "/send/forgot/me@myemail.com",
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Password reset instructions",
+			respCode:     200,
+		},
+		{
+			// test language prefs en
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Password reset instructions",
+			customHeaders: map[string]string{
+				"Accept-Language": "en",
+			},
+			respCode: 200,
+		},
+		{
+			// test language prefs fr
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Réinitialisation du mot de passe",
+			customHeaders: map[string]string{
+				"Accept-Language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// test language prefs fr
+			method:       "POST",
+			url:          "/send/forgot/me@myemail.com",
+			emailSubject: "Réinitialisation du mot de passe",
+			customHeaders: map[string]string{
+				"Accept-Language": "en", "x-tidepool-language": "fr",
+			},
 			respCode: 200,
 		},
 		{
@@ -144,6 +175,11 @@ func TestForgotResponds(t *testing.T) {
 		if test.token != "" {
 			request.Header.Set(TP_SESSION_TOKEN, testing_token)
 		}
+		if test.customHeaders != nil {
+			for header, value := range test.customHeaders {
+				request.Header.Set(header, value)
+			}
+		}
 		response := httptest.NewRecorder()
 		testRtr.ServeHTTP(response, request)
 
@@ -163,6 +199,13 @@ func TestForgotResponds(t *testing.T) {
 
 			if cmp := result.deepCompare(&test.response); cmp != "" {
 				t.Fatalf("Test %d url: '%s'\n\t%s\n", idx, test.url, cmp)
+			}
+		}
+
+		if test.emailSubject != "" {
+			if emailSubjectSent := mockNotifier.GetLastEmailSubject(); emailSubjectSent != test.emailSubject {
+				t.Fatalf("Test %d url: '%s'\nNon-expected email subject %s (expected %s)",
+					idx, test.url, emailSubjectSent, test.emailSubject)
 			}
 		}
 	}
