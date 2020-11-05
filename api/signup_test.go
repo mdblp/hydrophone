@@ -23,12 +23,49 @@ func TestSignupResponds(t *testing.T) {
 			respCode: 404,
 		},
 		{
-			// first time you ask, it does it
-			returnNone: true,
-			method:     "POST",
-			url:        "/send/signup/NewUserID",
-			token:      testing_token_uid1,
-			respCode:   200,
+			// first time you ask, it does it. Default to english
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/NewUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Verify your email address",
+			respCode:     200,
+		},
+		{
+			// testing language preferences
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Verify your email address",
+			customHeaders: map[string]string{
+				"Accept-Language": "en",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Vérification de votre adresse email",
+			customHeaders: map[string]string{
+				"Accept-Language": "fr",
+			},
+			respCode: 200,
+		},
+		{
+			// testing language preferences
+			returnNone:   true,
+			method:       "POST",
+			url:          "/send/signup/FrenchUserID",
+			token:        testing_token_uid1,
+			emailSubject: "Vérification de votre adresse email",
+			customHeaders: map[string]string{
+				"Accept-Language": "en", "x-tidepool-language": "fr",
+			},
+			respCode: 200,
 		},
 		{
 			// need a token
@@ -251,6 +288,11 @@ func TestSignupResponds(t *testing.T) {
 		if test.token != "" {
 			request.Header.Set(TP_SESSION_TOKEN, testing_token)
 		}
+		if test.customHeaders != nil {
+			for header, value := range test.customHeaders {
+				request.Header.Set(header, value)
+			}
+		}
 		response := httptest.NewRecorder()
 		testRtr.ServeHTTP(response, request)
 
@@ -270,6 +312,14 @@ func TestSignupResponds(t *testing.T) {
 
 			if cmp := result.deepCompare(&test.response); cmp != "" {
 				t.Fatalf("Test %d url: '%s'\n\t%s\n", idx, test.url, cmp)
+			}
+		}
+
+		if test.emailSubject != "" {
+			if emailSubjectSent := mockNotifier.GetLastEmailSubject(); emailSubjectSent != test.emailSubject {
+				t.Fatalf("Test %d url: '%s'\n\t%s\n", idx, test.url, emailSubjectSent)
+				t.Fatalf("Test %d url: '%s'\nNon-expected email subject %s (expected %s)",
+					idx, test.url, emailSubjectSent, test.emailSubject)
 			}
 		}
 	}
