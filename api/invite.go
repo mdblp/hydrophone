@@ -26,6 +26,8 @@ type (
 	inviteBody struct {
 		Email       string                    `json:"email"`
 		Permissions commonClients.Permissions `json:"permissions"`
+		TeamID      string                    `json:"teamId"`
+		IsAdmin     string                    `json:"isAdmin"`
 	}
 )
 
@@ -77,7 +79,7 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 
 //Checks do they have an existing invite or are they already a team member
 //Or are they an existing user and already in the group?
-func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token, teamID string, res http.ResponseWriter) (bool, *shoreline.UserData) {
+func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, teamID, token string, res http.ResponseWriter) (bool, *shoreline.UserData) {
 
 	//already has invite from this user?
 	invites, _ := a.Store.FindConfirmations(
@@ -85,7 +87,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 		&models.Confirmation{
 			CreatorId: invitorID,
 			Email:     inviteeEmail,
-			TeamId:    teamID,
+			TeamID:    teamID,
 			Type:      models.TypeMedicalTeamInvite},
 		models.StatusPending,
 	)
@@ -582,13 +584,8 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 	var inviteeLanguage = "en"
 	if token := a.token(res, req); token != nil {
 
-		invitorID := vars["userid"]
+		invitorID := token.UserID
 		if invitorID == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		teamID := vars["teamid"]
-		if teamID == "" {
 			res.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -614,13 +611,13 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			return
 		}
 
-		if ib.Email == "" || ib.Permissions == nil {
+		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
 			res.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
-		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, teamID, sessionToken, res); existingInvite == true {
+		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, ib.TeamID, sessionToken, res); existingInvite == true {
 			log.Printf("SendInvite: invited [%s] user already has or had an invite", ib.Email)
 			return
 		} else {
@@ -629,11 +626,12 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 				models.TypeMedicalTeamInvite,
 				models.TemplateNameMedicalteamInvite,
 				invitorID,
-				// teamID, // TODO should be the team Object or team name
 				ib.Permissions)
 
 			// if the invitee is already a user, we can use his preferences
+			invite.TeamID = ib.TeamID
 			invite.Email = ib.Email
+			invite.IsAdmin = ib.IsAdmin
 			if invitedUsr != nil {
 				invite.UserId = invitedUsr.UserID
 				inviteePreferences := a.getUserPreferences(invite.UserId, res)

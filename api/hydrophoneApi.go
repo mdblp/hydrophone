@@ -127,8 +127,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/signup/{userid}", varsHandler(a.sendSignUp)).Methods("POST")
 	send.Handle("/forgot/{useremail}", varsHandler(a.passwordReset)).Methods("POST")
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
-	// POST /confirm/send/invite/team/:userid
-	send.Handle("/invite/{teamid}/{userid}", varsHandler(a.SendTeamInvite)).Methods("POST")
+	// POST /confirm/send/team-invite
+	send.Handle("/team-invite", varsHandler(a.SendTeamInvite)).Methods("POST")
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
 	send.Handle("/pin-reset/{userid}", varsHandler(a.SendPinReset)).Methods("POST")

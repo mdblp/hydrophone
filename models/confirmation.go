@@ -21,7 +21,8 @@ type (
 
 		TemplateName TemplateName `json:"-" bson:"templateName"`
 		UserId       string       `json:"-" bson:"userId"`
-		TeamId       string       `json:"-" bson:"teamId"`
+		TeamID       string       `json:"-" bson:"teamId"`
+		IsAdmin      string       `json:"-" bson:"isAdmin"`
 		Status       Status       `json:"-" bson:"status"`
 		Modified     time.Time    `json:"-" bson:"modified"`
 		ShortKey     string       `json:"shortKey" bson:"shortKey"`
