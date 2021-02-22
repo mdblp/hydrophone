@@ -21,6 +21,7 @@ type (
 
 		TemplateName TemplateName `json:"-" bson:"templateName"`
 		UserId       string       `json:"-" bson:"userId"`
+		TeamId       string       `json:"-" bson:"teamId"`
 		Status       Status       `json:"-" bson:"status"`
 		Modified     time.Time    `json:"-" bson:"modified"`
 		ShortKey     string       `json:"shortKey" bson:"shortKey"`
@@ -30,6 +31,7 @@ type (
 	Creator struct {
 		*Profile `json:"profile" bson:"-"`
 		UserId   string `json:"userid" bson:"-"` //for compatability with blip
+		TeamId   string `json:"teamid" bson:"-"`
 	}
 	Patient struct {
 		Birthday      string `json:"birthday"`
@@ -68,6 +70,7 @@ const (
 	TypePatientPasswordReset Type = "patient_password_reset"
 	TypePatientPasswordInfo  Type = "patient_password_info"
 	TypeCareteamInvite       Type = "careteam_invitation"
+	TypeMedicalTeamInvite    Type = "medicalteam_invitation"
 	TypeSignUp               Type = "signup_confirmation"
 	TypeNoAccount            Type = "no_account"
 	TypeInformation          Type = "patient_information"

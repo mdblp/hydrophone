@@ -75,6 +75,55 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 	return false, nil
 }
 
+//Checks do they have an existing invite or are they already a team member
+//Or are they an existing user and already in the group?
+func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token, teamID string, res http.ResponseWriter) (bool, *shoreline.UserData) {
+
+	//already has invite from this user?
+	invites, _ := a.Store.FindConfirmations(
+		ctx,
+		&models.Confirmation{
+			CreatorId: invitorID,
+			Email:     inviteeEmail,
+			TeamId:    teamID,
+			Type:      models.TypeMedicalTeamInvite},
+		models.StatusPending,
+	)
+
+	if len(invites) > 0 {
+		//rule is we cannot send if the invite is not yet expired
+		if !invites[0].IsExpired() {
+			log.Println(statusExistingInviteMessage)
+			log.Println("last invite not yet expired")
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingInviteMessage)}
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
+			return true, nil
+		}
+	}
+
+	//already in the medical team
+	invitedUsr := a.findExistingUser(inviteeEmail, a.sl.TokenProvide())
+	log.Println("Inviting %s into %s", invitedUsr.Username, teamID)
+	// TODO
+	// call the teams service to check if the user is already a member
+
+	return false, nil
+}
+
+func (a *Api) getUserPreferences(userid string, res http.ResponseWriter) *models.Preferences {
+	// let's get the invitee user preferences
+	inviteePreferences := &models.Preferences{}
+	if err := a.seagull.GetCollection(userid, "preferences", a.sl.TokenProvide(), inviteePreferences); err != nil {
+		a.sendError(
+			res,
+			http.StatusInternalServerError,
+			STATUS_ERR_FINDING_USR,
+			"send invitation: error getting invitee user preferences: ",
+			err.Error())
+	}
+	return inviteePreferences
+}
+
 // @Summary Get list of received invitations for logged-in user
 // @Description  Get list of received invitations that have been sent to this user but not yet acted upon.
 // @ID hydrophone-api-GetReceivedInvitations
@@ -506,6 +555,119 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 						"PatientName": fullName,
 						"Email":       invite.Email,
 						"WebPath":     webPath,
+					}
+
+					if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
+						a.logAudit(req, "invite sent")
+					} else {
+						a.logAudit(req, "invite failed to be sent")
+						log.Print("Something happened generating an invite email")
+						res.WriteHeader(http.StatusUnprocessableEntity)
+						return
+					}
+				}
+
+				a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+				return
+			}
+		}
+
+	}
+	return
+}
+
+func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
+	// In case the invitee is a known user, the language will be overriden in a later step
+	var inviteeLanguage = "en"
+	if token := a.token(res, req); token != nil {
+
+		invitorID := vars["userid"]
+		if invitorID == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		teamID := vars["teamid"]
+		if teamID == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		// TODO get the team Name from teams service
+		teamName := "Name of the team"
+		teamAddress := "Address of the team"
+		teamIdentification := "Shared ID of the team"
+
+		// TODO
+		if permissions, err := a.tokenUserHasRequestedPermissions(token, invitorID, commonClients.Permissions{"root": commonClients.Allowed, "custodian": commonClients.Allowed}); err != nil {
+			println("TODO perrmissions %s", permissions)
+			// make sure the invitorID can invite someone in the team teamID
+			a.sendError(res, http.StatusInternalServerError, STATUS_ERR_FINDING_USR, err)
+			return
+		}
+
+		defer req.Body.Close()
+		var ib = &inviteBody{}
+		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
+			log.Printf("SendInvite: error decoding invite to detail %v\n", err)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
+			return
+		}
+
+		if ib.Email == "" || ib.Permissions == nil {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
+		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, teamID, sessionToken, res); existingInvite == true {
+			log.Printf("SendInvite: invited [%s] user already has or had an invite", ib.Email)
+			return
+		} else {
+			//None exist so lets create the invite
+			invite, _ := models.NewConfirmationWithContext(
+				models.TypeMedicalTeamInvite,
+				models.TemplateNameMedicalteamInvite,
+				invitorID,
+				// teamID, // TODO should be the team Object or team name
+				ib.Permissions)
+
+			// if the invitee is already a user, we can use his preferences
+			invite.Email = ib.Email
+			if invitedUsr != nil {
+				invite.UserId = invitedUsr.UserID
+				inviteePreferences := a.getUserPreferences(invite.UserId, res)
+				// does the invitee have a preferred language?
+				if inviteePreferences.DisplayLanguage != "" {
+					inviteeLanguage = inviteePreferences.DisplayLanguage
+				}
+			}
+
+			if a.addOrUpdateConfirmation(req.Context(), invite, res) {
+				a.logAudit(req, "invite created")
+
+				if err := a.addProfile(invite); err != nil {
+					log.Println("SendInvite: ", err.Error())
+				} else {
+
+					fullName := invite.Creator.Profile.FullName
+
+					// TODO
+					// validate the web path
+					var webPath = "hcp/signup"
+
+					// if invitee is already a user (ie already has an account), he won't go to signup but login instead
+					if invite.UserId != "" {
+						webPath = ""
+					}
+
+					emailContent := map[string]interface{}{
+						"MedicalteamName":          teamName,
+						"MedicalteamAddress":       teamAddress,
+						"MedicalteamIentification": teamIdentification,
+						"CreatorName":              fullName,
+						"Email":                    invite.Email,
+						"WebPath":                  webPath,
 					}
 
 					if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {

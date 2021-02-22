@@ -71,6 +71,7 @@ const (
 	STATUS_ERR_DECODING_CONFIRMATION = "Error decoding the confirmation"
 	STATUS_ERR_FINDING_PREVIEW       = "Error finding the invite preview"
 	STATUS_ERR_FINDING_VALIDATION    = "Error finding the account validation"
+	STATUS_ERR_DECODING_INVITE       = "Error decoding the invitation"
 
 	//returned status messages
 	STATUS_NOT_FOUND     = "Nothing found"
@@ -126,6 +127,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/signup/{userid}", varsHandler(a.sendSignUp)).Methods("POST")
 	send.Handle("/forgot/{useremail}", varsHandler(a.passwordReset)).Methods("POST")
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
+	// POST /confirm/send/invite/team/:userid
+	send.Handle("/invite/{teamid}/{userid}", varsHandler(a.SendTeamInvite)).Methods("POST")
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
 	send.Handle("/pin-reset/{userid}", varsHandler(a.SendPinReset)).Methods("POST")
@@ -266,6 +269,8 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 			templateName = models.TemplateNamePatientPasswordInfo
 		case models.TypeCareteamInvite:
 			templateName = models.TemplateNameCareteamInvite
+		case models.TypeMedicalTeamInvite:
+			templateName = models.TemplateNameMedicalteamInvite
 		case models.TypeSignUp:
 			templateName = models.TemplateNameSignup
 		case models.TypeNoAccount:
