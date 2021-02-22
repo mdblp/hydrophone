@@ -103,7 +103,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 
 	//already in the medical team
 	invitedUsr := a.findExistingUser(inviteeEmail, a.sl.TokenProvide())
-	log.Println("Inviting %s into %s", invitedUsr.Username, teamID)
+	log.Printf("Inviting %s into %s", invitedUsr.Username, teamID)
 	// TODO
 	// call the teams service to check if the user is already a member
 
