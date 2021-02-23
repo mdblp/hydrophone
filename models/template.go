@@ -19,6 +19,8 @@ func (t TemplateName) String() string {
 const (
 	TemplateNameCareteamInvite        TemplateName = "careteam_invitation"
 	TemplateNameMedicalteamInvite     TemplateName = "medicalteam_invitation"
+	TemplateNameMedicalteamDoAdmin    TemplateName = "medicalteam_do_admin"
+	TemplateNameMedicalteamRemove     TemplateName = "medicalteam_remove"
 	TemplateNameNoAccount             TemplateName = "no_account"
 	TemplateNamePasswordReset         TemplateName = "password_reset"
 	TemplateNamePatientPasswordReset  TemplateName = "patient_password_reset"

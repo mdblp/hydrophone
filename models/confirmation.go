@@ -72,6 +72,8 @@ const (
 	TypePatientPasswordInfo  Type = "patient_password_info"
 	TypeCareteamInvite       Type = "careteam_invitation"
 	TypeMedicalTeamInvite    Type = "medicalteam_invitation"
+	TypeMedicalTeamDoAdmin   Type = "medicalteam_do_admin"
+	TypeMedicalTeamRemove    Type = "medicalteam_remove"
 	TypeSignUp               Type = "signup_confirmation"
 	TypeNoAccount            Type = "no_account"
 	TypeInformation          Type = "patient_information"

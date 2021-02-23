@@ -87,3 +87,22 @@ MedicalTeamInviteWarning: "Please verify you know this person, confirm that you 
 MedicalTeamInviteInfo: "You need a Professional account to join a team. 
 If you’re already registered as a caregiver you can switch to a Professional account in your account preferences. Otherwise you can sign up by following the link below."
 MedicalTeamInviteJoin: "Respond to invitation"
+
+# Medical/Care team do Admin
+MedicalTeamDoAdminSubject: "You are now an administrator of {{ .MedicalteamName }}"
+MedicalTeamDoAdminHeadline: "You are now an administrator of {{ .MedicalteamName }}"
+MedicalTeamDoAdminBody1: "A team administrator made you an admin of {{ .MedicalteamName }}."
+MedicalTeamDoAdminBody2: "Now you can:"
+MedicalTeamDoAdminListItem1: "Invite / remove team members"
+MedicalTeamDoAdminListItem2: "Edit team information"
+MedicalTeamDoAdminListItem3: "Give or remove admin permissions"
+MedicalTeamDoAdminInfo: "Read our <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
+MedicalTeamDoAdminAction: "Go to YourLoops"
+
+# Medical/Care team remove member
+MedicalTeamRemoveSubject: "You are no longer a member of {{ .MedicalteamName }}"
+MedicalTeamRemoveHeadline: "A team administrator removed you from the team."
+MedicalTeamRemoveBody1: "You will no longer have access to {{ .MedicalteamName }} patients data but your account is still active."
+MedicalTeamRemoveBody2: "Think it’s a mistake? Get in touch with a team administrator."
+MedicalTeamRemoveInfo: "Read our <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
+MedicalTeamRemoveAction: "Go to YourLoops"

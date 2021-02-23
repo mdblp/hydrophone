@@ -129,6 +129,10 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
 	// POST /confirm/send/team-invite
 	send.Handle("/team-invite", varsHandler(a.SendTeamInvite)).Methods("POST")
+	// PUT /confirm/send/team-invite - add admin role
+	send.Handle("/team-invite", varsHandler(a.UpdateTeamInvite)).Methods("PUT")
+	// DELETE /confirm/send/team-invite - delete member
+	send.Handle("/team-invite", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
 	send.Handle("/pin-reset/{userid}", varsHandler(a.SendPinReset)).Methods("POST")
@@ -271,6 +275,10 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 			templateName = models.TemplateNameCareteamInvite
 		case models.TypeMedicalTeamInvite:
 			templateName = models.TemplateNameMedicalteamInvite
+		case models.TypeMedicalTeamDoAdmin:
+			templateName = models.TemplateNameMedicalteamDoAdmin
+		case models.TypeMedicalTeamRemove:
+			templateName = models.TemplateNameMedicalteamRemove
 		case models.TypeSignUp:
 			templateName = models.TemplateNameSignup
 		case models.TypeNoAccount:
