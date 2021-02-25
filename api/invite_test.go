@@ -29,6 +29,48 @@ func initTestingRouterNoPerms() *mux.Router {
 	return testRtr
 }
 
+func initWrongBodies() []testJSONObject {
+	var bodies []testJSONObject
+	bodies = append(
+		bodies,
+		testJSONObject{
+			"email":   testing_uid2 + "@email.org",
+			"teamId":  "",
+			"isAdmin": "true",
+		},
+		testJSONObject{
+			"email":   testing_uid2 + "@email.org",
+			"teamId":  "123456",
+			"isAdmin": "",
+		},
+		testJSONObject{
+			"email": testing_uid2 + "@email.org",
+		},
+		testJSONObject{},
+	)
+	return bodies
+}
+
+func sendTeamInvite(method string, t *testing.T) {
+	tstRtr := initTestingRouterNoPerms()
+	wrongBodies := initWrongBodies()
+	for i := 0; i < len(wrongBodies); i++ {
+		body := &bytes.Buffer{}
+		json.NewEncoder(body).Encode(wrongBodies[i])
+
+		request, _ := http.NewRequest(method, "/send/team-invite", body)
+		request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
+		response := httptest.NewRecorder()
+		tstRtr.ServeHTTP(response, request)
+
+		if response.Code != http.StatusBadRequest {
+			t.Logf("expected %d actual %d", http.StatusBadRequest, response.Code)
+			t.Fail()
+		}
+	}
+
+}
+
 func TestSendInvite_NoPerms(t *testing.T) {
 
 	tstRtr := initTestingRouterNoPerms()
@@ -308,4 +350,19 @@ func TestInviteResponds(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestSendTeamInvite_WrongBody(t *testing.T) {
+
+	sendTeamInvite("POST", t)
+}
+
+func TestUpdateTeamInvite_WrongBody(t *testing.T) {
+
+	sendTeamInvite("PUT", t)
+}
+
+func TestDeleteTeamInvite_WrongBody(t *testing.T) {
+
+	sendTeamInvite("DELETE", t)
 }
