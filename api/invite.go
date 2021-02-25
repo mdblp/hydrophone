@@ -104,12 +104,18 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 		}
 	}
 
-	//already in the medical team
 	invitedUsr := a.findExistingUser(inviteeEmail, a.sl.TokenProvide())
-	log.Printf("Inviting %s into %s", invitedUsr.Username, teamID)
 	// TODO
 	// call the teams service to check if the user is already a member
-
+	if invitedUsr != nil {
+		isMember, err := a.isTeamMember(invitedUsr.UserID, teamID)
+		if isMember || err != nil {
+			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeEmail, teamID)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingMemberMessage)}
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
+			return true, invitedUsr
+		}
+	}
 	return false, nil
 }
 
@@ -590,6 +596,20 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 	return
 }
 
+// @Summary Send invitation to a hcp joining a medical team
+// @Description  create a notification for the invitee and send him an email with the invitation
+// @ID hydrophone-api-SendTeamInvite
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Confirmation "invite details"
+// @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
+// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 409 {object} status.Status "user already has a pending or declined invite OR user is already part of the team"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
+// @Router /confirm/send/team-invite [post]
+// @security TidepoolAuth
 func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
@@ -601,36 +621,36 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			res.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		// TODO get the team Name from teams service
-		teamName := "Name of the team"
-		teamAddress := "Address of the team"
-		teamIdentification := "Shared ID of the team"
-
-		// TODO
-		if permissions, err := a.tokenUserHasRequestedPermissions(token, invitorID, commonClients.Permissions{"root": commonClients.Allowed, "custodian": commonClients.Allowed}); err != nil {
-			println("TODO perrmissions %s", permissions)
-			// make sure the invitorID can invite someone in the team teamID
-			a.sendError(res, http.StatusInternalServerError, STATUS_ERR_FINDING_USR, err)
-			return
-		}
 
 		defer req.Body.Close()
 		var ib = &inviteBody{}
 		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
 			log.Printf("SendInvite: error decoding invite to detail %v\n", err)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
 
 		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
-			res.WriteHeader(http.StatusBadRequest)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
 
+		if auth, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); !auth || err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+
+		// TODO get the team Name from teams service
+		teamName := "Name of the team"
+		teamAddress := "Address of the team"
+		teamIdentification := "Shared ID of the team"
+
 		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
+		// check duplicate invite and if user is already a member
 		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, ib.TeamID, sessionToken, models.TypeMedicalTeamInvite, res); existingInvite == true {
-			log.Printf("SendInvite: invited [%s] user already has or had an invite", ib.Email)
 			return
 		} else {
 			//None exist so lets create the invite
@@ -695,6 +715,19 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 	return
 }
 
+// @Summary Send notification to an hcp that becomes admin
+// @Description  Send an email to th enew admin
+// @ID hydrophone-api-UpdateTeamInvite
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Confirmation "invite details"
+// @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
+// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 409 {object} status.Status "No notification and email sent; User is already an admin"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"// @Router /confirm/send/team-invite [put]
+// @security TidepoolAuth
 func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
@@ -712,133 +745,49 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
 			log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
 
 		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
-			res.WriteHeader(http.StatusBadRequest)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
 
 		// TODO get the team Name from teams service
 		teamName := "Name of the team"
 
-		// TODO validate the invitorID is admin of the given team
-		if permissions, err := a.tokenUserHasRequestedPermissions(token, invitorID, commonClients.Permissions{"root": commonClients.Allowed, "custodian": commonClients.Allowed}); err != nil {
-			println("TODO perrmissions %s", permissions)
-			// make sure the invitorID can add Admin role in the team teamID
-			a.sendError(res, http.StatusInternalServerError, STATUS_ERR_FINDING_USR, err)
+		// TODO validate the token.userid is admin of the given team
+		if auth, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); !auth || err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
 
-		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
+		// var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
 		var isAdmin = strings.ToLower(ib.IsAdmin) == "true"
 		if isAdmin {
-			if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, ib.TeamID, sessionToken, models.TypeMedicalTeamDoAdmin, res); existingInvite == true {
-				log.Printf("DoAdminInvite: invited [%s] user already has or had an invite", ib.Email)
-				return
-			} else {
-				invite, _ := models.NewConfirmationWithContext(
-					models.TypeMedicalTeamDoAdmin,
-					models.TemplateNameMedicalteamDoAdmin,
-					invitorID,
-					ib.Permissions)
-
-				// if the invitee is already a user, we can use his preferences
-				invite.TeamID = ib.TeamID
-				invite.Email = ib.Email
-				invite.IsAdmin = ib.IsAdmin
-				if invitedUsr != nil {
-					invite.UserId = invitedUsr.UserID
-					// does the invitee have a preferred language?
-					inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-				}
-
-				if a.addOrUpdateConfirmation(req.Context(), invite, res) {
-					a.logAudit(req, "invite created")
-
-					if err := a.addProfile(invite); err != nil {
-						log.Println("SendInvite: ", err.Error())
-					} else {
-
-						emailContent := map[string]interface{}{
-							"MedicalteamName": teamName,
-							"Email":           invite.Email,
-							"Language":        inviteeLanguage,
-						}
-
-						if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
-							a.logAudit(req, "invite sent")
-						} else {
-							a.logAudit(req, "invite failed to be sent")
-							log.Print("Something happened generating an invite email")
-							res.WriteHeader(http.StatusUnprocessableEntity)
-							return
-						}
-					}
-
-					a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+			invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
+			if invitedUsr != nil && invitedUsr.UserID != "" {
+				// make teams call
+				if admin, err := a.isTeamAdmin(invitedUsr.UserID, ib.TeamID); admin == true || err != nil {
+					statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ALREADY_ADMIN)}
+					a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 					return
 				}
 			}
-
-		}
-	}
-	return
-}
-
-func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
-	// In case the invitee is a known user, the language will be overriden in a later step
-	var inviteeLanguage = "en"
-	if token := a.token(res, req); token != nil {
-
-		invitorID := token.UserID
-		if invitorID == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		defer req.Body.Close()
-		var ib = &inviteBody{}
-		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
-			log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
-			return
-		}
-
-		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		// TODO get the team Name from teams service
-		teamName := "Name of the team"
-
-		// TODO validate the invitorID is admin of the given team
-		if permissions, err := a.tokenUserHasRequestedPermissions(token, invitorID, commonClients.Permissions{"root": commonClients.Allowed, "custodian": commonClients.Allowed}); err != nil {
-			println("TODO perrmissions %s", permissions)
-			a.sendError(res, http.StatusInternalServerError, STATUS_ERR_FINDING_USR, err)
-			return
-		}
-
-		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
-		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, ib.TeamID, sessionToken, models.TypeMedicalTeamDoAdmin, res); existingInvite == true {
-			log.Printf("Delete Member: [%s] user already has an active delete notification", ib.Email)
-			return
-		} else {
 			invite, _ := models.NewConfirmationWithContext(
-				models.TypeMedicalTeamRemove,
-				models.TemplateNameMedicalteamRemove,
+				models.TypeMedicalTeamDoAdmin,
+				models.TemplateNameMedicalteamDoAdmin,
 				invitorID,
 				ib.Permissions)
 
-			// let's use the user preferences
+			// if the invitee is already a user, we can use his preferences
 			invite.TeamID = ib.TeamID
 			invite.Email = ib.Email
 			invite.IsAdmin = ib.IsAdmin
+			invite.Status = models.StatusCompleted
 			if invitedUsr != nil {
 				invite.UserId = invitedUsr.UserID
 				// does the invitee have a preferred language?
@@ -867,11 +816,117 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 						return
 					}
 				}
-
 				a.sendModelAsResWithStatus(res, invite, http.StatusOK)
 				return
 			}
 		}
+	}
+	return
+}
+
+// @Summary Delete hcp from a medical team
+// @Description create a notification for the hcp and send him an email to inform him he has been removed from the medical team
+// @ID hydrophone-api-DeleteTeamMember
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Confirmation "delete member"
+// @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
+// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 409 {object} status.Status "No notification and email sent; User is not a member"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
+// @Router /confirm/send/team-invite [delete]
+// @security TidepoolAuth
+func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
+	// In case the invitee is a known user, the language will be overriden in a later step
+	var inviteeLanguage = "en"
+	if token := a.token(res, req); token != nil {
+
+		invitorID := token.UserID
+		if invitorID == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		defer req.Body.Close()
+		var ib = &inviteBody{}
+		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
+			log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+
+		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+
+		// TODO get the team Name from teams service
+		teamName := "Name of the team"
+
+		// TODO validate the token.userid is admin of the given team
+		if auth, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); !auth || err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+
+		invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
+		if invitedUsr != nil && invitedUsr.UserID != "" {
+			// make teams call
+			if member, err := a.isTeamMember(invitedUsr.UserID, ib.TeamID); !member || err != nil {
+				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_NOT_MEMBER)}
+				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+				return
+			}
+		}
+		invite, _ := models.NewConfirmationWithContext(
+			models.TypeMedicalTeamRemove,
+			models.TemplateNameMedicalteamRemove,
+			invitorID,
+			ib.Permissions)
+
+		// let's use the user preferences
+		invite.TeamID = ib.TeamID
+		invite.Email = ib.Email
+		invite.IsAdmin = ib.IsAdmin
+		if invitedUsr != nil {
+			invite.UserId = invitedUsr.UserID
+			// does the invitee have a preferred language?
+			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
+		}
+
+		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
+			a.logAudit(req, "invite created")
+
+			if err := a.addProfile(invite); err != nil {
+				log.Println("SendInvite: ", err.Error())
+			} else {
+
+				emailContent := map[string]interface{}{
+					"MedicalteamName": teamName,
+					"Email":           invite.Email,
+					"Language":        inviteeLanguage,
+				}
+
+				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
+					a.logAudit(req, "invite sent")
+				} else {
+					a.logAudit(req, "invite failed to be sent")
+					log.Print("Something happened generating an invite email")
+					res.WriteHeader(http.StatusUnprocessableEntity)
+					return
+				}
+			}
+
+			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+			return
+		}
+
 		return
 	}
 }

@@ -72,12 +72,16 @@ const (
 	STATUS_ERR_FINDING_PREVIEW       = "Error finding the invite preview"
 	STATUS_ERR_FINDING_VALIDATION    = "Error finding the account validation"
 	STATUS_ERR_DECODING_INVITE       = "Error decoding the invitation"
+	STATUS_ERR_MISSING_DATA_INVITE   = "Error missing data in the invitation"
 
 	//returned status messages
 	STATUS_NOT_FOUND     = "Nothing found"
 	STATUS_NO_TOKEN      = "No x-tidepool-session-token was found"
 	STATUS_INVALID_TOKEN = "The x-tidepool-session-token was invalid"
 	STATUS_UNAUTHORIZED  = "Not authorized for requested operation"
+	STATUS_ALREADY_ADMIN = "User already an admin"
+	STATUS_NOT_MEMBER    = "User is not a member"
+	STATUS_NOT_ADMIN     = STATUS_UNAUTHORIZED
 	STATUS_OK            = "OK"
 )
 
@@ -457,5 +461,38 @@ func (a *Api) isAuthorizedUser(tokenData *shoreline.TokenData, userId string) bo
 		return true
 	} else {
 		return false
+	}
+}
+
+// userId is admin of teamid
+// TODO to be updated with teams calls
+func (a *Api) isTeamAdmin(userId, teamId string) (bool, error) {
+	// testing purpose only
+	if userId == "76f47a4234" && teamId == "100" {
+		return false, nil
+	}
+	if userId == "c8d420ce52" && (teamId == "100" || teamId == "1000") {
+		return false, nil
+	}
+	return true, nil
+}
+
+// userId is member of teamid
+// TODO to be updated with teams calls
+func (a *Api) isTeamMember(userId, teamId string) (bool, error) {
+	if userId != "76f47a4234" && teamId == "100" {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (a *Api) tokenUserIsTeamAdmin(tokenData *shoreline.TokenData, teamId string) (bool, error) {
+	if tokenData.IsServer {
+		return true, nil
+	} else if isAdmin, err := a.isTeamAdmin(tokenData.UserID, teamId); isAdmin {
+		log.Printf("[%s] isAdmin of [%s]", tokenData.UserID, teamId)
+		return true, nil
+	} else {
+		return false, err
 	}
 }
