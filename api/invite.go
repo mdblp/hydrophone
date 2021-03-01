@@ -40,7 +40,8 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 	invites, _ := a.Store.FindConfirmations(
 		ctx,
 		&models.Confirmation{CreatorId: invitorID, Email: inviteeEmail, Type: models.TypeCareteamInvite},
-		models.StatusPending,
+		[]models.Status{models.StatusPending},
+		[]models.Type{},
 	)
 
 	if len(invites) > 0 {
@@ -90,7 +91,8 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 			Email:     inviteeEmail,
 			TeamID:    teamID,
 			Type:      invite},
-		models.StatusPending,
+		[]models.Status{models.StatusPending},
+		[]models.Type{},
 	)
 
 	if len(invites) > 0 {
@@ -175,8 +177,20 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 
 		invitedUsr := a.findExistingUser(inviteeID, req.Header.Get(TP_SESSION_TOKEN))
 
+		types := []models.Type{
+			models.TypeCareteamInvite,
+			models.TypeMedicalTeamInvite,
+		}
+		status := []models.Status{
+			models.StatusPending,
+		}
 		//find all oustanding invites were this user is the invite//
-		found, err := a.Store.FindConfirmations(req.Context(), &models.Confirmation{Email: invitedUsr.Emails[0], Type: models.TypeCareteamInvite}, models.StatusPending)
+		found, err := a.Store.FindConfirmations(
+			req.Context(),
+			&models.Confirmation{Email: invitedUsr.Emails[0]},
+			status,
+			types,
+		)
 
 		//log.Printf("GetReceivedInvitations: found [%d] pending invite(s)", len(found))
 		if err != nil {
@@ -225,7 +239,12 @@ func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, var
 		}
 
 		//find all invites I have sent that are pending or declined
-		found, err := a.Store.FindConfirmations(req.Context(), &models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite}, models.StatusPending, models.StatusDeclined)
+		found, err := a.Store.FindConfirmations(
+			req.Context(),
+			&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite},
+			[]models.Status{models.StatusPending, models.StatusDeclined},
+			[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove},
+		)
 		if invitations := a.checkFoundConfirmations(res, found, err); invitations != nil {
 			a.logAudit(req, "get sent invites")
 			a.sendModelAsResWithStatus(res, invitations, http.StatusOK)

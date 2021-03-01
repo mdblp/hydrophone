@@ -21,7 +21,7 @@ type (
 
 		TemplateName TemplateName `json:"-" bson:"templateName"`
 		UserId       string       `json:"-" bson:"userId"`
-		TeamID       string       `json:"-" bson:"teamId"`
+		TeamID       string       `json:"teamId" bson:"teamId"`
 		IsAdmin      string       `json:"-" bson:"isAdmin"`
 		Status       Status       `json:"-" bson:"status"`
 		Modified     time.Time    `json:"-" bson:"modified"`
@@ -32,7 +32,6 @@ type (
 	Creator struct {
 		*Profile `json:"profile" bson:"-"`
 		UserId   string `json:"userid" bson:"-"` //for compatability with blip
-		TeamId   string `json:"teamid" bson:"-"`
 	}
 	Patient struct {
 		Birthday      string `json:"birthday"`

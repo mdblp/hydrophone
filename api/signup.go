@@ -543,7 +543,10 @@ func (a *Api) getSignUp(res http.ResponseWriter, req *http.Request, vars map[str
 			return
 		}
 
-		if signups, _ := a.Store.FindConfirmations(req.Context(), &models.Confirmation{UserId: userId, Type: models.TypeSignUp}, models.StatusPending); signups == nil {
+		statuses := []models.Status{models.StatusPending}
+		noTypes := []models.Type{}
+
+		if signups, _ := a.Store.FindConfirmations(req.Context(), &models.Confirmation{UserId: userId, Type: models.TypeSignUp}, statuses, noTypes); signups == nil {
 			log.Printf("getSignUp %s", STATUS_SIGNUP_NOT_FOUND)
 			a.sendModelAsResWithStatus(res, status.NewStatus(http.StatusNotFound, STATUS_SIGNUP_NOT_FOUND), http.StatusNotFound)
 			return
