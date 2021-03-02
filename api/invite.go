@@ -15,11 +15,12 @@ import (
 
 const (
 	//Status message we return from the service
-	statusExistingInviteMessage = "There is already an existing invite"
-	statusExistingMemberMessage = "The user is already an existing member"
-	statusInviteNotFoundMessage = "No matching invite was found"
-	statusInviteCanceledMessage = "Invite has been canceled"
-	statusForbiddenMessage      = "Forbidden to perform requested operation"
+	statusExistingInviteMessage  = "There is already an existing invite"
+	statusExistingMemberMessage  = "The user is already an existing member"
+	statusInviteNotFoundMessage  = "No matching invite was found"
+	statusInviteCanceledMessage  = "Invite has been canceled"
+	statusInviteNotActiveMessage = "Invite already canceled"
+	statusForbiddenMessage       = "Forbidden to perform requested operation"
 )
 
 type (
@@ -490,6 +491,85 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 				res.WriteHeader(http.StatusOK)
 				return
 			}
+		}
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
+		log.Printf("DismissInvite: [%s]", statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+		return
+	}
+	return
+}
+
+// @Summary Dismiss a team invite
+// @Description Invitee can dismiss a team invite
+// @ID hydrophone-api-dismissTeamInvite
+// @Accept  json
+// @Produce  json
+// @Param teamid path string true "Team ID"
+// @Success 200 {string} string "OK"
+// @NotModified 304 {string} "not modified"
+// @Failure 400 {object} status.Status "inviteeid or/and the payload is missing or malformed"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
+// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 404 {object} status.Status "invitation not found"
+// @Failure 500 {object} status.Status "Error (internal) while processing the data"
+// @Router /dismiss/team-invite/{teamid} [put]
+// @security TidepoolAuth
+func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	if token := a.token(res, req); token != nil {
+
+		teamID := vars["teamid"]
+		inviteeID := token.UserID
+
+		if teamID == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		dismiss := &models.Confirmation{}
+		if err := json.NewDecoder(req.Body).Decode(dismiss); err != nil {
+			log.Printf("DismissInvite: error decoding invite to dismiss [%v]", err)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)}
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
+			return
+		}
+
+		// key of the request
+		if dismiss.Key == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if isAdmin, err := a.isTeamAdmin(inviteeID, teamID); isAdmin && err == nil {
+			// as team admin you can act on behalf of members
+			// for any invitation for the given team
+			dismiss.TeamID = teamID
+		} else if !token.IsServer {
+			// non server tokens, set the userid and teamId
+			dismiss.TeamID = teamID
+			dismiss.UserId = inviteeID
+		}
+
+		if conf, err := a.findExistingConfirmation(req.Context(), dismiss, res); err != nil {
+			log.Printf("DismissInvite: finding [%s]", err.Error())
+			a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
+			return
+		} else if conf != nil {
+
+			if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
+				conf.UpdateStatus(models.StatusDeclined)
+
+				if a.addOrUpdateConfirmation(req.Context(), conf, res) {
+					log.Printf("dismiss invite [%s] for [%s]", dismiss.Key, dismiss.TeamID)
+					a.logAudit(req, "dismissinvite ")
+					res.WriteHeader(http.StatusOK)
+					return
+				}
+			}
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotModified, statusInviteNotActiveMessage)}
+			log.Printf("DismissInvite: [%s]", statusErr.Error())
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
 		}
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
 		log.Printf("DismissInvite: [%s]", statusErr.Error())

@@ -167,6 +167,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 		varsHandler(a.DismissInvite)).Methods("PUT")
 	dismiss.Handle("/signup/{userid}",
 		varsHandler(a.dismissSignUp)).Methods("PUT")
+	// PUT /confirm/dismiss/team-invite/{teamid}
+	dismiss.Handle("/team-invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
 
 	// PUT /confirm/:userid/invited/:invited_address
 	// PUT /confirm/signup/:userid
