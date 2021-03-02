@@ -7,7 +7,8 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Changed
 - YLP-472 Switch permission client from gatekeeper to crew
 - YLP-447 Upgrade go-common to 0.6.2 version
-
+- YLP-516 Manage invitations to join a team (invite, add admin role, delete member)
+- YLP-444 Update hydrophone emails style
 ## 1.4.0 - 2021-01-11
 ### Changed
 - Add Italian and Spanish locales
