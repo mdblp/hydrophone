@@ -9,7 +9,7 @@ FooterGetSupport: "SUPPORT"
 NoAccountSubject: "Unknown email address"
 NoAccountHeadline: "You requested to reset your YourLoops password but no account has been created with this email address yet."
 NoAccountBody: "If you already use a Diabeloop device, login with the email and password you entered when setting up your DBL.\nIf you’re a healthcare professional and wish to create an account, please click on the link below.\n"
-NoAccountSignUp: "Create Professional Account"
+NoAccountSignUp: "Sign up"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "Password reset"
@@ -32,9 +32,10 @@ PatientPasswordInfoBody2: "If this email has reached you in error, please contac
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Patient invitation"
 #CareTeamInviteHello: "Hello,"
-CareTeamInviteHeadline: "{{ .CareteamName }} wants to share their diabetes data with you on YourLoops."
-CareTeamInviteBody: "YourLoops is a visualization platform for diabetes management and reporting. You’ll find all the data captured by a DBL displayed into charts and graphs. \nYour patient {{ .CareteamName }}' chose to share their data with you. To accept their invitation, click on the link below."
-CareTeamInviteJoin: "View data"
+CareTeamInviteHeadline: "{{ .PatientName }} wants to share their diabetes data with you on YourLoops."
+CareTeamInviteBody: "YourLoops is a visualization platform for diabetes management and reporting. You’ll find all the data captured by a DBL displayed into charts and graphs."
+CareTeamInviteBody2: "{{ .PatientName }} chose to share their data with you. To respond, click on the link below."
+CareTeamInviteJoin: "Respond to invitation"
 #Signup
 #(email to ask patient for verification of email)
 SignupConfirmationSubject: "Verify your email address"
