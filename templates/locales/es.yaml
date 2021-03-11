@@ -34,6 +34,7 @@ CareTeamInvitationSubject: "Invitación del paciente"
 #CareTeamInviteHello: "Hello,"
 CareTeamInviteHeadline: "{{ .CareteamName }} desea compartir con usted sus datos de diabetes en YourLoops."
 CareTeamInviteBody: "YourLoops es una plataforma de visualización para el control de la diabetes y la creación de informes. Todos los datos capturados por un DBL se muestran en tablas y gráficos. \nEl paciente {{ .CareteamName }} ha elegido compartir con usted sus datos. Para aceptar su invitación, haga clic en el enlace siguiente."
+CareTeamInviteBody2: "{{ .PatientName }} chose to share their data with you. To respond, click on the link below."
 CareTeamInviteJoin: "Ver los datos"
 #Signup
 #(email to ask patient for verification of email)
