@@ -3,10 +3,12 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
 
+	"github.com/mdblp/crew/store"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/shoreline"
 	"github.com/tidepool-org/go-common/clients/status"
@@ -82,7 +84,7 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 
 //Checks do they have an existing invite or are they already a team member
 //Or are they an existing user and already in the group?
-func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, teamID, token string, invite models.Type, res http.ResponseWriter) (bool, *shoreline.UserData) {
+func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *shoreline.UserData) {
 
 	//already has invite from this user?
 	invites, _ := a.Store.FindConfirmations(
@@ -90,7 +92,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 		&models.Confirmation{
 			CreatorId: invitorID,
 			Email:     inviteeEmail,
-			TeamID:    teamID,
+			TeamID:    team.ID,
 			Type:      invite},
 		[]models.Status{models.StatusPending},
 		[]models.Type{},
@@ -111,9 +113,8 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 	// TODO
 	// call the teams service to check if the user is already a member
 	if invitedUsr != nil {
-		isMember, err := a.isTeamMember(invitedUsr.UserID, teamID)
-		if isMember || err != nil {
-			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeEmail, teamID)
+		if isMember, err := a.isTeamMember(invitedUsr.UserID, team); isMember || err != nil {
+			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeEmail, team.Name)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingMemberMessage)}
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
 			return true, invitedUsr
@@ -145,6 +146,24 @@ func (a *Api) getUserLanguage(userid string, res http.ResponseWriter) string {
 		language = inviteePreferences.DisplayLanguage
 	}
 	return language
+}
+
+func (a *Api) getTeam(userid, teamid string, teams []store.Team) (store.Team, error) {
+	for i := 0; i < len(teams); i++ {
+		if teams[i].ID == teamid {
+			return teams[i], nil
+		}
+	}
+	return nil, errors.New()
+}
+
+func (a *Api) isTeamAdmin(userid, store.Team) (bool, error) {
+	for j := 0; j < len(team.Members); j++ {
+		if team.Members[j].UserID == userid {
+			return team.Members[j].Role == "admin", nil
+		}
+	}
+	return false, nil
 }
 
 // @Summary Get list of received invitations for logged-in user
@@ -736,20 +755,13 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			return
 		}
 
-		if auth, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); !auth || err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		if auth, team, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); err != nil {
 			return
 		}
 
-		// TODO get the team Name from teams service
-		teamName := "Name of the team"
-		teamAddress := "Address of the team"
-		teamIdentification := "Shared ID of the team"
-
 		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
 		// check duplicate invite and if user is already a member
-		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, ib.TeamID, sessionToken, models.TypeMedicalTeamInvite, res); existingInvite == true {
+		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, sessionToken, team, models.TypeMedicalTeamInvite, res); existingInvite == true {
 			return
 		} else {
 			//None exist so lets create the invite
@@ -774,11 +786,6 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 				if err := a.addProfile(invite); err != nil {
 					log.Println("SendInvite: ", err.Error())
 				} else {
-
-					fullName := invite.Creator.Profile.FullName
-
-					// TODO
-					// validate the web path
 					var webPath = "hcp/signup"
 
 					// if invitee is already a user (ie already has an account), he won't go to signup but login instead
@@ -787,10 +794,10 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 					}
 
 					emailContent := map[string]interface{}{
-						"MedicalteamName":          teamName,
-						"MedicalteamAddress":       teamAddress,
-						"MedicalteamIentification": teamIdentification,
-						"CreatorName":              fullName,
+						"MedicalteamName":          team.Name,
+						"MedicalteamAddress":       team.Address,
+						"MedicalteamIentification": team.code,
+						"CreatorName":              invite.Creator.Profile.FullName,
 						"Email":                    invite.Email,
 						"WebPath":                  webPath,
 					}
@@ -854,23 +861,15 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 			return
 		}
 
-		// TODO get the team Name from teams service
-		teamName := "Name of the team"
-
-		// TODO validate the token.userid is admin of the given team
-		if auth, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); !auth || err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		if auth, team, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); err != nil {
 			return
 		}
 
-		// var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
 		var isAdmin = strings.ToLower(ib.IsAdmin) == "true"
 		if isAdmin {
 			invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
 			if invitedUsr != nil && invitedUsr.UserID != "" {
-				// make teams call
-				if admin, err := a.isTeamAdmin(invitedUsr.UserID, ib.TeamID); admin == true || err != nil {
+				if admin, err := a.isTeamAdmin(invitedUsr.UserID, team); admin == true || err != nil {
 					statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ALREADY_ADMIN)}
 					a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 					return
@@ -901,7 +900,7 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 				} else {
 
 					emailContent := map[string]interface{}{
-						"MedicalteamName": teamName,
+						"MedicalteamName": team.Name,
 						"Email":           invite.Email,
 						"Language":        inviteeLanguage,
 					}
@@ -964,21 +963,15 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			return
 		}
 
-		// TODO get the team Name from teams service
-		teamName := "Name of the team"
-
-		// TODO validate the token.userid is admin of the given team
-		if auth, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); !auth || err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		if auth, team, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); err != nil {
 			return
 		}
 
 		invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
 		if invitedUsr != nil && invitedUsr.UserID != "" {
 			// make teams call
-			if member, err := a.isTeamMember(invitedUsr.UserID, ib.TeamID); !member || err != nil {
-				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_NOT_MEMBER)}
+			if member, err := a.isTeamMember(invitedUsr.UserID, team); err != nil {
+				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, err)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
 			}
@@ -1007,7 +1000,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			} else {
 
 				emailContent := map[string]interface{}{
-					"MedicalteamName": teamName,
+					"MedicalteamName": team.Name,
 					"Email":           invite.Email,
 					"Language":        inviteeLanguage,
 				}
