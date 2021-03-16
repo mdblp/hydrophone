@@ -245,34 +245,35 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 // @Router /invite/{userid} [get]
 // @security TidepoolAuth
 func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	if token := a.token(res, req); token != nil {
-
-		invitorID := vars["userid"]
-
-		if invitorID == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		if !a.isAuthorizedUser(token, invitorID) {
-			a.sendError(res, http.StatusUnauthorized, STATUS_UNAUTHORIZED)
-			return
-		}
-
-		//find all invites I have sent that are pending or declined
-		found, err := a.Store.FindConfirmations(
-			req.Context(),
-			&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite},
-			[]models.Status{models.StatusPending, models.StatusDeclined},
-			[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove},
-		)
-		if invitations := a.checkFoundConfirmations(res, found, err); invitations != nil {
-			a.logAudit(req, "get sent invites")
-			a.sendModelAsResWithStatus(res, invitations, http.StatusOK)
-			return
-		}
+	token := a.token(res, req)
+	if token == nil {
+		return
 	}
-	return
+
+	invitorID := vars["userid"]
+
+	if invitorID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if !a.isAuthorizedUser(token, invitorID) {
+		a.sendError(res, http.StatusUnauthorized, STATUS_UNAUTHORIZED)
+		return
+	}
+
+	//find all invites I have sent that are pending or declined
+	found, err := a.Store.FindConfirmations(
+		req.Context(),
+		&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite},
+		[]models.Status{models.StatusPending, models.StatusDeclined},
+		[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove},
+	)
+	if invitations := a.checkFoundConfirmations(res, found, err); invitations != nil {
+		a.logAudit(req, "get sent invites")
+		a.sendModelAsResWithStatus(res, invitations, http.StatusOK)
+		return
+	}
 }
 
 //Accept the given invite
@@ -414,99 +415,101 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 // @Router /accept/team-invite/{userid}/{teamid} [put]
 // @security TidepoolAuth
 func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	if token := a.token(res, req); token != nil {
-
-		userID := vars["userid"]
-		teamID := vars["teamid"]
-
-		if userID == "" || teamID == "" {
-			log.Printf("AcceptInvite inviteeID %s or teamID %s not set", userID, teamID)
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		// Non-server tokens only legit when for same userid
-		if !token.IsServer && userID != token.UserID {
-			log.Println("AcceptInvite ", STATUS_UNAUTHORIZED)
-			a.sendModelAsResWithStatus(
-				res,
-				status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)},
-				http.StatusUnauthorized,
-			)
-			return
-		}
-
-		accept := &models.Confirmation{}
-		if err := json.NewDecoder(req.Body).Decode(accept); err != nil {
-			log.Printf("AcceptInvite error decoding invite data: %v\n", err)
-			a.sendModelAsResWithStatus(
-				res,
-				&status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)},
-				http.StatusBadRequest,
-			)
-			return
-		}
-
-		if accept.Key == "" {
-			log.Println("AcceptInvite has no confirmation key set")
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		conf, err := a.findExistingConfirmation(req.Context(), accept, res)
-		if err != nil {
-			log.Printf("AcceptInvite error while finding confirmation [%s]\n", err.Error())
-			a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
-			return
-		}
-		if conf == nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
-			log.Println("AcceptInvite ", statusErr.Error())
-			a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
-			return
-		}
-
-		validationErrors := []error{}
-
-		conf.ValidateStatus(models.StatusPending, &validationErrors).
-			ValidateType(models.TypeMedicalTeamInvite, &validationErrors).
-			ValidateUserID(userID, &validationErrors).
-			ValidateTeamID(teamID, &validationErrors)
-
-		if len(validationErrors) > 0 {
-			for _, validationError := range validationErrors {
-				log.Println("AcceptInvite forbidden as there was a expectation mismatch", validationError)
-			}
-			a.sendModelAsResWithStatus(
-				res,
-				&status.StatusError{Status: status.NewStatus(http.StatusForbidden, statusForbiddenMessage)},
-				http.StatusForbidden,
-			)
-			return
-		}
-
-		if err := a.perms.SetPermissions(a.sl.TokenProvide(), userID, teamID); err != nil {
-			log.Printf("AcceptInvite error setting permissions [%v]\n", err)
-			a.sendModelAsResWithStatus(
-				res,
-				&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_DECODING_CONFIRMATION)},
-				http.StatusInternalServerError,
-			)
-			return
-		}
-		log.Printf("AcceptInvite: permissions were set for [%v -> %v] after an invite was accepted", teamID, userID)
-		conf.UpdateStatus(models.StatusCompleted)
-		if !a.addOrUpdateConfirmation(req.Context(), conf, res) {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
-			log.Println("AcceptInvite ", statusErr.Error())
-			a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
-			return
-		}
-		a.logAudit(req, "acceptinvite")
-		res.WriteHeader(http.StatusOK)
-		res.Write([]byte(STATUS_OK))
+	token := a.token(res, req)
+	if token == nil {
 		return
 	}
+
+	userID := vars["userid"]
+	teamID := vars["teamid"]
+
+	if userID == "" || teamID == "" {
+		log.Printf("AcceptInvite inviteeID %s or teamID %s not set", userID, teamID)
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Non-server tokens only legit when for same userid
+	if !token.IsServer && userID != token.UserID {
+		log.Println("AcceptInvite ", STATUS_UNAUTHORIZED)
+		a.sendModelAsResWithStatus(
+			res,
+			status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)},
+			http.StatusUnauthorized,
+		)
+		return
+	}
+
+	accept := &models.Confirmation{}
+	if err := json.NewDecoder(req.Body).Decode(accept); err != nil {
+		log.Printf("AcceptInvite error decoding invite data: %v\n", err)
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)},
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	if accept.Key == "" {
+		log.Println("AcceptInvite has no confirmation key set")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	conf, err := a.findExistingConfirmation(req.Context(), accept, res)
+	if err != nil {
+		log.Printf("AcceptInvite error while finding confirmation [%s]\n", err.Error())
+		a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
+		return
+	}
+	if conf == nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
+		log.Println("AcceptInvite ", statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+		return
+	}
+
+	validationErrors := []error{}
+
+	conf.ValidateStatus(models.StatusPending, &validationErrors).
+		ValidateType(models.TypeMedicalTeamInvite, &validationErrors).
+		ValidateUserID(userID, &validationErrors).
+		ValidateTeamID(teamID, &validationErrors)
+
+	if len(validationErrors) > 0 {
+		for _, validationError := range validationErrors {
+			log.Println("AcceptInvite forbidden as there was a expectation mismatch", validationError)
+		}
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusForbidden, statusForbiddenMessage)},
+			http.StatusForbidden,
+		)
+		return
+	}
+
+	if err := a.perms.SetPermissions(a.sl.TokenProvide(), userID, teamID); err != nil {
+		log.Printf("AcceptInvite error setting permissions [%v]\n", err)
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_DECODING_CONFIRMATION)},
+			http.StatusInternalServerError,
+		)
+		return
+	}
+	log.Printf("AcceptInvite: permissions were set for [%v -> %v] after an invite was accepted", teamID, userID)
+	conf.UpdateStatus(models.StatusCompleted)
+	if !a.addOrUpdateConfirmation(req.Context(), conf, res) {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
+		log.Println("AcceptInvite ", statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
+		return
+	}
+	a.logAudit(req, "acceptinvite")
+	res.WriteHeader(http.StatusOK)
+	res.Write([]byte(STATUS_OK))
+	return
 }
 
 // @Summary Cancel an invite
@@ -598,7 +601,8 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 		// Non-server tokens only legit when for same userid
 		if !token.IsServer && inviteeID != token.UserID {
 			log.Printf("DismissInvite %s ", STATUS_UNAUTHORIZED)
-			a.sendModelAsResWithStatus(res, status.StatusError{status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}, http.StatusUnauthorized)
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
 
@@ -653,68 +657,69 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 // @Router /dismiss/team-invite/{teamid} [put]
 // @security TidepoolAuth
 func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	if token := a.token(res, req); token != nil {
-
-		teamID := vars["teamid"]
-		inviteeID := token.UserID
-
-		if teamID == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		dismiss := &models.Confirmation{}
-		if err := json.NewDecoder(req.Body).Decode(dismiss); err != nil {
-			log.Printf("DismissInvite: error decoding invite to dismiss [%v]", err)
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)}
-			a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
-			return
-		}
-
-		// key of the request
-		if dismiss.Key == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		tokenValue := req.Header.Get(TP_SESSION_TOKEN)
-
-		if isAdmin, _, err := a.userIsTeamAdmin(tokenValue, token.UserID, teamID, res); isAdmin && err == nil {
-			// as team admin you can act on behalf of members
-			// for any invitation for the given team
-			dismiss.TeamID = teamID
-		} else if !token.IsServer {
-			// non server tokens, set the userid and teamId
-			dismiss.TeamID = teamID
-			dismiss.UserId = inviteeID
-		}
-
-		if conf, err := a.findExistingConfirmation(req.Context(), dismiss, res); err != nil {
-			log.Printf("DismissInvite: finding [%s]", err.Error())
-			a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
-			return
-		} else if conf != nil {
-
-			if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
-				conf.UpdateStatus(models.StatusDeclined)
-
-				if a.addOrUpdateConfirmation(req.Context(), conf, res) {
-					log.Printf("dismiss invite [%s] for [%s]", dismiss.Key, dismiss.TeamID)
-					a.logAudit(req, "dismissinvite ")
-					res.WriteHeader(http.StatusOK)
-					return
-				}
-			}
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotModified, statusInviteNotActiveMessage)}
-			log.Printf("DismissInvite: [%s]", statusErr.Error())
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
-		log.Printf("DismissInvite: [%s]", statusErr.Error())
-		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+	token := a.token(res, req)
+	if token == nil {
 		return
 	}
+
+	teamID := vars["teamid"]
+	inviteeID := token.UserID
+
+	if teamID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	dismiss := &models.Confirmation{}
+	if err := json.NewDecoder(req.Body).Decode(dismiss); err != nil {
+		log.Printf("DismissInvite: error decoding invite to dismiss [%v]", err)
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)}
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
+		return
+	}
+
+	// key of the request
+	if dismiss.Key == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+
+	if isAdmin, _, err := a.userIsTeamAdmin(tokenValue, token.UserID, teamID, res); isAdmin && err == nil {
+		// as team admin you can act on behalf of members
+		// for any invitation for the given team
+		dismiss.TeamID = teamID
+	} else if !token.IsServer {
+		// non server tokens, set the userid and teamId
+		dismiss.TeamID = teamID
+		dismiss.UserId = inviteeID
+	}
+
+	if conf, err := a.findExistingConfirmation(req.Context(), dismiss, res); err != nil {
+		log.Printf("DismissInvite: finding [%s]", err.Error())
+		a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
+		return
+	} else if conf != nil {
+
+		if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
+			conf.UpdateStatus(models.StatusDeclined)
+
+			if a.addOrUpdateConfirmation(req.Context(), conf, res) {
+				log.Printf("dismiss invite [%s] for [%s]", dismiss.Key, dismiss.TeamID)
+				a.logAudit(req, "dismissinvite ")
+				res.WriteHeader(http.StatusOK)
+				return
+			}
+		}
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotModified, statusInviteNotActiveMessage)}
+		log.Printf("DismissInvite: [%s]", statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+	statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
+	log.Printf("DismissInvite: [%s]", statusErr.Error())
+	a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
 	return
 }
 
@@ -853,95 +858,99 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = "en"
 	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
-	if token := a.token(res, req); token != nil {
+	token := a.token(res, req)
+	if token == nil {
+		return
+	}
 
-		invitorID := token.UserID
-		if invitorID == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
+	invitorID := token.UserID
+	if invitorID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	defer req.Body.Close()
+	var ib = &inviteBody{}
+	if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
+		log.Printf("SendInvite: error decoding invite to detail %v\n", err)
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+
+	if ib.Email == "" || ib.TeamID == "" {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+	if ib.IsAdmin == "" {
+		ib.IsAdmin = "false"
+	}
+
+	// var team = store.Team{}
+	_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+	if err != nil {
+		return
+	}
+
+	var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
+	// check duplicate invite and if user is already a member
+	if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, sessionToken, team, models.TypeMedicalTeamInvite, res); existingInvite {
+		return
+	} else {
+		//None exist so lets create the invite
+		invite, _ := models.NewConfirmationWithContext(
+			models.TypeMedicalTeamInvite,
+			models.TemplateNameMedicalteamInvite,
+			invitorID,
+			ib.Permissions)
+
+		// if the invitee is already a user, we can use his preferences
+		invite.TeamID = ib.TeamID
+		invite.Email = ib.Email
+		invite.IsAdmin = ib.IsAdmin
+		if invitedUsr != nil {
+			invite.UserId = invitedUsr.UserID
+			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 		}
 
-		defer req.Body.Close()
-		var ib = &inviteBody{}
-		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
-			log.Printf("SendInvite: error decoding invite to detail %v\n", err)
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
+		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
+			a.logAudit(req, "invite created")
 
-		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
+			if err := a.addProfile(invite); err != nil {
+				log.Println("SendInvite: ", err.Error())
+			} else {
+				var webPath = "hcp/signup"
 
-		// var team = store.Team{}
-		_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
-		if err != nil {
-			return
-		}
-
-		var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
-		// check duplicate invite and if user is already a member
-		if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, sessionToken, team, models.TypeMedicalTeamInvite, res); existingInvite == true {
-			return
-		} else {
-			//None exist so lets create the invite
-			invite, _ := models.NewConfirmationWithContext(
-				models.TypeMedicalTeamInvite,
-				models.TemplateNameMedicalteamInvite,
-				invitorID,
-				ib.Permissions)
-
-			// if the invitee is already a user, we can use his preferences
-			invite.TeamID = ib.TeamID
-			invite.Email = ib.Email
-			invite.IsAdmin = ib.IsAdmin
-			if invitedUsr != nil {
-				invite.UserId = invitedUsr.UserID
-				inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-			}
-
-			if a.addOrUpdateConfirmation(req.Context(), invite, res) {
-				a.logAudit(req, "invite created")
-
-				if err := a.addProfile(invite); err != nil {
-					log.Println("SendInvite: ", err.Error())
-				} else {
-					var webPath = "hcp/signup"
-
-					// if invitee is already a user (ie already has an account), he won't go to signup but login instead
-					if invite.UserId != "" {
-						webPath = ""
-					}
-
-					emailContent := map[string]interface{}{
-						"MedicalteamName":          team.Name,
-						"MedicalteamAddress":       team.Address,
-						"MedicalteamIentification": team.Code,
-						"CreatorName":              invite.Creator.Profile.FullName,
-						"Email":                    invite.Email,
-						"WebPath":                  webPath,
-					}
-
-					if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
-						a.logAudit(req, "invite sent")
-					} else {
-						a.logAudit(req, "invite failed to be sent")
-						log.Print("Something happened generating an invite email")
-						res.WriteHeader(http.StatusUnprocessableEntity)
-						return
-					}
+				// if invitee is already a user (ie already has an account), he won't go to signup but login instead
+				if invite.UserId != "" {
+					webPath = ""
 				}
 
-				a.sendModelAsResWithStatus(res, invite, http.StatusOK)
-				return
-			}
-		}
+				emailContent := map[string]interface{}{
+					"MedicalteamName":          team.Name,
+					"MedicalteamAddress":       team.Address,
+					"MedicalteamIentification": team.Code,
+					"CreatorName":              invite.Creator.Profile.FullName,
+					"Email":                    invite.Email,
+					"WebPath":                  webPath,
+				}
 
+				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
+					a.logAudit(req, "invite sent")
+				} else {
+					a.logAudit(req, "invite failed to be sent")
+					log.Print("Something happened generating an invite email")
+					res.WriteHeader(http.StatusUnprocessableEntity)
+					return
+				}
+			}
+
+			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+			return
+		}
 	}
-	return
+
 }
 
 // @Summary Send notification to an hcp that becomes admin
@@ -962,89 +971,93 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = "en"
 	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
-	if token := a.token(res, req); token != nil {
+	token := a.token(res, req)
+	if token == nil {
+		return
+	}
 
-		invitorID := token.UserID
-		if invitorID == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			return
-		}
+	invitorID := token.UserID
+	if invitorID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-		defer req.Body.Close()
-		var ib = &inviteBody{}
-		if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
-			log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
+	defer req.Body.Close()
+	var ib = &inviteBody{}
+	if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
+		log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
 
-		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
+	if ib.Email == "" || ib.TeamID == "" {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+	if ib.IsAdmin == "" {
+		ib.IsAdmin = "false"
+	}
 
-		_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
-		if err != nil {
-			return
-		}
+	_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+	if err != nil {
+		return
+	}
 
-		var isAdmin = strings.ToLower(ib.IsAdmin) == "true"
-		if isAdmin {
-			invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
-			if invitedUsr != nil && invitedUsr.UserID != "" {
-				if admin, err := a.isTeamAdmin(invitedUsr.UserID, team); admin == true || err != nil {
-					statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ALREADY_ADMIN)}
-					a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-					return
-				}
-			}
-			invite, _ := models.NewConfirmationWithContext(
-				models.TypeMedicalTeamDoAdmin,
-				models.TemplateNameMedicalteamDoAdmin,
-				invitorID,
-				ib.Permissions)
-
-			// if the invitee is already a user, we can use his preferences
-			invite.TeamID = ib.TeamID
-			invite.Email = ib.Email
-			invite.IsAdmin = ib.IsAdmin
-			invite.Status = models.StatusCompleted
-			if invitedUsr != nil {
-				invite.UserId = invitedUsr.UserID
-				// does the invitee have a preferred language?
-				inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-			}
-
-			if a.addOrUpdateConfirmation(req.Context(), invite, res) {
-				a.logAudit(req, "invite created")
-
-				if err := a.addProfile(invite); err != nil {
-					log.Println("SendInvite: ", err.Error())
-				} else {
-
-					emailContent := map[string]interface{}{
-						"MedicalteamName": team.Name,
-						"Email":           invite.Email,
-						"Language":        inviteeLanguage,
-					}
-
-					if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
-						a.logAudit(req, "invite sent")
-					} else {
-						a.logAudit(req, "invite failed to be sent")
-						log.Print("Something happened generating an invite email")
-						res.WriteHeader(http.StatusUnprocessableEntity)
-						return
-					}
-				}
-				a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+	var isAdmin = strings.ToLower(ib.IsAdmin) == "true"
+	if isAdmin {
+		invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
+		if invitedUsr != nil && invitedUsr.UserID != "" {
+			if admin, err := a.isTeamAdmin(invitedUsr.UserID, team); admin || err != nil {
+				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ALREADY_ADMIN)}
+				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
 			}
 		}
+		invite, _ := models.NewConfirmationWithContext(
+			models.TypeMedicalTeamDoAdmin,
+			models.TemplateNameMedicalteamDoAdmin,
+			invitorID,
+			ib.Permissions)
+
+		// if the invitee is already a user, we can use his preferences
+		invite.TeamID = ib.TeamID
+		invite.Email = ib.Email
+		invite.IsAdmin = ib.IsAdmin
+		invite.Status = models.StatusCompleted
+		if invitedUsr != nil {
+			invite.UserId = invitedUsr.UserID
+			// does the invitee have a preferred language?
+			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
+		}
+
+		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
+			a.logAudit(req, "invite created")
+
+			if err := a.addProfile(invite); err != nil {
+				log.Println("SendInvite: ", err.Error())
+			} else {
+
+				emailContent := map[string]interface{}{
+					"MedicalteamName": team.Name,
+					"Email":           invite.Email,
+					"Language":        inviteeLanguage,
+				}
+
+				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
+					a.logAudit(req, "invite sent")
+				} else {
+					a.logAudit(req, "invite failed to be sent")
+					log.Print("Something happened generating an invite email")
+					res.WriteHeader(http.StatusUnprocessableEntity)
+					return
+				}
+			}
+			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+			return
+		}
 	}
-	return
 }
 
 // @Summary Delete hcp from a medical team
@@ -1083,7 +1096,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			return
 		}
 
-		if ib.Email == "" || ib.TeamID == "" || ib.IsAdmin == "" {
+		if ib.Email == "" || ib.TeamID == "" {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
