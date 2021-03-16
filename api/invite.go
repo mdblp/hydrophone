@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/crew/store"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/shoreline"
@@ -703,6 +704,19 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	} else if conf != nil {
 
 		if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
+
+			var member = store.Member{
+				UserID:           inviteeID,
+				TeamID:           teamID,
+				Role:             "member", // default value
+				InvitationStatus: "rejected",
+			}
+			if _, err := crewClient.UpdateTeamMember(tokenValue, member); err != nil {
+				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+				return
+			}
+
 			conf.UpdateStatus(models.StatusDeclined)
 
 			if a.addOrUpdateConfirmation(req.Context(), conf, res) {
@@ -914,6 +928,18 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 		}
 
+		var member = store.Member{
+			UserID:           invite.UserId,
+			TeamID:           ib.TeamID,
+			Role:             ib.IsAdmin,
+			InvitationStatus: "pending",
+		}
+		if _, err := crewClient.UpdateTeamMember(tokenValue, member); err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+
 		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
 			a.logAudit(req, "invite created")
 
@@ -1032,6 +1058,18 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 		}
 
+		var member = store.Member{
+			UserID:           invite.UserId,
+			TeamID:           ib.TeamID,
+			Role:             ib.IsAdmin,
+			InvitationStatus: "accepted",
+		}
+		if _, err := crewClient.UpdateTeamMember(tokenValue, member); err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+
 		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
 			a.logAudit(req, "invite created")
 
@@ -1130,6 +1168,12 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			invite.UserId = invitedUsr.UserID
 			// does the invitee have a preferred language?
 			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
+		}
+
+		if _, err := crewClient.RemoveTeamMember(tokenValue, ib.TeamID, invite.UserId); err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
 		}
 
 		if a.addOrUpdateConfirmation(req.Context(), invite, res) {

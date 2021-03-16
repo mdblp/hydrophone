@@ -23,6 +23,7 @@ const (
 	STATUS_SIGNUP_ERROR      = "Error while completing signup confirmation. The signup confirmation remains active until it expires"
 	STATUS_ERR_FINDING_USR   = "Error finding user"
 	STATUS_ERR_UPDATING_USR  = "Error updating user"
+	STATUS_ERR_UPDATING_TEAM = "Error updating team"
 	STATUS_NO_PASSWORD       = "User does not have a password"
 	STATUS_MISSING_PASSWORD  = "Password is missing"
 	STATUS_INVALID_PASSWORD  = "Password specified is invalid"
