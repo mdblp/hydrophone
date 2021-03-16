@@ -15,7 +15,7 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	crewClient "github.com/mdblp/crew/client"
-	"github.com/tidepool-org/crew/store"
+	"github.com/mdblp/crew/store"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/portal"
 	"github.com/tidepool-org/go-common/clients/shoreline"
@@ -154,6 +154,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	accept.Handle("/signup/{confirmationid}", varsHandler(a.acceptSignUp)).Methods("PUT")
 	accept.Handle("/forgot", varsHandler(a.acceptPassword)).Methods("PUT")
 	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
+	// PUT /confirm/accept/team-invite
+	accept.Handle("/team_invite/{userid}/{teamid}", varsHandler(a.AcceptTeamInvite)).Methods("PUT")
 
 	// GET /confirm/signup/:userid
 	// GET /confirm/invite/:userid
@@ -469,49 +471,34 @@ func (a *Api) isAuthorizedUser(tokenData *shoreline.TokenData, userId string) bo
 	}
 }
 
-// userId is admin of teamid
-// TODO to be updated with teams calls
-func (a *Api) isTeamAdmin(userId, teamId string) (bool, error) {
-	// testing purpose only
-	if userId == "76f47a4234" && teamId == "100" {
-		return false, nil
-	}
-	if userId == "c8d420ce52" && (teamId == "100" || teamId == "1000") {
-		return false, nil
-	}
-	return true, nil
-}
-
 // userId is member of a Team
-func (a *Api) isTeamMember(userID, team store.Team) (bool, error) {
-	for i := 0; i < len(team.Member); i++ {
-		if team.Member[i].UserID == userID {
+func (a *Api) isTeamMember(userID string, team store.Team) (bool, error) {
+	for i := 0; i < len(team.Members); i++ {
+		if team.Members[i].UserID == userID {
 			return true, nil
 		}
 	}
 	return false, errors.New(STATUS_NOT_MEMBER)
 }
 
-func (a *Api) tokenUserIsTeamAdmin(tokenData *shoreline.TokenData, teamID string) (bool, store.Team, error) {
-	if tokenData.IsServer {
-		// here we should use a token server to get the team
-		return false, nil, errors.New(STATUS_INVALID_TOKEN)
-	} else {
-		if teams, err := a.perms.TeamsForUser(tokenData); err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
-		if team, err := a.getTeam(tokenData.UserID, teamID, teams); err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
-		if auth, err := a.isTeamAdmin(tokenData.UserID, team); !auth || err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
-		return auth, team, nil
+func (a *Api) userIsTeamAdmin(token, userID, teamID string, res http.ResponseWriter) (bool, store.Team, error) {
+	var team = store.Team{}
+	var auth = false
+	teams, err := a.perms.TeamsForUser(token)
+	if err != nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return auth, team, err
 	}
+	if team, err = a.getTeam(userID, teamID, teams); err != nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return auth, team, err
+	}
+	if auth, err = a.isTeamAdmin(userID, team); !auth || err != nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return auth, team, err
+	}
+	return auth, team, nil
 }

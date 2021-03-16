@@ -149,15 +149,16 @@ func (a *Api) getUserLanguage(userid string, res http.ResponseWriter) string {
 }
 
 func (a *Api) getTeam(userid, teamid string, teams []store.Team) (store.Team, error) {
+	team := store.Team{}
 	for i := 0; i < len(teams); i++ {
 		if teams[i].ID == teamid {
 			return teams[i], nil
 		}
 	}
-	return nil, errors.New()
+	return team, errors.New(STATUS_ERR_FINDING_TEAM)
 }
 
-func (a *Api) isTeamAdmin(userid, store.Team) (bool, error) {
+func (a *Api) isTeamAdmin(userid string, team store.Team) (bool, error) {
 	for j := 0; j < len(team.Members); j++ {
 		if team.Members[j].UserID == userid {
 			return team.Members[j].Role == "admin", nil
@@ -391,6 +392,123 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 	}
 }
 
+//Accept the team invite for a member
+//
+// http.StatusOK when accepted
+// http.StatusBadRequest when the incoming data is incomplete or incorrect
+// http.StatusForbidden when mismatch of user ID's, type or status
+// @Summary Accept the given invite
+// @Description  This would be PUT by the web page at the link in the invite email. No authentication is required.
+// @ID hydrophone-api-acceptTeamInvite
+// @Accept  json
+// @Produce  json
+// @Param userid path string true "invitee id"
+// @Param teamid path string true "team id"
+// @Param invitation body models.Confirmation true "invitation details"
+// @Success 200 {string} string "OK"
+// @Failure 400 {object} status.Status "inviteeid, invitorid or/and the payload is missing or malformed"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
+// @Failure 403 {object} status.Status "Operation is forbiden. Either the authorization token is invalid or this invite cannot be accepted"
+// @Failure 404 {object} status.Status "invitation not found"
+// @Failure 500 {object} status.Status "Error (internal) while processing the data"
+// @Router /accept/team-invite/{userid}/{teamid} [put]
+// @security TidepoolAuth
+func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	if token := a.token(res, req); token != nil {
+
+		userID := vars["userid"]
+		teamID := vars["teamid"]
+
+		if userID == "" || teamID == "" {
+			log.Printf("AcceptInvite inviteeID %s or teamID %s not set", userID, teamID)
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		// Non-server tokens only legit when for same userid
+		if !token.IsServer && userID != token.UserID {
+			log.Println("AcceptInvite ", STATUS_UNAUTHORIZED)
+			a.sendModelAsResWithStatus(
+				res,
+				status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)},
+				http.StatusUnauthorized,
+			)
+			return
+		}
+
+		accept := &models.Confirmation{}
+		if err := json.NewDecoder(req.Body).Decode(accept); err != nil {
+			log.Printf("AcceptInvite error decoding invite data: %v\n", err)
+			a.sendModelAsResWithStatus(
+				res,
+				&status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)},
+				http.StatusBadRequest,
+			)
+			return
+		}
+
+		if accept.Key == "" {
+			log.Println("AcceptInvite has no confirmation key set")
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		conf, err := a.findExistingConfirmation(req.Context(), accept, res)
+		if err != nil {
+			log.Printf("AcceptInvite error while finding confirmation [%s]\n", err.Error())
+			a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
+			return
+		}
+		if conf == nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
+			log.Println("AcceptInvite ", statusErr.Error())
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+			return
+		}
+
+		validationErrors := []error{}
+
+		conf.ValidateStatus(models.StatusPending, &validationErrors).
+			ValidateType(models.TypeMedicalTeamInvite, &validationErrors).
+			ValidateUserID(userID, &validationErrors).
+			ValidateTeamID(teamID, &validationErrors)
+
+		if len(validationErrors) > 0 {
+			for _, validationError := range validationErrors {
+				log.Println("AcceptInvite forbidden as there was a expectation mismatch", validationError)
+			}
+			a.sendModelAsResWithStatus(
+				res,
+				&status.StatusError{Status: status.NewStatus(http.StatusForbidden, statusForbiddenMessage)},
+				http.StatusForbidden,
+			)
+			return
+		}
+
+		if err := a.perms.SetPermissions(a.sl.TokenProvide(), userID, teamID); err != nil {
+			log.Printf("AcceptInvite error setting permissions [%v]\n", err)
+			a.sendModelAsResWithStatus(
+				res,
+				&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_DECODING_CONFIRMATION)},
+				http.StatusInternalServerError,
+			)
+			return
+		}
+		log.Printf("AcceptInvite: permissions were set for [%v -> %v] after an invite was accepted", teamID, userID)
+		conf.UpdateStatus(models.StatusCompleted)
+		if !a.addOrUpdateConfirmation(req.Context(), conf, res) {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
+			log.Println("AcceptInvite ", statusErr.Error())
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
+			return
+		}
+		a.logAudit(req, "acceptinvite")
+		res.WriteHeader(http.StatusOK)
+		res.Write([]byte(STATUS_OK))
+		return
+	}
+}
+
 // @Summary Cancel an invite
 // @Description Cancel an invite that has been sent to an email address
 // @ID hydrophone-api-cancelInvite
@@ -559,7 +677,9 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 			return
 		}
 
-		if isAdmin, err := a.isTeamAdmin(inviteeID, teamID); isAdmin && err == nil {
+		tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+
+		if isAdmin, _, err := a.userIsTeamAdmin(tokenValue, token.UserID, teamID, res); isAdmin && err == nil {
 			// as team admin you can act on behalf of members
 			// for any invitation for the given team
 			dismiss.TeamID = teamID
@@ -732,6 +852,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = "en"
+	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 	if token := a.token(res, req); token != nil {
 
 		invitorID := token.UserID
@@ -755,7 +876,9 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			return
 		}
 
-		if auth, team, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); err != nil {
+		// var team = store.Team{}
+		_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+		if err != nil {
 			return
 		}
 
@@ -796,7 +919,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 					emailContent := map[string]interface{}{
 						"MedicalteamName":          team.Name,
 						"MedicalteamAddress":       team.Address,
-						"MedicalteamIentification": team.code,
+						"MedicalteamIentification": team.Code,
 						"CreatorName":              invite.Creator.Profile.FullName,
 						"Email":                    invite.Email,
 						"WebPath":                  webPath,
@@ -838,6 +961,7 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = "en"
+	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 	if token := a.token(res, req); token != nil {
 
 		invitorID := token.UserID
@@ -861,7 +985,8 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 			return
 		}
 
-		if auth, team, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); err != nil {
+		_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+		if err != nil {
 			return
 		}
 
@@ -940,6 +1065,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = "en"
+	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 	if token := a.token(res, req); token != nil {
 
 		invitorID := token.UserID
@@ -963,15 +1089,16 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			return
 		}
 
-		if auth, team, err := a.tokenUserIsTeamAdmin(token, ib.TeamID); err != nil {
+		_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+		if err != nil {
 			return
 		}
 
 		invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
 		if invitedUsr != nil && invitedUsr.UserID != "" {
 			// make teams call
-			if member, err := a.isTeamMember(invitedUsr.UserID, team); err != nil {
-				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, err)}
+			if _, err := a.isTeamMember(invitedUsr.UserID, team); err != nil {
+				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_NOT_MEMBER)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
 			}
