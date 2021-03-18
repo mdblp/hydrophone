@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/crew/store"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/shoreline"
@@ -711,7 +710,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 				Role:             "member", // default value
 				InvitationStatus: "rejected",
 			}
-			if _, err := crewClient.UpdateTeamMember(tokenValue, member); err != nil {
+			if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
@@ -934,7 +933,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			Role:             ib.IsAdmin,
 			InvitationStatus: "pending",
 		}
-		if _, err := crewClient.UpdateTeamMember(tokenValue, member); err != nil {
+		if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
@@ -1064,7 +1063,7 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 			Role:             ib.IsAdmin,
 			InvitationStatus: "accepted",
 		}
-		if _, err := crewClient.UpdateTeamMember(tokenValue, member); err != nil {
+		if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
@@ -1170,7 +1169,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 		}
 
-		if _, err := crewClient.RemoveTeamMember(tokenValue, ib.TeamID, invite.UserId); err != nil {
+		if err := a.perms.RemoveTeamMember(tokenValue, ib.TeamID, invite.UserId); err != nil {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
