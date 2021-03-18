@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/shoreline"
@@ -504,7 +505,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 
 					emailContent := map[string]interface{}{
 						"PatientName": fullName,
-						"Email":       invite.Email,
+						"Email":       url.QueryEscape(invite.Email),
 						"WebPath":     webPath,
 					}
 
