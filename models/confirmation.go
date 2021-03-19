@@ -71,6 +71,7 @@ const (
 	TypePatientPasswordInfo  Type = "patient_password_info"
 	TypeCareteamInvite       Type = "careteam_invitation"    // invite and share data to a caregiver
 	TypeMedicalTeamInvite    Type = "medicalteam_invitation" // invite an hcp to a medical team
+	TypeMedicalTeamPatientInvite Type = "medicalteam_patient_invitation"
 	TypeMedicalTeamDoAdmin   Type = "medicalteam_do_admin"
 	TypeMedicalTeamRemove    Type = "medicalteam_remove"
 	TypeSignUp               Type = "signup_confirmation"
