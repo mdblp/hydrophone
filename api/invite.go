@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -90,10 +89,9 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 	invites, _ := a.Store.FindConfirmations(
 		ctx,
 		&models.Confirmation{
-			CreatorId: invitorID,
-			Email:     inviteeEmail,
-			TeamID:    team.ID,
-			Type:      invite},
+			Email:  inviteeEmail,
+			TeamID: team.ID,
+			Type:   invite},
 		[]models.Status{models.StatusPending},
 		[]models.Type{},
 	)
@@ -110,10 +108,9 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 	}
 
 	invitedUsr := a.findExistingUser(inviteeEmail, a.sl.TokenProvide())
-	// TODO
 	// call the teams service to check if the user is already a member
 	if invitedUsr != nil {
-		if isMember, err := a.isTeamMember(invitedUsr.UserID, team); isMember || err != nil {
+		if isMember := a.isTeamMember(invitedUsr.UserID, team); isMember {
 			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeEmail, team.Name)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingMemberMessage)}
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
@@ -146,16 +143,6 @@ func (a *Api) getUserLanguage(userid string, res http.ResponseWriter) string {
 		language = inviteePreferences.DisplayLanguage
 	}
 	return language
-}
-
-func (a *Api) getTeam(userid, teamid string, teams []store.Team) (store.Team, error) {
-	team := store.Team{}
-	for i := 0; i < len(teams); i++ {
-		if teams[i].ID == teamid {
-			return teams[i], nil
-		}
-	}
-	return team, errors.New(STATUS_ERR_FINDING_TEAM)
 }
 
 func (a *Api) isTeamAdmin(userid string, team store.Team) (bool, error) {
@@ -429,17 +416,6 @@ func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 		return
 	}
 
-	// Non-server tokens only legit when for same userid
-	if !token.IsServer && userID != token.UserID {
-		log.Println("AcceptInvite ", STATUS_UNAUTHORIZED)
-		a.sendModelAsResWithStatus(
-			res,
-			status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)},
-			http.StatusUnauthorized,
-		)
-		return
-	}
-
 	accept := &models.Confirmation{}
 	if err := json.NewDecoder(req.Body).Decode(accept); err != nil {
 		log.Printf("AcceptInvite error decoding invite data: %v\n", err)
@@ -489,7 +465,12 @@ func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 		return
 	}
 
-	if err := a.perms.SetPermissions(a.sl.TokenProvide(), userID, teamID); err != nil {
+	var member = store.Member{
+		UserID:           userID,
+		TeamID:           teamID,
+		InvitationStatus: "accepted",
+	}
+	if _, err := a.perms.UpdateTeamMember(req.Header.Get(TP_SESSION_TOKEN), member); err != nil {
 		log.Printf("AcceptInvite error setting permissions [%v]\n", err)
 		a.sendModelAsResWithStatus(
 			res,
@@ -509,7 +490,6 @@ func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 	a.logAudit(req, "acceptinvite")
 	res.WriteHeader(http.StatusOK)
 	res.Write([]byte(STATUS_OK))
-	return
 }
 
 // @Summary Cancel an invite
@@ -686,7 +666,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 
 	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 
-	if isAdmin, _, err := a.userIsTeamAdmin(tokenValue, token.UserID, teamID, res); isAdmin && err == nil {
+	if isAdmin, _, err := a.getTeamForUser(tokenValue, teamID, token.UserID, res); isAdmin && err == nil {
 		// as team admin you can act on behalf of members
 		// for any invitation for the given team
 		dismiss.TeamID = teamID
@@ -707,7 +687,6 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 			var member = store.Member{
 				UserID:           inviteeID,
 				TeamID:           teamID,
-				Role:             "member", // default value
 				InvitationStatus: "rejected",
 			}
 			if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
@@ -900,9 +879,10 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		ib.IsAdmin = "false"
 	}
 
-	// var team = store.Team{}
-	_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
-	if err != nil {
+	auth, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
+	if !auth {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
 
@@ -922,18 +902,21 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		invite.TeamID = ib.TeamID
 		invite.Email = ib.Email
 		invite.IsAdmin = ib.IsAdmin
-		if invitedUsr != nil {
-			invite.UserId = invitedUsr.UserID
-			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-		}
-
 		var member = store.Member{
-			UserID:           invite.UserId,
+			// UserID:           invite.UserId,
 			TeamID:           ib.TeamID,
 			Role:             ib.IsAdmin,
 			InvitationStatus: "pending",
+			// To be Added
+			// Email: ib.Email,
 		}
-		if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
+		if invitedUsr != nil {
+			invite.UserId = invitedUsr.UserID
+			member.UserID = invitedUsr.UserID
+			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
+		}
+
+		if _, err := a.perms.AddTeamMember(tokenValue, member); err != nil {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
@@ -1025,75 +1008,77 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 		ib.IsAdmin = "false"
 	}
 
-	_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
 	if err != nil {
 		return
 	}
-
+	var invitedUsr *shoreline.UserData
 	var isAdmin = strings.ToLower(ib.IsAdmin) == "true"
 	if isAdmin {
-		invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
+		invitedUsr = a.findExistingUser(ib.Email, a.sl.TokenProvide())
 		if invitedUsr != nil && invitedUsr.UserID != "" {
 			if admin, err := a.isTeamAdmin(invitedUsr.UserID, team); admin || err != nil {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ALREADY_ADMIN)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
 			}
-		}
-		invite, _ := models.NewConfirmationWithContext(
-			models.TypeMedicalTeamDoAdmin,
-			models.TemplateNameMedicalteamDoAdmin,
-			invitorID,
-			ib.Permissions)
-
-		// if the invitee is already a user, we can use his preferences
-		invite.TeamID = ib.TeamID
-		invite.Email = ib.Email
-		invite.IsAdmin = ib.IsAdmin
-		invite.Status = models.StatusCompleted
-		if invitedUsr != nil {
-			invite.UserId = invitedUsr.UserID
-			// does the invitee have a preferred language?
-			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-		}
-
-		var member = store.Member{
-			UserID:           invite.UserId,
-			TeamID:           ib.TeamID,
-			Role:             ib.IsAdmin,
-			InvitationStatus: "accepted",
-		}
-		if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+		} else {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ERR_FINDING_USER)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
+	}
+	invite, _ := models.NewConfirmationWithContext(
+		models.TypeMedicalTeamDoAdmin,
+		models.TemplateNameMedicalteamDoAdmin,
+		invitorID,
+		ib.Permissions)
 
-		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
-			a.logAudit(req, "invite created")
+	// if the invitee is already a user, we can use his preferences
+	invite.TeamID = ib.TeamID
+	invite.Email = ib.Email
+	invite.IsAdmin = ib.IsAdmin
+	invite.Status = models.StatusCompleted
+	invite.UserId = invitedUsr.UserID
+	// does the invitee have a preferred language?
+	inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 
-			if err := a.addProfile(invite); err != nil {
-				log.Println("SendInvite: ", err.Error())
-			} else {
+	var member = store.Member{
+		UserID:           invite.UserId,
+		TeamID:           ib.TeamID,
+		Role:             ib.IsAdmin,
+		InvitationStatus: "accepted",
+	}
+	if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
 
-				emailContent := map[string]interface{}{
-					"MedicalteamName": team.Name,
-					"Email":           invite.Email,
-					"Language":        inviteeLanguage,
-				}
+	if a.addOrUpdateConfirmation(req.Context(), invite, res) {
+		a.logAudit(req, "invite created")
 
-				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
-					a.logAudit(req, "invite sent")
-				} else {
-					a.logAudit(req, "invite failed to be sent")
-					log.Print("Something happened generating an invite email")
-					res.WriteHeader(http.StatusUnprocessableEntity)
-					return
-				}
+		if err := a.addProfile(invite); err != nil {
+			log.Println("SendInvite: ", err.Error())
+		} else {
+
+			emailContent := map[string]interface{}{
+				"MedicalteamName": team.Name,
+				"Email":           invite.Email,
+				"Language":        inviteeLanguage,
 			}
-			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
-			return
+
+			if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
+				a.logAudit(req, "invite sent")
+			} else {
+				a.logAudit(req, "invite failed to be sent")
+				log.Print("Something happened generating an invite email")
+				res.WriteHeader(http.StatusUnprocessableEntity)
+				return
+			}
 		}
+		a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+		return
 	}
 }
 
@@ -1139,7 +1124,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			return
 		}
 
-		_, team, err := a.userIsTeamAdmin(tokenValue, token.UserID, ib.TeamID, res)
+		_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
 		if err != nil {
 			return
 		}
@@ -1147,7 +1132,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		invitedUsr := a.findExistingUser(ib.Email, a.sl.TokenProvide())
 		if invitedUsr != nil && invitedUsr.UserID != "" {
 			// make teams call
-			if _, err := a.isTeamMember(invitedUsr.UserID, team); err != nil {
+			if isMember := a.isTeamMember(invitedUsr.UserID, team); isMember {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_NOT_MEMBER)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return

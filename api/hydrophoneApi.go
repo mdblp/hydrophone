@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -472,33 +471,32 @@ func (a *Api) isAuthorizedUser(tokenData *shoreline.TokenData, userId string) bo
 }
 
 // userId is member of a Team
-func (a *Api) isTeamMember(userID string, team store.Team) (bool, error) {
+func (a *Api) isTeamMember(userID string, team store.Team) bool {
 	for i := 0; i < len(team.Members); i++ {
-		if team.Members[i].UserID == userID {
-			return true, nil
+		if team.Members[i].UserID == userID && team.Members[i].InvitationStatus == "accepted" {
+			return true
 		}
 	}
-	return false, errors.New(STATUS_NOT_MEMBER)
+	return false
 }
 
-func (a *Api) userIsTeamAdmin(token, userID, teamID string, res http.ResponseWriter) (bool, store.Team, error) {
-	var team = store.Team{}
+//
+// return true is the user userID is admin of the Team identified by teamID
+// it returns the Team object corresponding to the team
+// if any error occurs during the search, it returns an error with the
+// related code
+func (a *Api) getTeamForUser(token, teamID, userID string, res http.ResponseWriter) (bool, store.Team, error) {
 	var auth = false
-	teams, err := a.perms.TeamsForUser(token)
+	team, err := a.perms.GetTeam(token, teamID)
 	if err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return auth, team, err
+		return auth, *team, err
 	}
-	if team, err = a.getTeam(userID, teamID, teams); err != nil {
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return auth, team, err
-	}
-	if auth, err = a.isTeamAdmin(userID, team); !auth || err != nil {
+	if auth, err = a.isTeamAdmin(userID, *team); !auth || err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return auth, team, err
+		return auth, *team, err
 	}
-	return auth, team, nil
+	return auth, *team, nil
 }

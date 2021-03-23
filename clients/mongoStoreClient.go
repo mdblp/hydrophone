@@ -71,6 +71,9 @@ func (c *Client) FindConfirmation(ctx context.Context, confirmation *models.Conf
 	if confirmation.ShortKey != "" {
 		query["shortKey"] = confirmation.ShortKey
 	}
+	if confirmation.TeamID != "" {
+		query["teamId"] = confirmation.TeamID
+	}
 	opts := options.FindOne()
 	opts.SetSort(bson.D{primitive.E{Key: "created", Value: -1}})
 	if err = mgoConfirmationsCollection(c).FindOne(ctx, query, opts).Decode(&result); err != nil && err != mongo.ErrNoDocuments {
