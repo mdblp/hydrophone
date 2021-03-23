@@ -399,7 +399,7 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 // @Failure 403 {object} status.Status "Operation is forbiden. Either the authorization token is invalid or this invite cannot be accepted"
 // @Failure 404 {object} status.Status "invitation not found"
 // @Failure 500 {object} status.Status "Error (internal) while processing the data"
-// @Router /accept/team-invite/{userid}/{teamid} [put]
+// @Router /accept/team/invite/{userid}/{teamid} [put]
 // @security TidepoolAuth
 func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	token := a.token(res, req)
@@ -843,7 +843,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 // @Failure 409 {object} status.Status "user already has a pending or declined invite OR user is already part of the team"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
 // @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
-// @Router /confirm/send/team-invite [post]
+// @Router /confirm/send/team/invite [post]
 // @security TidepoolAuth
 func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
@@ -972,7 +972,8 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 // @Failure 403 {object} status.Status "Authorization token is invalid"
 // @Failure 409 {object} status.Status "No notification and email sent; User is already an admin"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
-// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"// @Router /confirm/send/team-invite [put]
+// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
+// @Router /confirm/send/team/role [put]
 // @security TidepoolAuth
 func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
@@ -1094,7 +1095,7 @@ func (a *Api) UpdateTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 // @Failure 409 {object} status.Status "No notification and email sent; User is not a member"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
 // @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
-// @Router /confirm/send/team-invite [delete]
+// @Router /confirm/send/team/leave [delete]
 // @security TidepoolAuth
 func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)

@@ -133,12 +133,13 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/signup/{userid}", varsHandler(a.sendSignUp)).Methods("POST")
 	send.Handle("/forgot/{useremail}", varsHandler(a.passwordReset)).Methods("POST")
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
-	// POST /confirm/send/team-invite
-	send.Handle("/team-invite", varsHandler(a.SendTeamInvite)).Methods("POST")
-	// PUT /confirm/send/team-invite - add admin role
-	send.Handle("/team-invite", varsHandler(a.UpdateTeamInvite)).Methods("PUT")
-	// DELETE /confirm/send/team-invite - delete member
-	send.Handle("/team-invite", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
+	// POST /confirm/send/team/invite
+	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
+	// POST /confirm/send/team/role - add or remove admin role
+	send.Handle("/team/role", varsHandler(a.UpdateTeamInvite)).Methods("POST")
+	// DELETE /confirm/team/:teamid - delete member
+	send.Handle("/team/leave", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
+
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
 	send.Handle("/pin-reset/{userid}", varsHandler(a.SendPinReset)).Methods("POST")
@@ -153,8 +154,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	accept.Handle("/signup/{confirmationid}", varsHandler(a.acceptSignUp)).Methods("PUT")
 	accept.Handle("/forgot", varsHandler(a.acceptPassword)).Methods("PUT")
 	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
-	// PUT /confirm/accept/team-invite
-	accept.Handle("/team_invite/{userid}/{teamid}", varsHandler(a.AcceptTeamInvite)).Methods("PUT")
+	// PUT /confirm/accept/team/invite
+	accept.Handle("/team/invite/{userid}/{teamid}", varsHandler(a.AcceptTeamInvite)).Methods("PUT")
 
 	// GET /confirm/signup/:userid
 	// GET /confirm/invite/:userid
