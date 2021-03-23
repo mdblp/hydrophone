@@ -172,7 +172,8 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 
 	content := map[string]interface{}{
 		"Key":          "123456789123456789123456789123456789",
-		"Email":        url.QueryEscape("john@diabeloop.com"),
+		"Email":        "john@diabeloop.com",
+		"EncodedEmail": url.QueryEscape("john@diabeloop.com"),
 		"FullName":     "John Doe",
 		"PatientName":  "John Doe",
 		"WebPath":      "login",

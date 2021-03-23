@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"net/url"
 	"regexp"
 	"time"
 
@@ -134,7 +133,7 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 			var templateName = models.TemplateNamePatientInformation
 
 			emailContent := map[string]interface{}{
-				"Email": url.QueryEscape(usrDetails.Emails[0]),
+				"Email": usrDetails.Emails[0],
 			}
 
 			newSignUp, _ = models.NewConfirmation(models.TypeInformation, templateName, usrDetails.UserID)
@@ -277,7 +276,7 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 
 					emailContent := map[string]interface{}{
 						"Key":      newSignUp.Key,
-						"Email":    url.QueryEscape(newSignUp.Email),
+						"Email":    newSignUp.Email,
 						"FullName": profile.FullName,
 					}
 
@@ -361,7 +360,7 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 
 				emailContent := map[string]interface{}{
 					"Key":      found.Key,
-					"Email":    url.QueryEscape(found.Email),
+					"Email":    found.Email,
 					"FullName": profile.FullName,
 				}
 

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"net/url"
 
 	"github.com/tidepool-org/go-common/clients/shoreline"
 	"github.com/tidepool-org/go-common/clients/status"
@@ -121,7 +120,7 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 		a.logAudit(req, "reset confirmation created")
 		emailContent := map[string]interface{}{
 			"Key":      resetCnf.Key,
-			"Email":    url.QueryEscape(resetCnf.Email),
+			"Email":    resetCnf.Email,
 			"ShortKey": resetCnf.ShortKey,
 		}
 
