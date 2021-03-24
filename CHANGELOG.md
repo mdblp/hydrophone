@@ -6,6 +6,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 ## Unreleased
 ### Changed
 - YLP-559 emails which are part of URLs are URL encoded
+- YLP-516 invitations to join a team
 ## 1.5.1 - 2021-03-12
 ### Engineering Use
 - Switch CI build to Jenkins (instead of Travis)

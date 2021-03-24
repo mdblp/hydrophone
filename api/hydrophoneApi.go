@@ -77,14 +77,14 @@ const (
 	STATUS_ERR_MISSING_DATA_INVITE   = "Error missing data in the invitation"
 
 	//returned status messages
-	STATUS_NOT_FOUND     = "Nothing found"
-	STATUS_NO_TOKEN      = "No x-tidepool-session-token was found"
-	STATUS_INVALID_TOKEN = "The x-tidepool-session-token was invalid"
-	STATUS_UNAUTHORIZED  = "Not authorized for requested operation"
-	STATUS_ALREADY_ADMIN = "User already an admin"
-	STATUS_NOT_MEMBER    = "User is not a member"
-	STATUS_NOT_ADMIN     = STATUS_UNAUTHORIZED
-	STATUS_OK            = "OK"
+	STATUS_NOT_FOUND           = "Nothing found"
+	STATUS_NO_TOKEN            = "No x-tidepool-session-token was found"
+	STATUS_INVALID_TOKEN       = "The x-tidepool-session-token was invalid"
+	STATUS_UNAUTHORIZED        = "Not authorized for requested operation"
+	STATUS_ROLE_ALRDY_ASSIGNED = "Role already assigned to user"
+	STATUS_NOT_MEMBER          = "User is not a member"
+	STATUS_NOT_ADMIN           = STATUS_UNAUTHORIZED
+	STATUS_OK                  = "OK"
 )
 
 func InitApi(
@@ -136,7 +136,7 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// POST /confirm/send/team/invite
 	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
 	// POST /confirm/send/team/role - add or remove admin role
-	send.Handle("/team/role", varsHandler(a.UpdateTeamInvite)).Methods("POST")
+	send.Handle("/team/role", varsHandler(a.UpdateTeamRole)).Methods("POST")
 	// DELETE /confirm/team/:teamid - delete member
 	send.Handle("/team/leave", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
 

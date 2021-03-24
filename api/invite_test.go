@@ -357,7 +357,7 @@ func TestSendTeamInvite_WrongBody(t *testing.T) {
 	sendTeamInvite("POST", "/send/team/invite", t)
 }
 
-func TestUpdateTeamInvite_WrongBody(t *testing.T) {
+func TestUpdateTeamRole_WrongBody(t *testing.T) {
 
 	sendTeamInvite("POST", "/send/team/role", t)
 }
