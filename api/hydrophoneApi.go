@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"runtime"
 	"strings"
@@ -306,8 +305,6 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 	// Support address configuration contains the mailto we want to strip out
 	supportEmail := fmt.Sprintf("<a href=%s>%s</a>", a.Config.SupportURL, strings.Replace(a.Config.SupportURL, "mailto:", "", 1))
 
-	// Create an Encoded Email entry
-	content["EmailEncoded"] = url.QueryEscape(content["Email"].(string))
 	// Content collection is here to replace placeholders in template body/content
 	content["WebURL"] = a.getWebURL(req)
 	content["SupportURL"] = a.Config.SupportURL
@@ -495,7 +492,7 @@ func (a *Api) getTeamForUser(token, teamID, userID string, res http.ResponseWrit
 	if err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return auth, *team, err
+		return auth, store.Team{}, err
 	}
 	if auth, err = a.isTeamAdmin(userID, *team); !auth || err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}

@@ -51,14 +51,14 @@ func initWrongBodies() []testJSONObject {
 	return bodies
 }
 
-func sendTeamInvite(method string, t *testing.T) {
+func sendTeamInvite(method, path string, t *testing.T) {
 	tstRtr := initTestingRouterNoPerms()
 	wrongBodies := initWrongBodies()
 	for i := 0; i < len(wrongBodies); i++ {
 		body := &bytes.Buffer{}
 		json.NewEncoder(body).Encode(wrongBodies[i])
 
-		request, _ := http.NewRequest(method, "/send/team-invite", body)
+		request, _ := http.NewRequest(method, path, body)
 		request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
 		response := httptest.NewRecorder()
 		tstRtr.ServeHTTP(response, request)
@@ -354,15 +354,15 @@ func TestInviteResponds(t *testing.T) {
 
 func TestSendTeamInvite_WrongBody(t *testing.T) {
 
-	sendTeamInvite("POST", t)
+	sendTeamInvite("POST", "/send/team/invite", t)
 }
 
 func TestUpdateTeamInvite_WrongBody(t *testing.T) {
 
-	sendTeamInvite("PUT", t)
+	sendTeamInvite("POST", "/send/team/role", t)
 }
 
 func TestDeleteTeamInvite_WrongBody(t *testing.T) {
 
-	sendTeamInvite("DELETE", t)
+	sendTeamInvite("DELETE", "/send/team/leave", t)
 }
