@@ -135,10 +135,10 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
 	// POST /confirm/send/team/invite
 	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
-	// POST /confirm/send/team/role - add or remove admin role
-	send.Handle("/team/role", varsHandler(a.UpdateTeamRole)).Methods("POST")
-	// DELETE /confirm/team/:teamid - delete member
-	send.Handle("/team/leave", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
+	// POST /confirm/send/team/role/{userid} - add or remove admin role to userid
+	send.Handle("/team/role/{userid}", varsHandler(a.UpdateTeamRole)).Methods("PUT")
+	// DELETE /confirm/team/leave/:userid - delete member
+	send.Handle("/team/leave/{userid}", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
 
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
@@ -472,9 +472,10 @@ func (a *Api) isAuthorizedUser(tokenData *shoreline.TokenData, userId string) bo
 }
 
 // userId is member of a Team
-func (a *Api) isTeamMember(userID string, team store.Team) bool {
+// Settings the all parameter to true will return all the members while it will only return the accepted members if the parameter is set false
+func (a *Api) isTeamMember(userID string, team store.Team, all bool) bool {
 	for i := 0; i < len(team.Members); i++ {
-		if team.Members[i].UserID == userID && team.Members[i].InvitationStatus == "accepted" {
+		if team.Members[i].UserID == userID && (team.Members[i].InvitationStatus == "accepted" || all) {
 			return true
 		}
 	}

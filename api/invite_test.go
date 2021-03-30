@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/mdblp/crew/store"
 	"github.com/tidepool-org/hydrophone/templates"
 )
 
@@ -27,6 +28,240 @@ func initTestingRouterNoPerms() *mux.Router {
 	)
 	hydrophone.SetHandlers("", testRtr)
 	return testRtr
+}
+
+func initTestingTeamRouter() *mux.Router {
+	//fresh each time
+	var testRtr = mux.NewRouter()
+
+	// Init mock data
+	token1 := "00000"
+	teams1 := []store.Team{}
+	mockPerms.SetMockNextCall(token1, teams1, nil)
+	// teamId2 := "123456"
+	// token2 := testing_token_uid1
+	members := []store.Member{
+		{
+			UserID:           testing_uid1,
+			TeamID:           "1",
+			Role:             "admin",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           "4567",
+			TeamID:           "2",
+			Role:             "patient",
+			InvitationStatus: "pending",
+		},
+	}
+	membersAddAdminRole := []store.Member{
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamAddAdminRole",
+			Role:             "admin",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           uid002,
+			TeamID:           "teamAddAdminRole",
+			InvitationStatus: "accepted",
+		},
+	}
+	// teams2 := []store.Team{
+	// 	{
+	// 		Name:        "Led Zep",
+	// 		Description: "Fake Team",
+	// 		Members:     members2,
+	// 		ID:          teamId2,
+	// 	},
+	// 	{
+	// 		Name:        "Black Sab",
+	// 		Description: "Fake Team",
+	// 	},
+	// }
+	// noMembers := []store.Member{}
+	team123456 := store.Team{
+		Name:        "Led Zep",
+		Description: "Fake Team",
+		Members:     members,
+		ID:          "123456",
+	}
+	teamAddAdminRole := store.Team{
+		Name:        "Led Zep",
+		Description: "Fake Team",
+		Members:     membersAddAdminRole,
+		ID:          "123456",
+	}
+	teamAlreadyMember := store.Team{
+		Name:        "team already member",
+		Description: "Fake Team",
+		Members:     membersAddAdminRole,
+		ID:          "teamAlreadyMember",
+	}
+	teamDeleteMember := store.Team{
+		Name:        "team already member",
+		Description: "Fake Team",
+		Members:     membersAddAdminRole,
+		ID:          "teamDeleteMember",
+	}
+
+	memberUID002 := store.Member{
+		TeamID:           "1",
+		InvitationStatus: "pending",
+	}
+
+	mockPerms.SetMockNextCall(testing_token_uid1, teams1, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &team123456, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"UID002", &memberUID002, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamAddAdminRole", &teamAddAdminRole, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamAlreadyMember", &teamAlreadyMember, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
+
+	hydrophone := InitApi(
+		FAKE_CONFIG,
+		mockStoreEmpty,
+		mockNotifier,
+		mock_uid1Shoreline,
+		mockPerms,
+		mockSeagull,
+		mockPortal,
+		mockTemplates,
+	)
+	hydrophone.SetHandlers("", testRtr)
+	return testRtr
+}
+
+func TestTeam(t *testing.T) {
+	tests := []toTest{
+		// returns a 200 when everything goes well
+		{
+			method:   "POST",
+			url:      "/send/team/invite",
+			respCode: 200,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email":  "me2@myemail.com",
+				"teamId": "123456",
+			},
+		},
+		// returns a 400 when body is not well formed
+		{
+			method:   "POST",
+			url:      "/send/team/invite",
+			respCode: 400,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email": "me2@myemail.com",
+			},
+		},
+		// returns a 409 when user is already a member
+		{
+			method:   "POST",
+			url:      "/send/team/invite",
+			respCode: 409,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email":  "me2@myemail.com",
+				"teamId": "teamAlreadyMember",
+			},
+		},
+		// returns a 200 when everything goes well to add an admin role
+		{
+			method:   "PUT",
+			url:      fmt.Sprintf("/send/team/role/%s", uid002),
+			respCode: 200,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"user":    uid002,
+				"teamId":  "teamAddAdminRole",
+				"isAdmin": "true",
+			},
+		},
+		// returns a 200 when everything goes well to delete a member
+		{
+			method:   "DELETE",
+			url:      fmt.Sprintf("/send/team/leave/%s", uid002),
+			respCode: 200,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email":  "me2@myemail.com",
+				"teamId": "teamAlreadyMember",
+			},
+		},
+		// returns a 400 when body is not well formed to delete a member
+		{
+			method:   "DELETE",
+			url:      fmt.Sprintf("/send/team/leave/%s", uid002),
+			respCode: 400,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email": "me2@myemail.com",
+			},
+		},
+		// returns a 400 when body is not well formed to delete a member
+		{
+			method:   "DELETE",
+			url:      fmt.Sprintf("/send/team/leave/%s", uid002),
+			respCode: 400,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"teamId": "teamAlreadyMember",
+			},
+		},
+	}
+
+	templatesPath, found := os.LookupEnv("TEMPLATE_PATH")
+	if found {
+		FAKE_CONFIG.I18nTemplatesPath = templatesPath
+	}
+	mockTemplates, _ = templates.New(FAKE_CONFIG.I18nTemplatesPath, mockLocalizer)
+
+	for idx, test := range tests {
+		var testRtr = initTestingTeamRouter()
+		var body = &bytes.Buffer{}
+		if len(test.body) != 0 {
+			json.NewEncoder(body).Encode(test.body)
+		}
+		request, _ := http.NewRequest(test.method, test.url, body)
+		if test.token != "" {
+			request.Header.Set(TP_SESSION_TOKEN, testing_token_uid1)
+		}
+		if test.customHeaders != nil {
+			for header, value := range test.customHeaders {
+				request.Header.Set(header, value)
+			}
+		}
+		response := httptest.NewRecorder()
+		testRtr.ServeHTTP(response, request)
+
+		if response.Code != test.respCode {
+			t.Fatalf("Test %d url: '%s'\nNon-expected status code %d (expected %d):\n\tbody: %v",
+				idx, test.url, response.Code, test.respCode, response.Body)
+		}
+		t.Logf("Test %d url: '%s'\nEexpected status code %d (expected %d):\n\tbody: %v",
+			idx, test.url, response.Code, test.respCode, response.Body)
+
+		if response.Body.Len() != 0 && len(test.response) != 0 {
+			// compare bodies by comparing the unmarshalled JSON results
+			var result = &testJSONObject{}
+
+			if err := json.NewDecoder(response.Body).Decode(result); err != nil {
+				t.Logf("Err decoding nonempty response body: [%v]\n [%v]\n", err, response.Body)
+				return
+			}
+
+			if cmp := result.deepCompare(&test.response); cmp != "" {
+				t.Fatalf("Test %d url: '%s'\n\t%s\n", idx, test.url, cmp)
+			}
+		}
+
+		if test.emailSubject != "" {
+			if emailSubjectSent := mockNotifier.GetLastEmailSubject(); emailSubjectSent != test.emailSubject {
+				t.Fatalf("Test %d url: '%s'\nNon-expected email subject %s (expected %s)",
+					idx, test.url, emailSubjectSent, test.emailSubject)
+			}
+		}
+	}
 }
 
 func initWrongBodies() []testJSONObject {
@@ -357,12 +592,17 @@ func TestSendTeamInvite_WrongBody(t *testing.T) {
 	sendTeamInvite("POST", "/send/team/invite", t)
 }
 
+func TestSendTeamInvite_NoTeam(t *testing.T) {
+
+	sendTeamInvite("POST", "/send/team/invite", t)
+}
+
 func TestUpdateTeamRole_WrongBody(t *testing.T) {
 
-	sendTeamInvite("POST", "/send/team/role", t)
+	sendTeamInvite("PUT", "/send/team/role/UID0000", t)
 }
 
 func TestDeleteTeamInvite_WrongBody(t *testing.T) {
 
-	sendTeamInvite("DELETE", "/send/team/leave", t)
+	sendTeamInvite("DELETE", "/send/team/leave/UID0000", t)
 }
