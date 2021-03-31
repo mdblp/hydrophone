@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/shoreline"
 	"github.com/tidepool-org/go-common/clients/status"
 	"github.com/tidepool-org/hydrophone/models"
@@ -24,8 +23,7 @@ const (
 type (
 	//Invite details for generating a new invite
 	inviteBody struct {
-		Email       string                    `json:"email"`
-		Permissions commonClients.Permissions `json:"permissions"`
+		Email string `json:"email"`
 	}
 )
 
@@ -453,7 +451,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 			return
 		}
 
-		if ib.Email == "" || ib.Permissions == nil {
+		if ib.Email == "" {
 			res.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -463,7 +461,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 			return
 		} else {
 			//None exist so lets create the invite
-			invite, _ := models.NewConfirmationWithContext(models.TypeCareteamInvite, models.TemplateNameCareteamInvite, invitorID, ib.Permissions)
+			invite, _ := models.NewConfirmation(models.TypeCareteamInvite, models.TemplateNameCareteamInvite, invitorID)
 
 			// if the invitee is already a Tidepool user, we can use his preferences
 			invite.Email = ib.Email

@@ -63,8 +63,7 @@ var (
 	/*
 	 * users permissons scenarios
 	 */
-	mock_NoPermsGatekeeper = commonClients.NewGatekeeperMock(commonClients.Permissions{"upload": commonClients.Permission{"userid": "other-id"}}, nil)
-	mock_uid1Shoreline     = newtestingShorelingMock(testing_uid1)
+	mock_uid1Shoreline = newtestingShorelingMock(testing_uid1)
 
 	responsableHydrophone = InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates)
 
