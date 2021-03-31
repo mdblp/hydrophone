@@ -69,8 +69,8 @@ const (
 	TypePasswordReset        Type = "password_reset"
 	TypePatientPasswordReset Type = "patient_password_reset"
 	TypePatientPasswordInfo  Type = "patient_password_info"
-	TypeCareteamInvite       Type = "careteam_invitation"
-	TypeMedicalTeamInvite    Type = "medicalteam_invitation"
+	TypeCareteamInvite       Type = "careteam_invitation"    // invite and share data to a caregiver
+	TypeMedicalTeamInvite    Type = "medicalteam_invitation" // invite an hcp to a medical team
 	TypeMedicalTeamDoAdmin   Type = "medicalteam_do_admin"
 	TypeMedicalTeamRemove    Type = "medicalteam_remove"
 	TypeSignUp               Type = "signup_confirmation"
