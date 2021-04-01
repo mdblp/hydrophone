@@ -82,6 +82,9 @@ func (d *MockStoreClient) FindConfirmation(ctx context.Context, notification *mo
 	if notification.ShortKey == "11111111" {
 		return nil, nil
 	}
+	if notification.Key == "key.to.be.dismissed" {
+		notification.Status = "Pending"
+	}
 	return notification, nil
 }
 

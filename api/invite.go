@@ -147,15 +147,15 @@ func (a *Api) getUserLanguage(userid string, res http.ResponseWriter) string {
 	return language
 }
 
-func (a *Api) isTeamAdmin(userid string, team store.Team) (bool, error) {
+func (a *Api) isTeamAdmin(userid string, team store.Team) bool {
 	for j := 0; j < len(team.Members); j++ {
 		if team.Members[j].UserID == userid {
 			if team.Members[j].Role == "admin" {
-				return true, nil
+				return true
 			}
 		}
 	}
-	return false, nil
+	return false
 }
 
 // @Summary Get list of received invitations for logged-in user
@@ -196,13 +196,17 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 		status := []models.Status{
 			models.StatusPending,
 		}
-		//find all oustanding invites were this user is the invite//
+		//find all outstanding invites were this user is the invite//
 		found, err := a.Store.FindConfirmations(
 			req.Context(),
 			&models.Confirmation{Email: invitedUsr.Emails[0]},
 			status,
 			types,
 		)
+		// get the team information
+		// TODO add below fields under target
+		// teamId
+		// Name
 
 		//log.Printf("GetReceivedInvitations: found [%d] pending invite(s)", len(found))
 		if err != nil {
@@ -626,7 +630,7 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 }
 
 // @Summary Dismiss a team invite
-// @Description Invitee can dismiss a team invite
+// @Description Invitee or Admin can dismiss a team invite
 // @ID hydrophone-api-dismissTeamInvite
 // @Accept  json
 // @Produce  json
@@ -638,7 +642,7 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 // @Failure 403 {object} status.Status "Authorization token is invalid"
 // @Failure 404 {object} status.Status "invitation not found"
 // @Failure 500 {object} status.Status "Error (internal) while processing the data"
-// @Router /dismiss/team-invite/{teamid} [put]
+// @Router /dismiss/team/invite/{teamid} [put]
 // @security TidepoolAuth
 func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	token := a.token(res, req)
@@ -647,7 +651,9 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	}
 
 	teamID := vars["teamid"]
-	inviteeID := token.UserID
+	// either the token is the inviteeID or the admin ID
+	// let's find out what type of user it is later on
+	userID := token.UserID
 
 	if teamID == "" {
 		res.WriteHeader(http.StatusBadRequest)
@@ -669,15 +675,14 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	}
 
 	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	// by default you can just act on your records
+	dismiss.UserId = userID
+	dismiss.TeamID = teamID
 
 	if isAdmin, _, err := a.getTeamForUser(tokenValue, teamID, token.UserID, res); isAdmin && err == nil {
 		// as team admin you can act on behalf of members
 		// for any invitation for the given team
-		dismiss.TeamID = teamID
-	} else if !token.IsServer {
-		// non server tokens, set the userid and teamId
-		dismiss.TeamID = teamID
-		dismiss.UserId = inviteeID
+		dismiss.UserId = ""
 	}
 
 	if conf, err := a.findExistingConfirmation(req.Context(), dismiss, res); err != nil {
@@ -689,7 +694,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 		if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
 
 			var member = store.Member{
-				UserID:           inviteeID,
+				UserID:           userID,
 				TeamID:           teamID,
 				InvitationStatus: "rejected",
 			}
@@ -885,6 +890,8 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 
 	auth, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
 	if !auth {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_NOT_ADMIN)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
 
@@ -1030,7 +1037,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	if admin, err := a.isTeamAdmin(inviteeID, team); admin == (memberRole == "admin") || err != nil {
+	if admin := a.isTeamAdmin(inviteeID, team); admin == (memberRole == "admin") {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ROLE_ALRDY_ASSIGNED)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
@@ -1154,7 +1161,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		return
 	}
 
-	if admin, err := a.isTeamAdmin(invitorID, team); !admin || err != nil {
+	if admin := a.isTeamAdmin(invitorID, team); !admin {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_UNAUTHORIZED)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return

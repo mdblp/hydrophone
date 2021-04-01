@@ -30,7 +30,7 @@ func initTestingRouterNoPerms() *mux.Router {
 	return testRtr
 }
 
-func initTestingTeamRouter() *mux.Router {
+func initTestingTeamRouter(returnNone bool) *mux.Router {
 	//fresh each time
 	var testRtr = mux.NewRouter()
 
@@ -62,24 +62,11 @@ func initTestingTeamRouter() *mux.Router {
 			InvitationStatus: "accepted",
 		},
 		{
-			UserID:           uid002,
+			UserID:           testing_uid3,
 			TeamID:           "teamAddAdminRole",
 			InvitationStatus: "accepted",
 		},
 	}
-	// teams2 := []store.Team{
-	// 	{
-	// 		Name:        "Led Zep",
-	// 		Description: "Fake Team",
-	// 		Members:     members2,
-	// 		ID:          teamId2,
-	// 	},
-	// 	{
-	// 		Name:        "Black Sab",
-	// 		Description: "Fake Team",
-	// 	},
-	// }
-	// noMembers := []store.Member{}
 	team123456 := store.Team{
 		Name:        "Led Zep",
 		Description: "Fake Team",
@@ -104,22 +91,68 @@ func initTestingTeamRouter() *mux.Router {
 		Members:     membersAddAdminRole,
 		ID:          "teamDeleteMember",
 	}
+	membersDismissInvite := []store.Member{
+		{
+			UserID:           testing_uid3,
+			TeamID:           "teamDismissInvite",
+			Role:             "admin",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamDismissInvite",
+			InvitationStatus: "pending",
+		},
+	}
+	membersDismissInvite_uid1 := store.Member{
+		UserID:           testing_uid1,
+		TeamID:           "teamDismissInvite",
+		InvitationStatus: "pending",
+	}
+	teamDismissInvite := store.Team{
+		Name:        "team dismiss invite",
+		Description: "Fake Team",
+		Members:     membersDismissInvite,
+		ID:          "teamDismissInvite",
+	}
+	membersDismissInviteAsAdmin := []store.Member{
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamDismissInvite",
+			Role:             "admin",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           "UIDpending",
+			TeamID:           "teamDismissInvite",
+			InvitationStatus: "pending",
+		},
+	}
+	teamDismissInviteAsAdmin := store.Team{
+		Name:        "team dismiss invite",
+		Description: "Fake Team",
+		Members:     membersDismissInviteAsAdmin,
+		ID:          "teamDismissInviteAsAdmin",
+	}
 
-	memberUID002 := store.Member{
+	member_uid3 := store.Member{
 		TeamID:           "1",
 		InvitationStatus: "pending",
 	}
 
 	mockPerms.SetMockNextCall(testing_token_uid1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &team123456, nil)
-	mockPerms.SetMockNextCall(testing_token_uid1+"UID002", &memberUID002, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid3, &member_uid3, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamAddAdminRole", &teamAddAdminRole, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamAlreadyMember", &teamAlreadyMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
 
 	hydrophone := InitApi(
 		FAKE_CONFIG,
-		mockStoreEmpty,
+		mockStore,
 		mockNotifier,
 		mock_uid1Shoreline,
 		mockPerms,
@@ -127,18 +160,33 @@ func initTestingTeamRouter() *mux.Router {
 		mockPortal,
 		mockTemplates,
 	)
+	if returnNone {
+		hydrophone = InitApi(
+			FAKE_CONFIG,
+			mockStoreEmpty,
+			mockNotifier,
+			mock_uid1Shoreline,
+			mockPerms,
+			mockSeagull,
+			mockPortal,
+			mockTemplates,
+		)
+
+	}
 	hydrophone.SetHandlers("", testRtr)
 	return testRtr
 }
 
-func TestTeam(t *testing.T) {
+func initTests() []toTest {
+
 	tests := []toTest{
 		// returns a 200 when everything goes well
 		{
-			method:   "POST",
-			url:      "/send/team/invite",
-			respCode: 200,
-			token:    testing_token_uid1,
+			method:     "POST",
+			returnNone: true,
+			url:        "/send/team/invite",
+			respCode:   200,
+			token:      testing_token_uid1,
 			body: testJSONObject{
 				"email":  "me2@myemail.com",
 				"teamId": "123456",
@@ -168,11 +216,11 @@ func TestTeam(t *testing.T) {
 		// returns a 200 when everything goes well to add an admin role
 		{
 			method:   "PUT",
-			url:      fmt.Sprintf("/send/team/role/%s", uid002),
+			url:      fmt.Sprintf("/send/team/role/%s", testing_uid3),
 			respCode: 200,
 			token:    testing_token_uid1,
 			body: testJSONObject{
-				"user":    uid002,
+				"user":    testing_uid3,
 				"teamId":  "teamAddAdminRole",
 				"isAdmin": "true",
 			},
@@ -180,7 +228,7 @@ func TestTeam(t *testing.T) {
 		// returns a 200 when everything goes well to delete a member
 		{
 			method:   "DELETE",
-			url:      fmt.Sprintf("/send/team/leave/%s", uid002),
+			url:      fmt.Sprintf("/send/team/leave/%s", testing_uid3),
 			respCode: 200,
 			token:    testing_token_uid1,
 			body: testJSONObject{
@@ -191,7 +239,7 @@ func TestTeam(t *testing.T) {
 		// returns a 400 when body is not well formed to delete a member
 		{
 			method:   "DELETE",
-			url:      fmt.Sprintf("/send/team/leave/%s", uid002),
+			url:      fmt.Sprintf("/send/team/leave/%s", testing_uid3),
 			respCode: 400,
 			token:    testing_token_uid1,
 			body: testJSONObject{
@@ -201,15 +249,52 @@ func TestTeam(t *testing.T) {
 		// returns a 400 when body is not well formed to delete a member
 		{
 			method:   "DELETE",
-			url:      fmt.Sprintf("/send/team/leave/%s", uid002),
+			url:      fmt.Sprintf("/send/team/leave/%s", testing_uid3),
 			respCode: 400,
 			token:    testing_token_uid1,
 			body: testJSONObject{
 				"teamId": "teamAlreadyMember",
 			},
 		},
+		// returns a 200 when dismiss a team invite for yourself
+		{
+			method:     "PUT",
+			returnNone: false,
+			url:        fmt.Sprintf("/dismiss/team/invite/%s", "teamDismissInvite"),
+			respCode:   200,
+			token:      testing_token_uid1,
+			body: testJSONObject{
+				"key": "key.to.be.dismissed",
+			},
+		},
+		// returns a 200 when dismiss a team invite as Admin
+		{
+			method:     "PUT",
+			returnNone: false,
+			url:        fmt.Sprintf("/dismiss/team/invite/%s", "teamDismissInviteAsAdmin"),
+			respCode:   200,
+			token:      testing_token_uid1,
+			body: testJSONObject{
+				"key": "key.to.be.dismissed",
+			},
+		},
+		// returns a 200 when dismiss a team invite as Admin
+		{
+			method:     "PUT",
+			returnNone: false,
+			url:        fmt.Sprintf("/dismiss/team/invite/%s", "nonExistingTeam"),
+			respCode:   400,
+			token:      testing_token_uid1,
+			body: testJSONObject{
+				"key": "key.to.be.dismissed",
+			},
+		},
 	}
+	return tests
+}
 
+func TestTeam(t *testing.T) {
+	tests := initTests()
 	templatesPath, found := os.LookupEnv("TEMPLATE_PATH")
 	if found {
 		FAKE_CONFIG.I18nTemplatesPath = templatesPath
@@ -217,7 +302,7 @@ func TestTeam(t *testing.T) {
 	mockTemplates, _ = templates.New(FAKE_CONFIG.I18nTemplatesPath, mockLocalizer)
 
 	for idx, test := range tests {
-		var testRtr = initTestingTeamRouter()
+		var testRtr = initTestingTeamRouter(test.returnNone)
 		var body = &bytes.Buffer{}
 		if len(test.body) != 0 {
 			json.NewEncoder(body).Encode(test.body)
@@ -303,7 +388,6 @@ func sendTeamInvite(method, path string, t *testing.T) {
 			t.Fail()
 		}
 	}
-
 }
 
 func TestSendInvite_NoPerms(t *testing.T) {

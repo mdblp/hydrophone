@@ -172,8 +172,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 		varsHandler(a.DismissInvite)).Methods("PUT")
 	dismiss.Handle("/signup/{userid}",
 		varsHandler(a.dismissSignUp)).Methods("PUT")
-	// PUT /confirm/dismiss/team-invite/{teamid}
-	dismiss.Handle("/team-invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
+	// PUT /confirm/dismiss/team/invite/{teamid}
+	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
 
 	// PUT /confirm/:userid/invited/:invited_address
 	// PUT /confirm/signup/:userid
@@ -495,10 +495,6 @@ func (a *Api) getTeamForUser(token, teamID, userID string, res http.ResponseWrit
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return auth, store.Team{}, err
 	}
-	if auth, err = a.isTeamAdmin(userID, *team); !auth || err != nil {
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return auth, *team, err
-	}
+	auth = a.isTeamAdmin(userID, *team)
 	return auth, *team, nil
 }
