@@ -63,6 +63,12 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			TeamID:           "teamAddAdminRole",
 			InvitationStatus: "accepted",
 		},
+		{
+			UserID:           testing_uid4,
+			TeamID:           "teamAlreadyMember",
+			Role:             "patient",
+			InvitationStatus: "accepted",
+		},
 	}
 	team123456 := store.Team{
 		Name:        "Led Zep",
@@ -137,7 +143,14 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		InvitationStatus: "pending",
 	}
 
-	mockPerms.SetMockNextCall(token1, teams1, nil)
+	member_uid4 := store.Member{
+		UserID:           testing_uid4,
+		TeamID:           "123456",
+		Role:             "patient",
+		InvitationStatus: "pending",
+	}
+
+    mockPerms.SetMockNextCall(token1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &team123456, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid3, &member_uid3, nil)
@@ -147,6 +160,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid4, &member_uid4, nil)
 
 	mockSeagull.SetMockNextCollectionCall(testing_uid3+"preferences", `{"Something":"anit no thing"}`, nil)
 
@@ -287,6 +301,71 @@ func initTests() []toTest {
 			token:      testing_token_uid1,
 			body: testJSONObject{
 				"key": "key.to.be.dismissed",
+			},
+		},
+		// returns a 200 when everything goes well
+		{
+			method:     "POST",
+			returnNone: true,
+			url:        "/send/team/invite/patient",
+			respCode:   200,
+			token:      testing_token_uid1,
+			body: testJSONObject{
+				"email":  "patient.team@myemail.com",
+				"teamId": "123456",
+			},
+		},
+		// returns a 400 when body is not well formed
+		{
+			method:   "POST",
+			url:      "/send/team/invite/patient",
+			respCode: 400,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email": "patient.team@myemail.com",
+			},
+		},
+		// returns a 400 when body is not well formed
+		{
+			method:   "POST",
+			url:      "/send/team/invite/patient",
+			respCode: 400,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"teamId": "123456",
+			},
+		},
+		// returns a 409 when user is already a member
+		{
+			method:     "POST",
+			returnNone: true,
+			url:        "/send/team/invite/patient",
+			respCode:   409,
+			token:      testing_token_uid1,
+			body: testJSONObject{
+				"email":  "patient.team@myemail.com",
+				"teamId": "teamAlreadyMember",
+			},
+			response: testJSONObject{
+				"code":   float64(409),
+				"error":  float64(1001),
+				"reason": statusExistingMemberMessage,
+			},
+		},
+		// returns a 409 when there is already an invite
+		{
+			method:   "POST",
+			url:      "/send/team/invite/patient",
+			respCode: 409,
+			token:    testing_token_uid1,
+			body: testJSONObject{
+				"email":  "patient.team@myemail.com",
+				"teamId": "teamAlreadyMember",
+			},
+			response: testJSONObject{
+				"code":   float64(409),
+				"error":  float64(1001),
+				"reason": statusExistingInviteMessage,
 			},
 		},
 	}
