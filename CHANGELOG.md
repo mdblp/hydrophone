@@ -6,6 +6,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 ## Unreleased
 ### Changed
 - YLP-559 emails which are part of URLs are URL encoded
+- YLP-516 invitations to join a team
 ### Fixed
 - YLP-532 Reset password demand can be used several times
 
@@ -17,7 +18,8 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Changed
 - YLP-472 Switch permission client from gatekeeper to crew
 - YLP-447 Upgrade go-common to 0.6.2 version
-
+- YLP-516 Manage invitations to join a team (invite, add admin role, delete member)
+- YLP-444 Update hydrophone emails style
 ## 1.4.0 - 2021-01-11
 ### Changed
 - Add Italian and Spanish locales

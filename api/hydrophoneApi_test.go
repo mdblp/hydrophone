@@ -31,6 +31,8 @@ const (
 
 	testing_token_uid2 = "a.fake.token.for.uid.2"
 	testing_uid2       = "UID999"
+
+	testing_uid3 = "UID002"
 )
 
 var (
@@ -64,6 +66,7 @@ var (
 	 * users permissons scenarios
 	 */
 	mock_uid1Shoreline = newtestingShorelingMock(testing_uid1)
+	mock_uid2Shoreline     = newtestingShorelingMock(testing_uid2)
 
 	responsableHydrophone = InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates)
 
@@ -87,6 +90,9 @@ func (m *testingShorelingMock) Signup(username, password, email string) (*shorel
 }
 func (m *testingShorelingMock) TokenProvide() string { return testing_token }
 func (m *testingShorelingMock) GetUser(userID, token string) (*shoreline.UserData, error) {
+	if userID == "me2@myemail.com" {
+		return &shoreline.UserData{UserID: testing_uid3, Emails: []string{userID}, Username: userID}, nil
+	}
 	return &shoreline.UserData{UserID: m.userid, Emails: []string{m.userid + "@email.org"}, Username: m.userid + "@email.org"}, nil
 }
 func (m *testingShorelingMock) UpdateUser(userID string, userUpdate shoreline.UserUpdate, token string) error {
