@@ -135,6 +135,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
 	// POST /confirm/send/team/invite
 	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
+	// POST /confirm/send/team/invite/patient
+	send.Handle("/team/invite/patient", varsHandler(a.SendTeamInvitePatient)).Methods("POST")
 	// POST /confirm/send/team/role/:userid - add or remove admin role to userid
 	send.Handle("/team/role/{userid}", varsHandler(a.UpdateTeamRole)).Methods("PUT")
 	// DELETE /confirm/team/leave/:userid - delete member
