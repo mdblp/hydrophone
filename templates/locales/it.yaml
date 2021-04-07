@@ -9,7 +9,7 @@ FooterGetSupport: "SUPPORTO"
 NoAccountSubject: "Indirizzo e-mail sconosciuto"
 NoAccountHeadline: "Hai richiesto di reimpostare la password YourLoops, ma non è stato ancora creato un account con questo indirizzo e-mail."
 NoAccountBody: "Se utilizzi già un dispositivo Diabeloop, accedi con l’e-mail e la password immesse durante la configurazione di DBL.\nSe sei il medico curante e desideri creare un account, fai clic sul link qui sotto.\n"
-NoAccountSignUp: "Crea account professionale"
+NoAccountSignUp: "Crea account"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "Reimpostazione password"
