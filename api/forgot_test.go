@@ -206,11 +206,16 @@ func TestForgotResponds(t *testing.T) {
 		//fresh each time
 		var testRtr = mux.NewRouter()
 
+		mockSeagull.SetMockNextCollectionCall("me@myemail.com"+"preferences", `{"Something":"anit no thing"}`, nil)
+		mockSeagull.SetMockNextCollectionCall("patient@myemail.com"+"preferences", `{"Something":"anit no thing"}`, nil)
+		mockSeagull.SetMockNextCollectionCall("clinic@myemail.com"+"preferences", `{"Something":"anit no thing"}`, nil)
+		mockSeagull.SetMockNextCollectionCall("expires@myemail.com"+"preferences", `{"Something":"anit no thing"}`, nil)
+
 		if test.returnNone {
-			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockGatekeeper, mockSeagull, mockPortal, mockTemplates)
+			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates)
 			hydrophoneFindsNothing.SetHandlers("", testRtr)
 		} else {
-			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockGatekeeper, mockSeagull, mockPortal, mockTemplates)
+			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates)
 			hydrophone.SetHandlers("", testRtr)
 		}
 

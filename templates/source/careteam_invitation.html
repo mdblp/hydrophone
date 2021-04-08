@@ -43,6 +43,9 @@
                   <p class="content-width">
                       {{.CareTeamInviteBody}}
                   </p>
+                  <p class="content-width">
+                    {{.CareTeamInviteBody2}}
+                </p>
                 </td>
               </tr>
               <tr>
@@ -52,7 +55,7 @@
                   <tr>
                   <td>
                   <![endif]-->
-                  <a class="btn primary" href="{{ .WebURL }}/{{ .WebPath }}?inviteEmail={{ .Email }}">
+                  <a class="btn primary" href="{{ .WebURL }}/{{ .WebPath }}?inviteEmail={{ .EncodedEmail }}">
                     {{.CareTeamInviteJoin}}
                   </a>
                   <!--[if (gte mso 9)|(IE)]>

@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/sh -eu
 # Generate OpenAPI documentation
 GOPATH=${GOPATH:-~/go}
 echo "Using GOPATH: ${GOPATH}"
@@ -11,10 +11,14 @@ fi
 $GOPATH/bin/swag --version
 $GOPATH/bin/swag init --parseDependency --generalInfo hydrophone.go --output docs
 
+# Validate OpenAPI documentation
+pip install openapi-spec-validator prance click 
+prance validate --backend=openapi-spec-validator  docs/swagger.json 
+
 # When tag is present, openapi doc is renamed before being deployed to S3
 # It is stored in a new directory that will be used as source by the Travis deploy step
 if [ -n "${TRAVIS_TAG:-}" ]; then
-    APP="${TRAVIS_REPO_SLUG#*/}"
+    APP="hydrophone"
     APP_TAG="${APP}-${TRAVIS_TAG/dblp./}"
     mkdir docs/openapi
     mv docs/swagger.json docs/openapi/${APP_TAG}-swagger.json
@@ -24,4 +28,3 @@ if [ -n "${TRAVIS_TAG:-}" ]; then
       cp docs/openapi/${APP_TAG}-swagger.json docs/openapi/${APP}-latest-swagger.json
     fi
 fi
-

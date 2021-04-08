@@ -1,5 +1,5 @@
 // @title Hydrophone API
-// @version 1.3.0
+// @version 1.5.0
 // @description The purpose of this API is to send notifications to users: forgotten passwords, initial signup, invitations and more
 // @license.name BSD 2-Clause "Simplified" License
 // @host api.android-qa.your-loops.dev
@@ -29,6 +29,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	crewClient "github.com/mdblp/crew/client"
 	common "github.com/tidepool-org/go-common"
 	"github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/disc"
@@ -124,16 +125,8 @@ func main() {
 
 	logger.Print("Shoreline client started")
 
-	gatekeeper := clients.NewGatekeeperClientBuilder().
-		WithHostGetter(config.GatekeeperConfig.ToHostGetter(hakkenClient)).
-		WithHttpClient(httpClient).
-		WithTokenProvider(shoreline).
-		Build()
-
-	seagull := clients.NewSeagullClientBuilder().
-		WithHostGetter(config.SeagullConfig.ToHostGetter(hakkenClient)).
-		WithHttpClient(httpClient).
-		Build()
+	permsClient := crewClient.NewCrewApiClientFromEnv(httpClient)
+	seagull := clients.NewSeagullClientFromEnv(httpClient)
 
 	portal := portal.NewPortalClientBuilder().
 		WithHostGetter(config.PortalConfig.ToHostGetter(hakkenClient)).
@@ -187,7 +180,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, gatekeeper, seagull, portal, emailTemplates)
+	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates)
 	api.SetHandlers("", rtr)
 
 	/*

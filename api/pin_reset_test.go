@@ -139,13 +139,14 @@ func TestPinResetResponds(t *testing.T) {
 		if pinResetTest.patientConfig != nil {
 			mockPortal.SetMockPatientConfig(pinResetTest.test.token, pinResetTest.patientConfig, nil)
 		}
+		mockSeagull.SetMockNextCollectionCall(testing_uid1+"preferences", `{"Something":"anit no thing"}`, nil)
 
 		//testing when there is nothing to return from the store
 		if pinResetTest.test.returnNone {
-			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockGatekeeper, mockSeagull, mockPortal, mockTemplates)
+			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates)
 			hydrophoneFindsNothing.SetHandlers("", testRtr)
 		} else {
-			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockGatekeeper, mockSeagull, mockPortal, mockTemplates)
+			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates)
 			hydrophone.SetHandlers("", testRtr)
 		}
 
