@@ -150,7 +150,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		InvitationStatus: "pending",
 	}
 
-    mockPerms.SetMockNextCall(token1, teams1, nil)
+	mockPerms.SetMockNextCall(token1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &team123456, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid3, &member_uid3, nil)
@@ -162,7 +162,11 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid4, &member_uid4, nil)
 
+	mockSeagull.SetMockNextCollectionCall(testing_uid1+"profile", `{"Something":"anit no thing"}`, nil)
+	mockSeagull.SetMockNextCollectionCall("patient.team@myemail.com"+"profile", `{"Something":"anit no thing"}`, nil)
+	mockSeagull.SetMockNextCollectionCall(testing_uid1+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid3+"preferences", `{"Something":"anit no thing"}`, nil)
+	mockSeagull.SetMockNextCollectionCall(testing_uid4+"preferences", `{"Something":"anit no thing"}`, nil)
 
 	hydrophone := InitApi(
 		FAKE_CONFIG,
@@ -234,9 +238,9 @@ func initTests() []toTest {
 			respCode: 200,
 			token:    testing_token_uid1,
 			body: testJSONObject{
-				"user":    testing_uid3,
-				"teamId":  "teamAddAdminRole",
-				"isAdmin": "true",
+				"user":   testing_uid3,
+				"teamId": "teamAddAdminRole",
+				"role":   "admin",
 			},
 		},
 		// returns a 200 when everything goes well to delete a member
@@ -307,44 +311,48 @@ func initTests() []toTest {
 		{
 			method:     "POST",
 			returnNone: true,
-			url:        "/send/team/invite/patient",
+			url:        "/send/team/invite",
 			respCode:   200,
 			token:      testing_token_uid1,
 			body: testJSONObject{
 				"email":  "patient.team@myemail.com",
 				"teamId": "123456",
+				"role":   "patient",
 			},
 		},
 		// returns a 400 when body is not well formed
 		{
 			method:   "POST",
-			url:      "/send/team/invite/patient",
+			url:      "/send/team/invite",
 			respCode: 400,
 			token:    testing_token_uid1,
 			body: testJSONObject{
 				"email": "patient.team@myemail.com",
+				"role":  "patient",
 			},
 		},
 		// returns a 400 when body is not well formed
 		{
 			method:   "POST",
-			url:      "/send/team/invite/patient",
+			url:      "/send/team/invite",
 			respCode: 400,
 			token:    testing_token_uid1,
 			body: testJSONObject{
 				"teamId": "123456",
+				"role":   "patient",
 			},
 		},
 		// returns a 409 when user is already a member
 		{
 			method:     "POST",
 			returnNone: true,
-			url:        "/send/team/invite/patient",
+			url:        "/send/team/invite",
 			respCode:   409,
 			token:      testing_token_uid1,
 			body: testJSONObject{
 				"email":  "patient.team@myemail.com",
 				"teamId": "teamAlreadyMember",
+				"role":   "patient",
 			},
 			response: testJSONObject{
 				"code":   float64(409),
@@ -355,12 +363,13 @@ func initTests() []toTest {
 		// returns a 409 when there is already an invite
 		{
 			method:   "POST",
-			url:      "/send/team/invite/patient",
+			url:      "/send/team/invite",
 			respCode: 409,
 			token:    testing_token_uid1,
 			body: testJSONObject{
 				"email":  "patient.team@myemail.com",
 				"teamId": "teamAlreadyMember",
+				"role":   "patient",
 			},
 			response: testJSONObject{
 				"code":   float64(409),
@@ -402,7 +411,7 @@ func TestTeam(t *testing.T) {
 			t.Fatalf("Test %d url: '%s'\nNon-expected status code %d (expected %d):\n\tbody: %v",
 				idx, test.url, response.Code, test.respCode, response.Body)
 		}
-		t.Logf("Test %d url: '%s'\nEexpected status code %d (expected %d):\n\tbody: %v",
+		t.Logf("Test %d url: '%s'\nExpected status code %d (expected %d):\n\tbody: %v",
 			idx, test.url, response.Code, test.respCode, response.Body)
 
 		if response.Body.Len() != 0 && len(test.response) != 0 {

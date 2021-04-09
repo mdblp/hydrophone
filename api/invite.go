@@ -26,10 +26,10 @@ const (
 type (
 	//Invite details for generating a new invite
 	inviteBody struct {
-		Email   string `json:"email"`
-		User    string `json:"user"`
-		TeamID  string `json:"teamId"`
-		IsAdmin string `json:"isAdmin"`
+		Email  string `json:"email"`
+		User   string `json:"user"`
+		TeamID string `json:"teamId"`
+		Role   string `json:"role"`
 	}
 )
 
@@ -838,7 +838,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 	return
 }
 
-// @Summary Send invitation to a hcp joining a medical team
+// @Summary Send invitation to a hcp or patient for joining a medical team
 // @Description  create a notification for the invitee and send him an email with the invitation
 // @ID hydrophone-api-SendTeamInvite
 // @Accept  json
@@ -882,51 +882,68 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
-	if ib.IsAdmin == "" {
-		ib.IsAdmin = "false"
+	managePatients := false
+	switch strings.ToLower(ib.Role) {
+	case "admin":
+		ib.Role = "admin"
+	case "patient":
+		ib.Role = "patient"
+		managePatients = true
+	default:
+		ib.Role = "member"
 	}
 
 	auth, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
-	if !auth {
+
+	// only for team management
+	if !auth && !managePatients {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_NOT_ADMIN)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
 
-	var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
 	// check duplicate invite and if user is already a member
-	if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, sessionToken, team, models.TypeMedicalTeamInvite, res); existingInvite {
+	if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, tokenValue, team, models.TypeMedicalTeamInvite, res); existingInvite {
 		return
 	} else {
-		//None exist so lets create the invite
-		invite, _ := models.NewConfirmation(
-			models.TypeMedicalTeamInvite,
-			models.TemplateNameMedicalteamInvite,
-			invitorID)
+		// lets create the invite depending o type of invited member
+		var invite *models.Confirmation
+		if managePatients {
+			invite, _ = models.NewConfirmation(
+				models.TypeMedicalTeamPatientInvite,
+				models.TemplateNameMedicalteamPatientInvite,
+				invitorID)
+		} else {
+			invite, _ = models.NewConfirmation(
+				models.TypeMedicalTeamInvite,
+				models.TemplateNameMedicalteamInvite,
+				invitorID)
+		}
 
 		// if the invitee is already a user, we can use his preferences
 		invite.TeamID = ib.TeamID
 		invite.Email = ib.Email
-		invite.IsAdmin = ib.IsAdmin
+		invite.Role = ib.Role
 		var member = store.Member{
-			// UserID:           invite.UserId,
 			TeamID:           ib.TeamID,
-			Role:             ib.IsAdmin,
+			Role:             ib.Role,
 			InvitationStatus: "pending",
-			// To be Added
-			// Email: ib.Email,
 		}
 		if invitedUsr != nil {
 			invite.UserId = invitedUsr.UserID
 			member.UserID = invitedUsr.UserID
 			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 		}
-
-		if _, err := a.perms.AddTeamMember(tokenValue, member); err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
+		if !managePatients {
+			if _, err := a.perms.AddTeamMember(tokenValue, member); err != nil {
+				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
+				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+				return
+			}
 		}
+		// TODO add the patient to the team
+		// else {
+		// }
 
 		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
 			a.logAudit(req, "invite created")
@@ -934,16 +951,16 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			if err := a.addProfile(invite); err != nil {
 				log.Println("SendInvite: ", err.Error())
 			} else {
-				var webPath = "hcp/signup"
-
-				// if invitee is already a user (ie already has an account), he won't go to signup but login instead
-				if invite.UserId != "" {
-					webPath = ""
+				// TODO add parameter for /notifications -> /<role>/notifications
+				var webPath = ""
+				if !managePatients && invite.UserId == "" {
+					webPath = "hcp/signup"
 				}
 
 				emailContent := map[string]interface{}{
 					"MedicalteamName":          team.Name,
 					"MedicalteamAddress":       team.Address,
+					"MedicalteamPhone":         team.Phone,
 					"MedicalteamIentification": team.Code,
 					"CreatorName":              invite.Creator.Profile.FullName,
 					"Email":                    invite.Email,
@@ -954,119 +971,6 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 					a.logAudit(req, "invite sent")
 				} else {
 					a.logAudit(req, "invite failed to be sent")
-					log.Print("Something happened generating an invite email")
-					res.WriteHeader(http.StatusUnprocessableEntity)
-					return
-				}
-			}
-
-			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
-			return
-		}
-	}
-
-}
-
-// @Summary Send invitation to a paatient for joining a medical team
-// @Description  create a notification for the invitee and send him an email with the invitation
-// @ID hydrophone-api-SendTeamInvitePatient
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} models.Confirmation "invite details"
-// @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
-// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
-// @Failure 403 {object} status.Status "Authorization token is invalid"
-// @Failure 409 {object} status.Status "user already has a pending or declined invite OR user is already part of the team"
-// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
-// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
-// @Router /confirm/send/team/invite/patient [post]
-// @security TidepoolAuth
-func (a *Api) SendTeamInvitePatient(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
-	// In case the invitee is a known user, the language will be overriden in a later step
-	var inviteeLanguage = "en"
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
-	token := a.token(res, req)
-	if token == nil {
-		return
-	}
-
-	invitorID := token.UserID
-	if invitorID == "" {
-		res.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	defer req.Body.Close()
-	var ib = &inviteBody{}
-	if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
-		log.Printf("SendInvite: error decoding invite to detail %v\n", err)
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return
-	}
-
-	if ib.Email == "" || ib.TeamID == "" {
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return
-	}
-	ib.IsAdmin = "false"
-
-	_, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
-
-	var sessionToken = req.Header.Get(TP_SESSION_TOKEN)
-	// check duplicate invite and if user is already a member
-	if existingInvite, invitedUsr := a.checkForDuplicateTeamInvite(req.Context(), ib.Email, invitorID, sessionToken, team, models.TypeMedicalTeamPatientInvite, res); existingInvite {
-		return
-	} else {
-		//None exist so lets create the invite
-		invite, _ := models.NewConfirmationWithContext(
-			models.TypeMedicalTeamPatientInvite,
-			models.TemplateNameMedicalteamPatientInvite,
-			invitorID,
-			ib.Permissions)
-
-		// if the invitee is already a user, we can use his preferences
-		invite.TeamID = ib.TeamID
-		invite.Email = ib.Email
-		var member = store.Member{
-			TeamID:           ib.TeamID,
-			Role:             "patient",
-			InvitationStatus: "pending",
-		}
-		if invitedUsr != nil {
-			invite.UserId = invitedUsr.UserID
-			member.UserID = invitedUsr.UserID
-			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-		}
-
-		if _, err := a.perms.AddTeamMember(tokenValue, member); err != nil {
-			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
-			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-			return
-		}
-
-		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
-			a.logAudit(req, "invite created")
-
-			if err := a.addProfile(invite); err != nil {
-				log.Println("SendInvite: ", err.Error())
-			} else {
-				emailContent := map[string]interface{}{
-					"MedicalteamName":          team.Name,
-					"MedicalteamAddress":       team.Address,
-					"MedicalteamPhone":         team.Phone,
-					"MedicalteamIentification": team.Code,
-					"CreatorName":              invite.Creator.Profile.FullName,
-					"Email":                    invite.Email,
-					"WebPath":                  "",
-				}
-
-				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
-					a.logAudit(req, "invite sent to %s for team %s", invite.Email, team.Name)
-				} else {
-					a.logAudit(req, "invite failed to be sent to %s for team %s", invite.Email, team.Name)
 					log.Print("Something happened generating an invite email")
 					res.WriteHeader(http.StatusUnprocessableEntity)
 					return
@@ -1130,9 +1034,8 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
-	memberRole := ""
-	if strings.ToLower(ib.IsAdmin) == "true" {
-		memberRole = "admin"
+	if strings.ToLower(ib.Role) == "admin" {
+		ib.Role = "admin"
 	}
 
 	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
@@ -1147,7 +1050,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	if admin := a.isTeamAdmin(inviteeID, team); admin == (memberRole == "admin") {
+	if admin := a.isTeamAdmin(inviteeID, team); admin == (ib.Role == "admin") {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, STATUS_ROLE_ALRDY_ASSIGNED)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
@@ -1155,7 +1058,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 	var member = store.Member{
 		UserID: inviteeID,
 		TeamID: ib.TeamID,
-		Role:   memberRole,
+		Role:   ib.Role,
 	}
 	if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
@@ -1163,7 +1066,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 	// Send the notification and email when adding admin role
-	if memberRole == "admin" {
+	if ib.Role == "admin" {
 		invite, _ := models.NewConfirmation(
 			models.TypeMedicalTeamDoAdmin,
 			models.TemplateNameMedicalteamDoAdmin,
@@ -1172,7 +1075,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		// if the invitee is already a user, we can use his preferences
 		invite.TeamID = ib.TeamID
 		invite.Email = ib.Email
-		invite.IsAdmin = ib.IsAdmin
+		invite.Role = ib.Role
 		invite.Status = models.StatusCompleted
 		invite.UserId = inviteeID
 		// does the invitee have a preferred language?
@@ -1284,7 +1187,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 	// let's use the user preferences
 	invite.TeamID = ib.TeamID
 	invite.Email = ib.Email
-	invite.IsAdmin = ib.IsAdmin
+	invite.Role = ib.Role
 	invite.UserId = inviteeID
 	// does the invitee have a preferred language?
 	inviteeLanguage = a.getUserLanguage(invite.UserId, res)
