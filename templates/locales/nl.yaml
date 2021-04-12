@@ -102,3 +102,12 @@ MedicalTeamRemoveBody1: "Je hebt geen toegang meer tot patiëntengegevens van {{
 MedicalTeamRemoveBody2: "Denk je dat dit een vergissing is? Neem contact op met een beheerder van het team."
 MedicalTeamRemoveInfo: "Lees ons <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacybeleid</a> voor meer informatie."
 MedicalTeamRemoveAction: "Naar YourLoops gaan"
+#Medical/Care team patient invitation
+MedicalTeamPatientInvitationSubject: "Share your data with a care team"
+MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} invites you to share your data with {{ .MedicalteamName }}"
+MedicalTeamPatientInviteBody: "{{ .CreatorName }} invites you to share your data with your medical team on YourLoops."
+MedicalTeamPatientInviteWarning: "Please verify that the above details match the information provided by your healthcare provider before responding to the invitation."
+MedicalTeamPatientInviteWarning2: "If you're unsure, get in touch with your healthcare provider and do not accept this invitation."
+MedicalTeamPatientInviteInfo: "By adding this team, you consent to share your personal data (including health data) with its members, who are authorized healthcare professionals registered on YourLoops."
+MedicalTeamPatientInviteInfo2: "Read our <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
+MedicalTeamPatientInviteJoin: "Respond to invitation"
