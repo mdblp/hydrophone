@@ -120,8 +120,8 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 		a.sendModelAsResWithStatus(res, status.StatusError{status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_USER)}, http.StatusInternalServerError)
 		return
 	} else {
-		if usrDetails.IsClinic() {
-			log.Printf("Clinician account [%s] cannot receive information message", usrDetails.UserID)
+		if usrDetails.IsClinic() || usrDetails.HasRole("caregiver") {
+			log.Printf("Clinician/Caregiver account [%s] cannot receive information message", usrDetails.UserID)
 			a.sendModelAsResWithStatus(res, STATUS_ERR_CLINICAL_USR, http.StatusForbidden)
 			return
 		}
@@ -211,27 +211,8 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 				var templateName models.TemplateName
 				var creatorID string
 
-				if usrDetails.IsClinic() {
+				if usrDetails.IsClinic() || usrDetails.HasRole("caregiver") {
 					templateName = models.TemplateNameSignupClinic
-				} else if usrDetails.IsCustodial() {
-					if token.IsServer {
-						templateName = models.TemplateNameSignupCustodial
-					} else {
-						tokenUserDetails, err := a.sl.GetUser(token.UserId, a.sl.TokenProvide())
-						if err != nil {
-							log.Printf("sendSignUp: error when getting token user [%s]", err.Error())
-							a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
-							return
-						}
-
-						creatorID = token.UserId
-
-						if tokenUserDetails.IsClinic() {
-							templateName = models.TemplateNameSignupCustodialClinic
-						} else {
-							templateName = models.TemplateNameSignupCustodial
-						}
-					}
 				} else {
 					templateName = models.TemplateNameSignup
 				}

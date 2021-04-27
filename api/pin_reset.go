@@ -72,8 +72,8 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 		return
 	}
 
-	if usrDetails.IsClinic() {
-		log.Printf("sendPinReset - Clinician account [%s] cannot receive PIN Reset message", usrDetails.UserID)
+	if usrDetails.IsClinic() || usrDetails.HasRole("caregiver") {
+		log.Printf("sendPinReset - Clinician/Caregiver account [%s] cannot receive PIN Reset message", usrDetails.UserID)
 		a.sendModelAsResWithStatus(res, STATUS_ERR_CLINICAL_USR, http.StatusForbidden)
 		return
 	}
