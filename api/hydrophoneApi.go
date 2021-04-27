@@ -15,9 +15,11 @@ import (
 
 	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/crew/store"
+	"github.com/mdblp/shoreline/clients/shoreline"
+	"github.com/mdblp/shoreline/token"
+	"github.com/mdblp/shoreline/schema"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/portal"
-	"github.com/tidepool-org/go-common/clients/shoreline"
 	"github.com/tidepool-org/go-common/clients/status"
 	"github.com/tidepool-org/hydrophone/clients"
 	"github.com/tidepool-org/hydrophone/models"
@@ -28,7 +30,7 @@ type (
 		Store          clients.StoreClient
 		notifier       clients.Notifier
 		templates      models.Templates
-		sl             shoreline.Client
+		sl             shoreline.ClientInterface
 		perms          crewClient.Crew
 		seagull        commonClients.Seagull
 		portal         portal.Client
@@ -91,7 +93,7 @@ func InitApi(
 	cfg Config,
 	store clients.StoreClient,
 	ntf clients.Notifier,
-	sl shoreline.Client,
+	sl shoreline.ClientInterface,
 	perms crewClient.Crew,
 	seagull commonClients.Seagull,
 	portal portal.Client,
@@ -339,7 +341,7 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 }
 
 //find and validate the token
-func (a *Api) token(res http.ResponseWriter, req *http.Request) *shoreline.TokenData {
+func (a *Api) token(res http.ResponseWriter, req *http.Request) *token.TokenData {
 	if token := req.Header.Get(TP_SESSION_TOKEN); token != "" {
 		log.Printf("Found token in request header %s", token)
 		td := a.sl.CheckToken(token)
@@ -386,7 +388,7 @@ func (a *Api) logAudit(req *http.Request, format string, args ...interface{}) {
 
 //Find existing user based on the given identifier
 //The identifier could be either an id or email address
-func (a *Api) findExistingUser(identifier, token string) *shoreline.UserData {
+func (a *Api) findExistingUser(identifier, token string) *schema.UserData {
 	if usr, err := a.sl.GetUser(identifier, token); err != nil {
 		log.Printf("Error [%s] trying to get existing users details", err.Error())
 		return nil
@@ -463,10 +465,10 @@ func (a *Api) sendErrorWithCode(res http.ResponseWriter, statusCode int, errorCo
 	a.sendModelAsResWithStatus(res, status.NewStatusWithError(statusCode, errorCode, reason), statusCode)
 }
 
-func (a *Api) isAuthorizedUser(tokenData *shoreline.TokenData, userId string) bool {
+func (a *Api) isAuthorizedUser(tokenData *token.TokenData, userId string) bool {
 	if tokenData.IsServer {
 		return true
-	} else if tokenData.UserID == userId {
+	} else if tokenData.UserId == userId {
 		return true
 	} else {
 		return false

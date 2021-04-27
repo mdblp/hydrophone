@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tidepool-org/go-common/clients/shoreline"
+	"github.com/mdblp/shoreline/schema"
 	"github.com/tidepool-org/go-common/clients/status"
 	"github.com/tidepool-org/hydrophone/models"
 )
@@ -205,7 +205,7 @@ func (a *Api) acceptPassword(res http.ResponseWriter, req *http.Request, vars ma
 
 		if usr := a.findExistingUser(rb.Email, token); usr != nil {
 
-			if err := a.sl.UpdateUser(usr.UserID, shoreline.UserUpdate{Password: &rb.Password}, token); err != nil {
+			if err := a.sl.UpdateUser(usr.UserID, schema.UserUpdate{Password: &rb.Password}, token); err != nil {
 				log.Printf("acceptPassword: error updating password as part of password reset [%v]", err)
 				status := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, statusResetError)}
 				a.sendModelAsResWithStatus(res, status, http.StatusBadRequest)

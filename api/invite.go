@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/mdblp/crew/store"
-	"github.com/tidepool-org/go-common/clients/shoreline"
+	"github.com/mdblp/shoreline/schema"
 	"github.com/tidepool-org/go-common/clients/status"
 	"github.com/tidepool-org/hydrophone/models"
 )
@@ -35,7 +35,7 @@ type (
 
 //Checks do they have an existing invite or are they already a team member
 //Or are they an existing user and already in the group?
-func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitorID, token string, res http.ResponseWriter) (bool, *shoreline.UserData) {
+func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitorID, token string, res http.ResponseWriter) (bool, *schema.UserData) {
 
 	//already has invite from this user?
 	invites, _ := a.Store.FindConfirmations(
@@ -82,7 +82,7 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 
 //Checks do they have an existing invite or are they already a team member
 //Or are they an existing user and already in the group?
-func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *shoreline.UserData) {
+func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *schema.UserData) {
 
 	//already has invite from this user?
 	invites, _ := a.Store.FindConfirmations(
@@ -179,7 +179,7 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 			return
 		}
 		// Non-server tokens only legit when for same userid
-		if !token.IsServer && inviteeID != token.UserID {
+		if !token.IsServer && inviteeID != token.UserId {
 			log.Printf("GetReceivedInvitations %s ", STATUS_UNAUTHORIZED)
 			a.sendModelAsResWithStatus(res, status.StatusError{status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}, http.StatusUnauthorized)
 			return
@@ -303,7 +303,7 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 		}
 
 		// Non-server tokens only legit when for same userid
-		if !token.IsServer && inviteeID != token.UserID {
+		if !token.IsServer && inviteeID != token.UserId {
 			log.Println("AcceptInvite ", STATUS_UNAUTHORIZED)
 			a.sendModelAsResWithStatus(
 				res,
@@ -421,7 +421,7 @@ func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if token.UserID != userID {
+	if token.UserId != userID {
 		a.sendModelAsResWithStatus(
 			res,
 			&status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)},
@@ -607,7 +607,7 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 		}
 
 		// Non-server tokens only legit when for same userid
-		if !token.IsServer && inviteeID != token.UserID {
+		if !token.IsServer && inviteeID != token.UserId {
 			log.Printf("DismissInvite %s ", STATUS_UNAUTHORIZED)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
@@ -673,7 +673,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	teamID := vars["teamid"]
 	// either the token is the inviteeID or the admin ID
 	// let's find out what type of user it is later on
-	userID := token.UserID
+	userID := token.UserId
 
 	if teamID == "" {
 		res.WriteHeader(http.StatusBadRequest)
@@ -699,7 +699,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	dismiss.UserId = userID
 	dismiss.TeamID = teamID
 
-	if isAdmin, _, err := a.getTeamForUser(tokenValue, teamID, token.UserID, res); isAdmin && err == nil {
+	if isAdmin, _, err := a.getTeamForUser(tokenValue, teamID, token.UserId, res); isAdmin && err == nil {
 		// as team admin you can act on behalf of members
 		// for any invitation for the given team
 		dismiss.UserId = ""
@@ -884,7 +884,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	invitorID := token.UserID
+	invitorID := token.UserId
 	if invitorID == "" {
 		res.WriteHeader(http.StatusBadRequest)
 		return
@@ -915,7 +915,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		ib.Role = "member"
 	}
 
-	auth, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
+	auth, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserId, res)
 
 	// only for team management
 	if !auth && !managePatients {
@@ -1039,7 +1039,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	invitorID := token.UserID
+	invitorID := token.UserId
 	if invitorID == "" {
 		res.WriteHeader(http.StatusBadRequest)
 		return
@@ -1063,7 +1063,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		ib.Role = "admin"
 	}
 
-	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
+	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserId, res)
 	if err != nil {
 		return
 	}
@@ -1164,7 +1164,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		return
 	}
 
-	invitorID := token.UserID
+	invitorID := token.UserId
 	if invitorID == "" {
 		res.WriteHeader(http.StatusBadRequest)
 		return
@@ -1185,7 +1185,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		return
 	}
 
-	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserID, res)
+	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserId, res)
 	if err != nil {
 		return
 	}
