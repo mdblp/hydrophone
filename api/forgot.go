@@ -77,7 +77,7 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 
 	// if the resetter is already registered we can use his preferences
 	if resetUsr := a.findExistingUser(email, a.sl.TokenProvide()); resetUsr != nil {
-		if resetUsr.IsClinic() || resetUsr.HasRole("caregiver") || a.Config.AllowPatientResetPassword {
+		if !resetUsr.HasRole("patient") || a.Config.AllowPatientResetPassword {
 			resetCnf, _ = models.NewConfirmation(models.TypePasswordReset, models.TemplateNamePasswordReset, "")
 			info = nil
 		} else {

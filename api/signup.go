@@ -120,7 +120,7 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 		a.sendModelAsResWithStatus(res, status.StatusError{status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_USER)}, http.StatusInternalServerError)
 		return
 	} else {
-		if usrDetails.IsClinic() || usrDetails.HasRole("caregiver") {
+		if !usrDetails.HasRole("patient") {
 			log.Printf("Clinician/Caregiver account [%s] cannot receive information message", usrDetails.UserID)
 			a.sendModelAsResWithStatus(res, STATUS_ERR_CLINICAL_USR, http.StatusForbidden)
 			return
@@ -211,7 +211,7 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 				var templateName models.TemplateName
 				var creatorID string
 
-				if usrDetails.IsClinic() || usrDetails.HasRole("caregiver") {
+				if !usrDetails.HasRole("patient") {
 					templateName = models.TemplateNameSignupClinic
 				} else {
 					templateName = models.TemplateNameSignup
