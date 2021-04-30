@@ -190,6 +190,7 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 		types := []models.Type{
 			models.TypeCareteamInvite,
 			models.TypeMedicalTeamInvite,
+			models.TypeMedicalTeamPatientInvite,
 		}
 		status := []models.Status{
 			models.StatusPending,
@@ -216,7 +217,6 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 			log.Printf("GetReceivedInvitations: found and have checked [%d] invites ", len(invites))
 			a.logAudit(req, "get received invites")
 			a.sendModelAsResWithStatus(res, invites, http.StatusOK)
-			return
 		}
 	}
 	return
@@ -260,7 +260,7 @@ func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, var
 		req.Context(),
 		&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite},
 		[]models.Status{models.StatusPending, models.StatusDeclined},
-		[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove},
+		[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove, models.TypeMedicalTeamPatientInvite},
 	)
 	if invitations := a.checkFoundConfirmations(res, found, err); invitations != nil {
 		a.logAudit(req, "get sent invites")
