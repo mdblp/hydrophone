@@ -191,6 +191,8 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 			models.TypeCareteamInvite,
 			models.TypeMedicalTeamInvite,
 			models.TypeMedicalTeamPatientInvite,
+			models.TypeMedicalTeamDoAdmin,
+			models.TypeMedicalTeamRemove,
 		}
 		status := []models.Status{
 			models.StatusPending,
@@ -219,7 +221,6 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 			a.sendModelAsResWithStatus(res, invites, http.StatusOK)
 		}
 	}
-	return
 }
 
 // @Summary Get the still-pending invitations for a group you own or are an admin of
@@ -260,7 +261,7 @@ func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, var
 		req.Context(),
 		&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite},
 		[]models.Status{models.StatusPending, models.StatusDeclined},
-		[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove, models.TypeMedicalTeamPatientInvite},
+		[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamPatientInvite},
 	)
 	if invitations := a.checkFoundConfirmations(res, found, err); invitations != nil {
 		a.logAudit(req, "get sent invites")
@@ -1054,7 +1055,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	if ib.User == "" || ib.TeamID == "" {
+	if ib.TeamID == "" {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
@@ -1101,7 +1102,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		invite.TeamID = ib.TeamID
 		invite.Email = ib.Email
 		invite.Role = ib.Role
-		invite.Status = models.StatusCompleted
+		invite.Status = models.StatusPending
 		invite.UserId = inviteeID
 		// does the invitee have a preferred language?
 		inviteeLanguage = a.getUserLanguage(invite.UserId, res)
