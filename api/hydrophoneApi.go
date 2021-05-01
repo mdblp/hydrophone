@@ -16,8 +16,8 @@ import (
 	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/crew/store"
 	"github.com/mdblp/shoreline/clients/shoreline"
-	"github.com/mdblp/shoreline/token"
 	"github.com/mdblp/shoreline/schema"
+	"github.com/mdblp/shoreline/token"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/portal"
 	"github.com/tidepool-org/go-common/clients/status"
@@ -156,6 +156,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	accept.Handle("/signup/{confirmationid}", varsHandler(a.acceptSignUp)).Methods("PUT")
 	accept.Handle("/forgot", varsHandler(a.acceptPassword)).Methods("PUT")
 	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
+	// PUT /confirm/accept/invite
+	accept.Handle("/any/invite", varsHandler(a.AcceptAnyInvite)).Methods("PUT")
 	// PUT /confirm/accept/team/invite
 	accept.Handle("/team/invite/{userid}/{teamid}", varsHandler(a.AcceptTeamInvite)).Methods("PUT")
 
