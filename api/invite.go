@@ -347,7 +347,7 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 		validationErrors := []error{}
 
 		conf.ValidateStatus(models.StatusPending, &validationErrors).
-			ValidateType(models.TypeCareteamInvite, &validationErrors).
+			ValidateType([]models.Type{models.TypeCareteamInvite}, &validationErrors).
 			ValidateUserID(inviteeID, &validationErrors).
 			ValidateCreatorID(invitorID, &validationErrors)
 
@@ -385,6 +385,94 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 		res.Write([]byte(STATUS_OK))
 		return
 	}
+}
+
+//Accept the given invite
+//
+// http.StatusOK when accepted
+// http.StatusBadRequest when the incoming data is incomplete or incorrect
+// http.StatusForbidden when mismatch of user ID's, type or status
+// @Summary Accept the given invite
+// @Description  This would be PUT by the web page at the link in the invite email. No authentication is required.
+// @ID hydrophone-api-acceptAnyInvite
+// @Accept  json
+// @Produce  json
+// @Param invitation body models.Confirmation true "invitation details"
+// @Success 200 {string} string "OK"
+// @Failure 400 {object} status.Status "the payload is missing or malformed: key is not provided"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
+// @Failure 403 {object} status.Status "Operation is forbiden. The invitation cannot be accepted for this given user"
+// @Failure 404 {object} status.Status "invitation not found"
+// @Failure 500 {object} status.Status "Error (internal) while processing the data"
+// @Router /accept/any/invite [put]
+// @security TidepoolAuth
+func (a *Api) AcceptAnyInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	token := a.token(res, req)
+	if token == nil {
+		return
+	}
+
+	inviteeID := token.UserId
+
+	accept := &models.Confirmation{}
+	if err := json.NewDecoder(req.Body).Decode(accept); err != nil {
+		log.Printf("AcceptInvite error decoding invite data: %v\n", err)
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)},
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	if accept.Key == "" {
+		log.Println("AcceptInvite has no confirmation key set")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	conf, err := a.findExistingConfirmation(req.Context(), accept, res)
+	if err != nil {
+		log.Printf("AcceptInvite error while finding confirmation [%s]\n", err.Error())
+		a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
+		return
+	}
+	if conf == nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
+		log.Println("AcceptInvite ", statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+		return
+	}
+
+	validationErrors := []error{}
+
+	conf.ValidateStatus(models.StatusPending, &validationErrors).
+		ValidateType([]models.Type{models.TypeMedicalTeamDoAdmin, models.TypeMedicalTeamRemove}, &validationErrors).
+		ValidateUserID(inviteeID, &validationErrors)
+
+	if len(validationErrors) > 0 {
+		for _, validationError := range validationErrors {
+			log.Println("AcceptInvite forbidden as there was a expectation mismatch", validationError)
+		}
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusForbidden, statusForbiddenMessage)},
+			http.StatusForbidden,
+		)
+		return
+	}
+
+	log.Printf("AcceptInvite: permissions were set for [%v] after an invite was accepted", inviteeID)
+	conf.UpdateStatus(models.StatusCompleted)
+	if !a.addOrUpdateConfirmation(req.Context(), conf, res) {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
+		log.Println("AcceptAnyInvite ", statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
+		return
+	}
+	a.logAudit(req, "acceptanyinvite")
+	res.WriteHeader(http.StatusOK)
+	res.Write([]byte(STATUS_OK))
 }
 
 //Accept the team invite for a member
@@ -468,9 +556,9 @@ func (a *Api) AcceptTeamInvite(res http.ResponseWriter, req *http.Request, vars 
 		ValidateTeamID(teamID, &validationErrors)
 
 	if conf.Role != "patient" {
-		conf.ValidateType(models.TypeMedicalTeamInvite, &validationErrors)
+		conf.ValidateType([]models.Type{models.TypeMedicalTeamInvite}, &validationErrors)
 	} else {
-		conf.ValidateType(models.TypeMedicalTeamPatientInvite, &validationErrors)
+		conf.ValidateType([]models.Type{models.TypeMedicalTeamPatientInvite}, &validationErrors)
 	}
 
 	if len(validationErrors) > 0 {
