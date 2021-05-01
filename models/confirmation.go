@@ -203,13 +203,18 @@ func (c *Confirmation) ValidateStatus(expectedStatus Status, validationErrors *[
 	return c
 }
 
-func (c *Confirmation) ValidateType(expectedType Type, validationErrors *[]error) *Confirmation {
-	if expectedType != c.Type {
-		*validationErrors = append(
-			*validationErrors,
-			fmt.Errorf("Confirmation expected Type `%s` but had `%s`", expectedType, c.Type),
-		)
+func (c *Confirmation) ValidateType(expectedTypes []Type, validationErrors *[]error) *Confirmation {
+	types := ""
+	for _, expectedType := range expectedTypes {
+		if expectedType == c.Type {
+			return c
+		}
+		types = fmt.Sprintf("%s, %s", types, expectedType)
 	}
+	*validationErrors = append(
+		*validationErrors,
+		fmt.Errorf("Confirmation expected Type(s) `%s` but had `%s`", types, c.Type),
+	)
 	return c
 }
 
