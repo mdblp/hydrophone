@@ -1099,7 +1099,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 }
 
 // @Summary Send notification to an hcp that becomes admin
-// @Description  Send an email and a notification to the new admin user. Removing the admin role does not trigger any notification or email.
+// @Description  Send an email and a notification to the new admin user. The role change is done but notification is pushed for information (notifacation status is set to pending). Removing the admin role is managed as an exception. It does not trigger any notification or email.
 // @ID hydrophone-api-UpdateTeamRole
 // @Accept  json
 // @Produce  json
