@@ -16,8 +16,8 @@ import (
 	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/crew/store"
 	"github.com/mdblp/shoreline/clients/shoreline"
-	"github.com/mdblp/shoreline/token"
 	"github.com/mdblp/shoreline/schema"
+	"github.com/mdblp/shoreline/token"
 	commonClients "github.com/tidepool-org/go-common/clients"
 	"github.com/tidepool-org/go-common/clients/portal"
 	"github.com/tidepool-org/go-common/clients/status"
@@ -139,7 +139,7 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
 	// POST /confirm/send/team/role/:userid - add or remove admin role to userid
 	send.Handle("/team/role/{userid}", varsHandler(a.UpdateTeamRole)).Methods("PUT")
-	// DELETE /confirm/team/leave/:userid - delete member
+	// DELETE /confirm/send/team/leave/:userid - delete member
 	send.Handle("/team/leave/{userid}", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
 
 	// POST /confirm/send/inform/:userid
