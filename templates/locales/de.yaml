@@ -98,7 +98,7 @@ MedicalTeamDoAdminAction: "YourLoops öffnen"
 #Medical/Care team remove member
 MedicalTeamRemoveSubject: "Sie sind nun nicht mehr Teil des Teams {{ .MedicalteamName }}"
 MedicalTeamRemoveHeadline: "Ein Team-Administrator hat Sie aus dem Team entfernt."
-MedicalTeamRemoveBody0: "A team administrator removed you from the team."
+MedicalTeamRemoveBody0: "Ein Teamadministrator hat Sie aus dem Team entfernt."
 MedicalTeamRemoveBody1: "Sie haben zwar keinen Zugriff mehr auf die mit dem Team {{ .MedicalteamName }} verknüpften Patientendaten, Ihr Konto ist jedoch weiterhin aktiv."
 MedicalTeamRemoveBody2: "Es handelt sich um einen Fehler? Wenden Sie sich an einen Team-Administrator."
 MedicalTeamRemoveInfo: "Weitere Informationen finden Sie in unserer <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>Datenschutzerklärung</a>."
