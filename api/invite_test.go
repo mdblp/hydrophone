@@ -673,7 +673,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "valid request to accept an team invite",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite/%s/%s", "123.456.789", "123456"),
+			url:      fmt.Sprintf("/accept/team/invite"),
 			token:    testing_token_uid1,
 			respCode: http.StatusOK,
 			body: testJSONObject{
@@ -683,7 +683,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "valid request to accept an team invite for a patient",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite/%s/%s", "123.456.789", "123456"),
+			url:      fmt.Sprintf("/accept/team/invite"),
 			token:    testing_token_uid1,
 			respCode: http.StatusOK,
 			body: testJSONObject{
@@ -692,19 +692,19 @@ func TestInviteResponds(t *testing.T) {
 			},
 		},
 		{
-			desc:     "not authorized request to accept an team invite",
+			desc:     "not authorized request to accept a team invite",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite/%s/%s", "not.authorized", "123456"),
+			url:      fmt.Sprintf("/accept/team/invite"),
 			token:    testing_token_uid1,
-			respCode: http.StatusUnauthorized,
+			respCode: http.StatusForbidden,
 			body: testJSONObject{
-				"key": "medicalteam.invite.member",
+				"key": "medicalteam.invite.wrong.member",
 			},
 		},
 		{
 			desc:     "invitation does not exist",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite/%s/%s", "123.456.789", "123456"),
+			url:      fmt.Sprintf("/accept/team/invite"),
 			token:    testing_token_uid1,
 			respCode: http.StatusForbidden,
 			body: testJSONObject{
@@ -714,7 +714,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "invalid invitation",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite/%s/%s", "123.456.789", "123456"),
+			url:      fmt.Sprintf("/accept/team/invite"),
 			token:    testing_token_uid1,
 			respCode: http.StatusNotFound,
 			body: testJSONObject{
@@ -724,14 +724,14 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "Any invite no key",
 			method:   http.MethodPut,
-			url:      "/accept/any/invite",
+			url:      "/accept/team/invite",
 			token:    testing_token_uid1,
 			respCode: http.StatusBadRequest,
 		},
 		{
 			desc:   "Any invite invalid key",
 			method: http.MethodPut,
-			url:    "/accept/any/invite",
+			url:    "/accept/team/invite",
 			token:  testing_token_uid1,
 			body: testJSONObject{
 				"key": "any.invite.invalid.key",
@@ -741,7 +741,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:   "Any invite already completed",
 			method: http.MethodPut,
-			url:    "/accept/any/invite",
+			url:    "/accept/team/invite",
 			token:  testing_token_uid1,
 			body: testJSONObject{
 				"key": "any.invite.completed.key",
@@ -752,7 +752,7 @@ func TestInviteResponds(t *testing.T) {
 			desc:   "Error getting invite",
 			doBad:  true,
 			method: http.MethodPut,
-			url:    "/accept/any/invite",
+			url:    "/accept/team/invite",
 			token:  testing_token_uid1,
 			body: testJSONObject{
 				"key": "foo",
@@ -762,17 +762,17 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:   "Any invite not a valid type",
 			method: http.MethodPut,
-			url:    "/accept/any/invite",
+			url:    "/accept/team/invite",
 			token:  testing_token_uid1,
 			body: testJSONObject{
-				"key": "medicalteam.invite.patient",
+				"key": "invite.wrong.type",
 			},
 			respCode: http.StatusForbidden,
 		},
 		{
 			desc:   "Any valid invite do admin",
 			method: http.MethodPut,
-			url:    "/accept/any/invite",
+			url:    "/accept/team/invite",
 			token:  testing_token_uid1,
 			body: testJSONObject{
 				"key": "any.invite.pending.do.admin",
@@ -782,7 +782,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:   "Any valid invite remove",
 			method: http.MethodPut,
-			url:    "/accept/any/invite",
+			url:    "/accept/team/invite",
 			token:  testing_token_uid1,
 			body: testJSONObject{
 				"key": "any.invite.pending.remove",
