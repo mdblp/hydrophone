@@ -183,16 +183,6 @@ func (c *Confirmation) ValidateUserID(expectedUserID string, validationErrors *[
 	return c
 }
 
-func (c *Confirmation) ValidateTeamID(expectedTeamID string, validationErrors *[]error) *Confirmation {
-	if expectedTeamID != c.TeamID {
-		*validationErrors = append(
-			*validationErrors,
-			fmt.Errorf("Confirmation expected TeamId of `%s` but had `%s`", expectedTeamID, c.TeamID),
-		)
-	}
-	return c
-}
-
 func (c *Confirmation) ValidateStatus(expectedStatus Status, validationErrors *[]error) *Confirmation {
 	if expectedStatus != c.Status {
 		*validationErrors = append(

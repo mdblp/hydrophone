@@ -394,7 +394,7 @@ func (a *Api) AcceptInvite(res http.ResponseWriter, req *http.Request, vars map[
 // http.StatusForbidden when mismatch of user ID's, type or status
 // @Summary Accept the given invite
 // @Description  This would be PUT by the web page at the link in the invite email. No authentication is required.
-// @ID hydrophone-api-acceptAnyInvite
+// @ID hydrophone-api-acceptTeamNotifs
 // @Accept  json
 // @Produce  json
 // @Param invitation body models.Confirmation true "invitation details"
@@ -468,9 +468,7 @@ func (a *Api) AcceptTeamNotifs(res http.ResponseWriter, req *http.Request, vars 
 	}
 
 	switch conf.Type {
-	case models.TypeMedicalTeamPatientInvite:
-		a.acceptTeamInvite(res, req, conf)
-	case models.TypeMedicalTeamInvite:
+	case models.TypeMedicalTeamPatientInvite, models.TypeMedicalTeamInvite:
 		a.acceptTeamInvite(res, req, conf)
 	default:
 		a.acceptAnyInvite(res, req, conf)
@@ -1021,7 +1019,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 }
 
 // @Summary Send notification to an hcp that becomes admin
-// @Description  Send an email and a notification to the new admin user. The role change is done but notification is pushed for information (notifacation status is set to pending). Removing the admin role is managed as an exception. It does not trigger any notification or email.
+// @Description  Send an email and a notification to the new admin user. The role change is done but notification is pushed for information (notification status is set to pending). Removing the admin role is managed as an exception. It does not trigger any notification or email.
 // @ID hydrophone-api-UpdateTeamRole
 // @Accept  json
 // @Produce  json

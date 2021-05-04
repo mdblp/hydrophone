@@ -673,7 +673,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "valid request to accept an team invite",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite"),
+			url:      "/accept/team/invite",
 			token:    testing_token_uid1,
 			respCode: http.StatusOK,
 			body: testJSONObject{
@@ -683,7 +683,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "valid request to accept an team invite for a patient",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite"),
+			url:      "/accept/team/invite",
 			token:    testing_token_uid1,
 			respCode: http.StatusOK,
 			body: testJSONObject{
@@ -694,7 +694,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "not authorized request to accept a team invite",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite"),
+			url:      "/accept/team/invite",
 			token:    testing_token_uid1,
 			respCode: http.StatusForbidden,
 			body: testJSONObject{
@@ -704,7 +704,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "invitation does not exist",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite"),
+			url:      "/accept/team/invite",
 			token:    testing_token_uid1,
 			respCode: http.StatusForbidden,
 			body: testJSONObject{
@@ -714,7 +714,7 @@ func TestInviteResponds(t *testing.T) {
 		{
 			desc:     "invalid invitation",
 			method:   http.MethodPut,
-			url:      fmt.Sprintf("/accept/team/invite"),
+			url:      "/accept/team/invite",
 			token:    testing_token_uid1,
 			respCode: http.StatusNotFound,
 			body: testJSONObject{
