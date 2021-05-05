@@ -106,7 +106,11 @@ func (d *MockStoreClient) FindConfirmation(ctx context.Context, notification *mo
 	if notification.Key == "medicalteam.invite.wrong.member" {
 		notification.Status = "pending"
 		notification.Type = "medicalteam_invitation"
-		notification.Team = &models.Team{}
+		if notification.Team == nil {
+			notification.Team = &models.Team{}
+		}
+		notification.Team.TeamID = "123456"
+		notification.UserId = "not.my.id"
 	}
 	notification.Team.TeamID = "123456"
 	if notification.Key == "medicalteam.invite.patient" {
