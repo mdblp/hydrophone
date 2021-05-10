@@ -137,6 +137,12 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		Members:     membersDismissInviteAsAdmin,
 		ID:          "teamDismissInviteAsAdmin",
 	}
+	teamDismissInvitePatient := store.Team{
+		Name:        "team dismiss invite",
+		Description: "Fake Team",
+		Members:     membersDismissInviteAsAdmin,
+		ID:          "teamDismissInvitePatient",
+	}
 
 	member_uid3 := store.Member{
 		TeamID:           "1",
@@ -160,6 +166,8 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvitePatient", &teamDismissInvitePatient, nil)
+
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid4, &member_uid4, nil)
 
 	mockSeagull.SetMockNextCollectionCall(testing_uid1+"profile", `{"Something":"anit no thing"}`, nil)
@@ -305,6 +313,17 @@ func initTests() []toTest {
 			token:      testing_token_uid1,
 			body: testJSONObject{
 				"key": "key.to.be.dismissed",
+			},
+		},
+		// returns a 200 when dismiss a team invite as Admin
+		{
+			method:     "PUT",
+			returnNone: false,
+			url:        fmt.Sprintf("/dismiss/team/invite/%s", "teamDismissInvitePatient"),
+			respCode:   200,
+			token:      testing_token_uid1,
+			body: testJSONObject{
+				"key": "patient.key.to.be.dismissed",
 			},
 		},
 		// returns a 200 when everything goes well

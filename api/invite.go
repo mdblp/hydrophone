@@ -663,7 +663,7 @@ func (a *Api) DismissInvite(res http.ResponseWriter, req *http.Request, vars map
 }
 
 // @Summary Dismiss a team invite
-// @Description Invitee or Admin can dismiss a team invite
+// @Description Invitee or Admin can dismiss a team invite. A patient can dismiss a care team invite.
 // @ID hydrophone-api-dismissTeamInvite
 // @Accept  json
 // @Produce  json
@@ -731,7 +731,15 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 				TeamID:           teamID,
 				InvitationStatus: "rejected",
 			}
-			if _, err := a.perms.UpdateTeamMember(tokenValue, member); err != nil {
+
+			var err error
+			switch conf.Type {
+			case models.TypeMedicalTeamPatientInvite:
+				_, err = a.perms.AddOrUpdatePatient(tokenValue, member)
+			default:
+				_, err = a.perms.UpdateTeamMember(tokenValue, member)
+			}
+			if err != nil {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
@@ -754,7 +762,6 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
 	log.Printf("DismissInvite: [%s]", statusErr.Error())
 	a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
-	return
 }
 
 // @Summary Send a invite to join a patient's team
