@@ -156,6 +156,19 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		InvitationStatus: "pending",
 	}
 
+	member_dismissed := store.Member{
+		UserID:           testing_uid4,
+		TeamID:           "123456",
+		Role:             "member",
+		InvitationStatus: "pending",
+	}
+	patient_dismissed := store.Member{
+		UserID:           testing_uid4,
+		TeamID:           "123456",
+		Role:             "patient",
+		InvitationStatus: "pending",
+	}
+
 	mockPerms.SetMockNextCall(token1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &team123456, nil)
@@ -165,6 +178,8 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"key.to.be.dismissed", &member_dismissed, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"patient.key.to.be.dismissed", &patient_dismissed, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvitePatient", &teamDismissInvitePatient, nil)
 
@@ -304,7 +319,7 @@ func initTests() []toTest {
 				"key": "key.to.be.dismissed",
 			},
 		},
-		// returns a 200 when dismiss a team invite as Admin
+		// returns a 400 when dismiss a team invite of non existing team as Admin
 		{
 			method:     "PUT",
 			returnNone: false,

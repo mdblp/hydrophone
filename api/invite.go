@@ -727,7 +727,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 		if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
 
 			var member = store.Member{
-				UserID:           userID,
+				UserID:           conf.UserId,
 				TeamID:           teamID,
 				InvitationStatus: "rejected",
 			}
