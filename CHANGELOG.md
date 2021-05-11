@@ -3,11 +3,13 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords, initial signup, and invitations.
 
-## unreleased
-### changed
+## unreleased 
+### Changed
 - YLP-682 Add team information in received invitations
+
 ### Fixed 
 - YLP-709 Bug: get the coorect ID to dismiss an invite
+- YLP-708 A HCP user shouldn't invite a patient to join a team 
 
 ## 1.6.1 - 2021-05-04
 ### Changed
