@@ -988,6 +988,12 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 			return
 		}
+		// patient cannot be invited as a member of a care team
+		if managePatients && !invitedUsr.HasRole("patient") {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusMethodNotAllowed, STATUS_MEMBER_NOT_AUTH)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
 		err := error(nil)
 		if !managePatients {
 			_, err = a.perms.AddTeamMember(tokenValue, member)
