@@ -112,7 +112,6 @@ func (d *MockStoreClient) FindConfirmation(ctx context.Context, notification *mo
 		notification.Team.TeamID = "123456"
 		notification.UserId = "not.my.id"
 	}
-	notification.Team.TeamID = "123456"
 	if notification.Key == "medicalteam.invite.patient" {
 		notification.Status = "pending"
 		notification.Type = "medicalteam_patient_invitation"

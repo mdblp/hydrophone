@@ -596,112 +596,112 @@ func TestDismissInvite_NoPerms(t *testing.T) {
 func TestInviteResponds(t *testing.T) {
 
 	inviteTests := []toTest{
-		// {
-		// 	desc:     "can't invite without a body",
-		// 	method:   http.MethodPost,
-		// 	url:      fmt.Sprintf("/send/invite/%s", testing_uid1),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusBadRequest,
-		// },
-		// {
-		// 	desc:     "can't invite without email",
-		// 	method:   http.MethodPost,
-		// 	url:      fmt.Sprintf("/send/invite/%s", testing_uid1),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusBadRequest,
-		// 	body: testJSONObject{
-		// 		"email":       "",
-		// 		"permissions": testJSONObject{"view": testJSONObject{}},
-		// 	},
-		// },
-		// {
-		// 	desc:     "can't have a duplicate invite",
-		// 	method:   http.MethodPost,
-		// 	url:      fmt.Sprintf("/send/invite/%s", testing_uid2),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusConflict,
-		// 	body: testJSONObject{
-		// 		"email": testing_uid2 + "@email.org",
-		// 		"permissions": testJSONObject{
-		// 			"view": testJSONObject{},
-		// 			"note": testJSONObject{},
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	desc:       "invite valid if email, permissons and not a duplicate",
-		// 	returnNone: true,
-		// 	method:     http.MethodPost,
-		// 	url:        fmt.Sprintf("/send/invite/%s", testing_uid2),
-		// 	token:      testing_token_uid1,
-		// 	respCode:   http.StatusOK,
-		// 	body: testJSONObject{
-		// 		"email":       testing_uid2 + "@email.org",
-		// 		"permissions": testJSONObject{"view": testJSONObject{}},
-		// 	},
-		// },
-		// {
-		// 	desc:     "invitations gives list of our outstanding invitations",
-		// 	method:   http.MethodGet,
-		// 	url:      fmt.Sprintf("/invitations/%s", testing_uid1),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusOK,
-		// 	response: testJSONObject{
-		// 		"invitedBy": testing_uid2,
-		// 		"permissions": testJSONObject{
-		// 			"view": testJSONObject{},
-		// 			"note": testJSONObject{},
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	desc:     "request not found without the full path",
-		// 	method:   http.MethodPut,
-		// 	url:      "/accept/invite",
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusNotFound,
-		// },
-		// {
-		// 	desc:     "invalid request to accept an invite when user ID's not expected",
-		// 	method:   http.MethodPut,
-		// 	url:      fmt.Sprintf("/accept/invite/%s/%s", testing_uid1, "badID"),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusForbidden,
-		// 	body: testJSONObject{
-		// 		"key": "careteam_invite/1234",
-		// 	},
-		// },
-		// {
-		// 	desc:     "invite will get invitations we sent",
-		// 	method:   http.MethodGet,
-		// 	url:      fmt.Sprintf("/invite/%s", testing_uid2),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusOK,
-		// 	response: testJSONObject{
-		// 		"email": "personToInvite@email.com",
-		// 		"permissions": testJSONObject{
-		// 			"view": testJSONObject{},
-		// 			"note": testJSONObject{},
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	desc:     "dismiss an invitation we were sent",
-		// 	method:   http.MethodPut,
-		// 	url:      fmt.Sprintf("/dismiss/invite/%s/%s", testing_uid2, testing_uid1),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusOK,
-		// 	body: testJSONObject{
-		// 		"key": "careteam_invite/1234",
-		// 	},
-		// },
-		// {
-		// 	desc:     "delete the other invitation we sent",
-		// 	method:   http.MethodPut,
-		// 	url:      fmt.Sprintf("/%s/invited/other@youremail.com", testing_uid1),
-		// 	token:    testing_token_uid1,
-		// 	respCode: http.StatusOK,
-		// },
+		{
+			desc:     "can't invite without a body",
+			method:   http.MethodPost,
+			url:      fmt.Sprintf("/send/invite/%s", testing_uid1),
+			token:    testing_token_uid1,
+			respCode: http.StatusBadRequest,
+		},
+		{
+			desc:     "can't invite without email",
+			method:   http.MethodPost,
+			url:      fmt.Sprintf("/send/invite/%s", testing_uid1),
+			token:    testing_token_uid1,
+			respCode: http.StatusBadRequest,
+			body: testJSONObject{
+				"email":       "",
+				"permissions": testJSONObject{"view": testJSONObject{}},
+			},
+		},
+		{
+			desc:     "can't have a duplicate invite",
+			method:   http.MethodPost,
+			url:      fmt.Sprintf("/send/invite/%s", testing_uid2),
+			token:    testing_token_uid1,
+			respCode: http.StatusConflict,
+			body: testJSONObject{
+				"email": testing_uid2 + "@email.org",
+				"permissions": testJSONObject{
+					"view": testJSONObject{},
+					"note": testJSONObject{},
+				},
+			},
+		},
+		{
+			desc:       "invite valid if email, permissons and not a duplicate",
+			returnNone: true,
+			method:     http.MethodPost,
+			url:        fmt.Sprintf("/send/invite/%s", testing_uid2),
+			token:      testing_token_uid1,
+			respCode:   http.StatusOK,
+			body: testJSONObject{
+				"email":       testing_uid2 + "@email.org",
+				"permissions": testJSONObject{"view": testJSONObject{}},
+			},
+		},
+		{
+			desc:     "invitations gives list of our outstanding invitations",
+			method:   http.MethodGet,
+			url:      fmt.Sprintf("/invitations/%s", testing_uid1),
+			token:    testing_token_uid1,
+			respCode: http.StatusOK,
+			response: testJSONObject{
+				"invitedBy": testing_uid2,
+				"permissions": testJSONObject{
+					"view": testJSONObject{},
+					"note": testJSONObject{},
+				},
+			},
+		},
+		{
+			desc:     "request not found without the full path",
+			method:   http.MethodPut,
+			url:      "/accept/invite",
+			token:    testing_token_uid1,
+			respCode: http.StatusNotFound,
+		},
+		{
+			desc:     "invalid request to accept an invite when user ID's not expected",
+			method:   http.MethodPut,
+			url:      fmt.Sprintf("/accept/invite/%s/%s", testing_uid1, "badID"),
+			token:    testing_token_uid1,
+			respCode: http.StatusForbidden,
+			body: testJSONObject{
+				"key": "careteam_invite/1234",
+			},
+		},
+		{
+			desc:     "invite will get invitations we sent",
+			method:   http.MethodGet,
+			url:      fmt.Sprintf("/invite/%s", testing_uid2),
+			token:    testing_token_uid1,
+			respCode: http.StatusOK,
+			response: testJSONObject{
+				"email": "personToInvite@email.com",
+				"permissions": testJSONObject{
+					"view": testJSONObject{},
+					"note": testJSONObject{},
+				},
+			},
+		},
+		{
+			desc:     "dismiss an invitation we were sent",
+			method:   http.MethodPut,
+			url:      fmt.Sprintf("/dismiss/invite/%s/%s", testing_uid2, testing_uid1),
+			token:    testing_token_uid1,
+			respCode: http.StatusOK,
+			body: testJSONObject{
+				"key": "careteam_invite/1234",
+			},
+		},
+		{
+			desc:     "delete the other invitation we sent",
+			method:   http.MethodPut,
+			url:      fmt.Sprintf("/%s/invited/other@youremail.com", testing_uid1),
+			token:    testing_token_uid1,
+			respCode: http.StatusOK,
+		},
 		{
 			desc:     "valid request to accept an team invite",
 			method:   http.MethodPut,
