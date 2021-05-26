@@ -20,7 +20,9 @@ const (
 func GetUserChosenLanguage(req *http.Request) string {
 	userlng := ""
 	if userlng = req.Header.Get(USER_LANGUAGE); userlng == "" {
-		userlng = GetBrowserPreferredLanguage(req)
+		if userlng = GetBrowserPreferredLanguage(req); userlng == "" {
+			userlng = "en"
+		}
 	}
 	return userlng
 }
