@@ -18,11 +18,11 @@ const (
 
 //GetUserChosenLanguage returns the chosen language passed as a custom header
 func GetUserChosenLanguage(req *http.Request) string {
-	if userlng := req.Header.Get(USER_LANGUAGE); userlng == "" {
-		return ""
-	} else {
-		return userlng
+	userlng := ""
+	if userlng = req.Header.Get(USER_LANGUAGE); userlng == "" {
+		userlng = GetBrowserPreferredLanguage(req)
 	}
+	return userlng
 }
 
 //GetBrowserPreferredLanguage returns the preferred language extracted from the request browser
