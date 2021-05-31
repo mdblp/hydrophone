@@ -1,7 +1,7 @@
 package hydrophone
 
 import (
-	"github.com/tidepool-org/hydrophone/models"
+	"github.com/mdblp/hydrophone/models"
 )
 
 type HydrophoneMockClient struct {
