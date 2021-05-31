@@ -216,8 +216,8 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 		}
 		if invitedUsr.HasRole("hcp") {
 			types = append(types, models.TypeMedicalTeamInvite,
-			models.TypeMedicalTeamDoAdmin,
-			models.TypeMedicalTeamRemove,
+				models.TypeMedicalTeamDoAdmin,
+				models.TypeMedicalTeamRemove,
 			)
 		}
 		status := []models.Status{
@@ -529,7 +529,7 @@ func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf 
 	// are we updating a team member or a patient
 	var err error
 	if conf.Role != "patient" {
-		_, err = a.perms.UpdateTeamMember(req.Header.Get(TP_SESSION_TOKEN), member)
+		_, err = a.perms.AddTeamMember(a.sl.TokenProvide(), member)
 	} else {
 		_, err = a.perms.AddOrUpdatePatient(req.Header.Get(TP_SESSION_TOKEN), member)
 	}
