@@ -206,12 +206,19 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 
 		invitedUsr := a.findExistingUser(inviteeID, req.Header.Get(TP_SESSION_TOKEN))
 
-		types := []models.Type{
-			models.TypeCareteamInvite,
-			models.TypeMedicalTeamInvite,
-			models.TypeMedicalTeamPatientInvite,
+		types := []models.Type{}
+		// Show invites relevant for the type of user
+		if invitedUsr.HasRole("patient") {
+			types = append(types, models.TypeMedicalTeamPatientInvite)
+		}
+		if invitedUsr.HasRole("caregiver") {
+			types = append(types, models.TypeCareteamInvite)
+		}
+		if invitedUsr.HasRole("hcp") {
+			types = append(types, models.TypeMedicalTeamInvite,
 			models.TypeMedicalTeamDoAdmin,
 			models.TypeMedicalTeamRemove,
+			)
 		}
 		status := []models.Status{
 			models.StatusPending,
