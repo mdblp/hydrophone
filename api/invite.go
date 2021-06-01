@@ -438,6 +438,14 @@ func (a *Api) AcceptTeamNotifs(res http.ResponseWriter, req *http.Request, vars 
 	if token == nil {
 		return
 	}
+	if token.Role != "hcp" && token.Role != "patient" {
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusForbidden, "Caregivers cannot accept a team invitation")},
+			http.StatusForbidden,
+		)
+		return
+	}
 
 	inviteeID := token.UserId
 
