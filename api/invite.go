@@ -212,7 +212,7 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 			types = append(types, models.TypeMedicalTeamPatientInvite)
 		}
 		if invitedUsr.HasRole("caregiver") {
-			types = append(types, models.TypeCareteamInvite)
+			types = append(types, models.TypeCareteamInvite, models.TypeMedicalTeamInvite)
 		}
 		if invitedUsr.HasRole("hcp") {
 			types = append(types, models.TypeMedicalTeamInvite,
