@@ -34,6 +34,9 @@ const (
 	testing_token_uid2 = "a.fake.token.for.uid.2"
 	testing_uid2       = "UID999"
 
+	testing_token_hcp       = "a.fake.token.for.hcp"
+	testing_token_caregiver = "a.fake.token.for.caregiver"
+
 	testing_uid3 = "UID002"
 	testing_uid4 = "UID004"
 )
@@ -78,7 +81,9 @@ var (
 )
 
 // In an effort to mock shoreline so that we can return the token we wish
-type testingShorelingMock struct{ userid string }
+type testingShorelingMock struct {
+	userid string
+}
 
 func newtestingShorelingMock(userid string) *testingShorelingMock {
 	return &testingShorelingMock{userid: userid}
@@ -110,7 +115,13 @@ func (m *testingShorelingMock) UpdateUser(userID string, userUpdate schema.UserU
 	return nil
 }
 func (m *testingShorelingMock) CheckToken(chkToken string) *token.TokenData {
-	return &token.TokenData{UserId: m.userid, IsServer: false}
+	if chkToken == testing_token_hcp {
+		return &token.TokenData{UserId: m.userid, IsServer: false, Role: "hcp"}
+	}
+	if chkToken == testing_token_caregiver {
+		return &token.TokenData{UserId: m.userid, IsServer: false, Role: "caregiver"}
+	}
+	return &token.TokenData{UserId: m.userid, IsServer: false, Role: "patient"}
 }
 
 type (
