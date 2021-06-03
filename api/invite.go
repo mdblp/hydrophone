@@ -852,7 +852,9 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 				res.WriteHeader(http.StatusUnauthorized)
 				return
 			}
-			err = a.perms.RemoveTeamMember(tokenValue, conf.Team.ID, conf.UserId)
+			if conf.UserId != "" {
+				err = a.perms.RemoveTeamMember(tokenValue, conf.Team.ID, conf.UserId)
+			}
 		case models.TypeCareteamInvite:
 			//verify the request comes from the creator
 			if !a.isAuthorizedUser(token, conf.CreatorId) {
