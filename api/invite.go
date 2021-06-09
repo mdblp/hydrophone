@@ -937,14 +937,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 			return
 		} else {
 
-			if invitedUsr == nil {
-				// we return an error as the invitedUser does not exist yet
-				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusForbidden, STATUS_ERR_FINDING_USER)}
-				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-				return
-			}
-
-			if invitedUsr.HasRole("patient") {
+			if invitedUsr != nil && invitedUsr.HasRole("patient") {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusMethodNotAllowed, STATUS_PATIENT_NOT_CAREGIVER)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
