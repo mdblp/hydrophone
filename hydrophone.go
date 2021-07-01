@@ -66,9 +66,9 @@ func main() {
 		logger.Panic("Problem loading config ", err)
 	}
 
-	environment, found := os.LookupEnv("ENV")
+	isTestEnv, found := os.LookupEnv("TEST")
 	isTest := false
-	if found && (strings.ToUpper(environment) == "TEST" || strings.ToUpper(environment) == "DEV") {
+	if found && strings.ToUpper(isTestEnv) == "TRUE" {
 		isTest = true
 	}
 	region, found := os.LookupEnv("REGION")
