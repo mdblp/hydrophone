@@ -67,9 +67,10 @@ func main() {
 	}
 
 	isTestEnv, found := os.LookupEnv("TEST")
-	isTest := false
 	if found && strings.ToUpper(isTestEnv) == "TRUE" {
-		isTest = true
+		config.Api.TestRoutes = true
+	} else {
+		config.Api.TestRoutes = false
 	}
 	region, found := os.LookupEnv("REGION")
 	if found {
@@ -182,7 +183,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates, isTest)
+	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates)
 	api.SetHandlers("", rtr)
 
 	/*
