@@ -68,9 +68,9 @@ func main() {
 
 	isTestEnv, found := os.LookupEnv("TEST")
 	if found && strings.ToUpper(isTestEnv) == "TRUE" {
-		config.Api.TestRoutes = true
+		config.Api.EnableTestRoutes = true
 	} else {
-		config.Api.TestRoutes = false
+		config.Api.EnableTestRoutes = false
 	}
 	region, found := os.LookupEnv("REGION")
 	if found {

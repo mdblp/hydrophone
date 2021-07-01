@@ -47,7 +47,7 @@ type (
 		AllowPatientResetPassword bool   `json:"allowPatientResetPassword"` // true means that patients can reset their password, false means that only clinicianc can reset their password
 		PatientPasswordResetURL   string `json:"patientPasswordResetUrl"`   // URL of the help web site that is used to give instructions to reset password for patients
 		Protocol                  string `json:"protocol"`
-		TestRoutes                bool   `json:"test"`
+		EnableTestRoutes          bool   `json:"test"`
 	}
 
 	group struct {
@@ -178,7 +178,7 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// PUT /confirm/dismiss/team/invite/{teamid}
 	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
 	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
-	if a.Config.TestRoutes {
+	if a.Config.EnableTestRoutes {
 		rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
 	}
 

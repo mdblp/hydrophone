@@ -921,10 +921,12 @@ func (a *Api) CancelAllInvites(res http.ResponseWriter, req *http.Request, vars 
 		inv.UpdateStatus(models.StatusCanceled)
 		if !a.addOrUpdateConfirmation(req.Context(), inv, res) {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
+			log.Printf("CancelAllInvite failed: [%s]", statusErr.Error())
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
 			return
 		}
 	}
+	log.Printf("cancel invites for [%s]", inviteeEmail)
 	res.WriteHeader(http.StatusOK)
 }
 
