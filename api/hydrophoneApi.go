@@ -37,6 +37,7 @@ type (
 		Config         Config
 		LanguageBundle *i18n.Bundle
 		logger         *log.Logger
+		isTest         bool
 	}
 	Config struct {
 		ServerSecret              string `json:"serverSecret"`              //used for services
@@ -98,6 +99,7 @@ func InitApi(
 	seagull commonClients.Seagull,
 	portal portal.Client,
 	templates models.Templates,
+	isTestEnv bool,
 ) *Api {
 	logger := log.New(os.Stdout, CONFIRM_API_PREFIX, log.LstdFlags)
 	return &Api{
@@ -111,6 +113,7 @@ func InitApi(
 		templates:      templates,
 		LanguageBundle: nil,
 		logger:         logger,
+		isTest:         isTestEnv,
 	}
 }
 
@@ -177,7 +180,9 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// PUT /confirm/dismiss/team/invite/{teamid}
 	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
 	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
-	rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
+	if a.isTest {
+		rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
+	}
 
 	// PUT /confirm/:userid/invited/:invited_address
 	// PUT /confirm/signup/:userid

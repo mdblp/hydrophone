@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 
 	"github.com/tidepool-org/go-common/clients/portal"
@@ -65,6 +66,11 @@ func main() {
 		logger.Panic("Problem loading config ", err)
 	}
 
+	environment, found := os.LookupEnv("ENV")
+	isTest := false
+	if found && (strings.ToUpper(environment) == "TEST" || strings.ToUpper(environment) == "DEV") {
+		isTest = true
+	}
 	region, found := os.LookupEnv("REGION")
 	if found {
 		config.Ses.Region = region
@@ -176,7 +182,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates)
+	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates, isTest)
 	api.SetHandlers("", rtr)
 
 	/*
