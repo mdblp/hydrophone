@@ -401,7 +401,7 @@ func (a *Api) acceptSignUp(res http.ResponseWriter, req *http.Request, vars map[
 		return
 	}
 
-	toFind := &models.Confirmation{Key: confirmationId, Type: models.TypeSignUp}
+	toFind := &models.Confirmation{Key: confirmationId, Type: models.TypeSignUp, Status: models.StatusPending}
 
 	if found := a.findSignUp(req.Context(), toFind, res); found != nil {
 		if found.IsExpired() {
