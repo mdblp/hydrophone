@@ -136,7 +136,7 @@ func (a *Api) sendSignUpInformation(res http.ResponseWriter, req *http.Request, 
 			// send information message to patient
 			var templateName = models.TemplateNamePatientInformation
 
-			emailContent := map[string]interface{}{
+			emailContent := map[string]string{
 				"Email": usrDetails.Emails[0],
 			}
 
@@ -259,7 +259,7 @@ func (a *Api) sendSignUp(res http.ResponseWriter, req *http.Request, vars map[st
 
 					log.Printf("Sending email confirmation to %s with key %s", newSignUp.Email, newSignUp.Key)
 
-					emailContent := map[string]interface{}{
+					emailContent := map[string]string{
 						"Key":      newSignUp.Key,
 						"Email":    newSignUp.Email,
 						"FullName": profile.FullName,
@@ -341,7 +341,7 @@ func (a *Api) resendSignUp(res http.ResponseWriter, req *http.Request, vars map[
 
 				log.Printf("Resending email confirmation to %s with key %s", found.Email, found.Key)
 
-				emailContent := map[string]interface{}{
+				emailContent := map[string]string{
 					"Key":      found.Key,
 					"Email":    found.Email,
 					"FullName": profile.FullName,

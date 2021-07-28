@@ -39,7 +39,7 @@ const (
 
 type Template interface {
 	Name() TemplateName
-	Execute(content interface{}, lang string) (string, string, error)
+	Execute(content map[string]string, lang string) (string, string, error)
 	ContentParts() []string
 	EscapeParts() []string
 	Subject() string
@@ -125,13 +125,13 @@ func (p *PrecompiledTemplate) EscapeParts() []string {
 }
 
 // Execute compiles the pre-compiled template with provided content
-func (p *PrecompiledTemplate) Execute(content interface{}, lang string) (string, string, error) {
+func (p *PrecompiledTemplate) Execute(content map[string]string, lang string) (string, string, error) {
 
 	var bodyBuffer bytes.Buffer
 	var subject string
 	var err error
-	contextParts := p.fillEscapedParts(content.(map[string]interface{}))
-	p.fillAndLocalize(lang, content.(map[string]interface{}), contextParts)
+	contextParts := p.fillEscapedParts(content)
+	p.fillAndLocalize(lang, content, contextParts)
 
 	if subject, err = p.fillAndLocalizeSubject(lang, contextParts); err != nil {
 		return "", "", fmt.Errorf("models: failure to generate subject %s", strconv.Quote(p.name.String()))
@@ -147,7 +147,7 @@ func (p *PrecompiledTemplate) Execute(content interface{}, lang string) (string,
 // fillAndLocalize fills the template content parts based on language bundle and locale
 // A template content/body is made of HTML tags and content that can be localized
 // Each template references its parts that can be filled in a collection called ContentParts
-func (p *PrecompiledTemplate) fillAndLocalize(locale string, contentPart map[string]interface{}, contextParts map[string]interface{}) {
+func (p *PrecompiledTemplate) fillAndLocalize(locale string, contentPart map[string]string, contextParts map[string]string) {
 
 	// Get content parts from the template
 	for _, v := range p.ContentParts() {
@@ -157,22 +157,22 @@ func (p *PrecompiledTemplate) fillAndLocalize(locale string, contentPart map[str
 	}
 }
 
-func (p *PrecompiledTemplate) fillAndLocalizeSubject(locale string, contextParts map[string]interface{}) (string, error) {
+func (p *PrecompiledTemplate) fillAndLocalizeSubject(locale string, contextParts map[string]string) (string, error) {
 	// Get content parts from the template
 	return p.localizer.Localize(p.Subject(), locale, contextParts)
 }
 
 // fillEscapedParts dynamically fills the escape parts with content
-func (p *PrecompiledTemplate) fillEscapedParts(content map[string]interface{}) map[string]interface{} {
+func (p *PrecompiledTemplate) fillEscapedParts(content map[string]string) map[string]string {
 	// Escaped parts are replaced with content value
-	var escape = make(map[string]interface{})
+	var escape = make(map[string]string)
 	if p.EscapeParts() != nil {
 		for _, v := range p.EscapeParts() {
 			val, exist := content[v]
 			if exist {
-				escape[v] = html.EscapeString(val.(string))
+				escape[v] = html.EscapeString(val)
 			} else {
-				escape[v] = nil
+				escape[v] = ""
 			}
 
 			content[v] = escape[v]
