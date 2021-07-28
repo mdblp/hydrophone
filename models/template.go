@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"html"
 	"strconv"
 	"text/template"
-
-	"github.com/microcosm-cc/bluemonday"
 
 	"github.com/mdblp/hydrophone/localize"
 )
@@ -165,14 +164,13 @@ func (p *PrecompiledTemplate) fillAndLocalizeSubject(locale string, contextParts
 
 // fillEscapedParts dynamically fills the escape parts with content
 func (p *PrecompiledTemplate) fillEscapedParts(content map[string]interface{}) map[string]interface{} {
-	policy := bluemonday.StrictPolicy()
 	// Escaped parts are replaced with content value
 	var escape = make(map[string]interface{})
 	if p.EscapeParts() != nil {
 		for _, v := range p.EscapeParts() {
 			val, exist := content[v]
 			if exist {
-				escape[v] = policy.Sanitize(val.(string))
+				escape[v] = html.EscapeString(val.(string))
 			} else {
 				escape[v] = nil
 			}
