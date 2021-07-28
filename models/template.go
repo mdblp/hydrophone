@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"html"
 	"strconv"
 	"text/template"
 
@@ -168,7 +169,8 @@ func (p *PrecompiledTemplate) fillEscapedParts(content map[string]interface{}) m
 	var escape = make(map[string]interface{})
 	if p.EscapeParts() != nil {
 		for _, v := range p.EscapeParts() {
-			escape[v] = content[v]
+			escape[v] = html.EscapeString(content[v].(string))
+			content[v] = escape[v]
 		}
 	}
 

@@ -196,7 +196,6 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 		"Language":                 "en",
 	}
 	// Content collection is here to replace placeholders in template body/content
-	content["CreatorName"] = "John Doe"
 	content["WebURL"] = a.Config.WebURL
 	content["SupportURL"] = a.Config.SupportURL
 	content["AssetURL"] = a.Config.AssetURL
