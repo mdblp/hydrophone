@@ -178,7 +178,7 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 
 	supportEmail := fmt.Sprintf("<a href=%s>%s</a>", a.Config.SupportURL, strings.Replace(a.Config.SupportURL, "mailto:", "", 1))
 
-	content := map[string]interface{}{
+	content := map[string]string{
 		"Key":                      "123456789123456789123456789123456789",
 		"Email":                    "john@diabeloop.com",
 		"EncodedEmail":             url.QueryEscape("john@diabeloop.com"),
