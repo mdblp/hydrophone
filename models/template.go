@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"html"
 	"strconv"
 	"text/template"
+
+	"github.com/microcosm-cc/bluemonday"
 
 	"github.com/mdblp/hydrophone/localize"
 )
@@ -130,6 +131,7 @@ func (p *PrecompiledTemplate) Execute(content interface{}, lang string) (string,
 	var bodyBuffer bytes.Buffer
 	var subject string
 	var err error
+
 	p.fillAndLocalize(lang, content.(map[string]interface{}))
 
 	if subject, err = p.fillAndLocalizeSubject(lang, content.(map[string]interface{})); err != nil {
@@ -164,12 +166,12 @@ func (p *PrecompiledTemplate) fillAndLocalizeSubject(locale string, content map[
 
 // fillEscapedParts dynamically fills the escape parts with content
 func (p *PrecompiledTemplate) fillEscapedParts(content map[string]interface{}) map[string]interface{} {
-
+	policy := bluemonday.StrictPolicy()
 	// Escaped parts are replaced with content value
 	var escape = make(map[string]interface{})
 	if p.EscapeParts() != nil {
 		for _, v := range p.EscapeParts() {
-			escape[v] = html.EscapeString(content[v].(string))
+			escape[v] = policy.Sanitize(content[v].(string))
 			content[v] = escape[v]
 		}
 	}
