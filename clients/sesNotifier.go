@@ -76,18 +76,8 @@ func NewSesNotifier(cfg *SesNotifierConfig) (*SesNotifier, error) {
 	}, nil
 }
 
-// Send a message to a list of recipients with a given subject
-func (c *SesNotifier) Send(to []string, subject string, msg string, tags map[string]string) (int, string) {
-	var toAwsAddress = make([]*string, len(to))
-	for i, x := range to {
-		toAwsAddress[i] = aws.String(x)
-	}
-	confSetStr := c.Config.ConfigurationSet
-	var confSetName *string = nil
-	if confSetStr != "" {
-		confSetName = &confSetStr
-	}
-
+// Returns SES Message tags based on default tags in config and tags passed as parameter
+func (c *SesNotifier) getSesTags(tags map[string]string) []*ses.MessageTag {
 	allTags := make(map[string]string)
 	for k, v := range c.Config.DefaultTags {
 		allTags[k] = v
@@ -102,6 +92,22 @@ func (c *SesNotifier) Send(to []string, subject string, msg string, tags map[str
 			sesTags = append(sesTags, &sesMessageTag)
 		}
 	}
+	return sesTags
+}
+
+// Send a message to a list of recipients with a given subject
+func (c *SesNotifier) Send(to []string, subject string, msg string, tags map[string]string) (int, string) {
+	var toAwsAddress = make([]*string, len(to))
+	for i, x := range to {
+		toAwsAddress[i] = aws.String(x)
+	}
+	confSetStr := c.Config.ConfigurationSet
+	var confSetName *string = nil
+	if confSetStr != "" {
+		confSetName = &confSetStr
+	}
+	sesTags := c.getSesTags(tags)
+
 	input := &ses.SendEmailInput{
 		Destination: &ses.Destination{
 			CcAddresses: []*string{},
