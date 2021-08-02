@@ -10,6 +10,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 
 ### Engineering
 - Dockerise Hydromail so it can be deployed in k8s environments
+- YLP-879: SES monitoring: enable SES configuration set and tags in SES emails
 
 ## 1.7.0 - 2021-07-01
 ### Engineering
