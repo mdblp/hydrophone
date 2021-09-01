@@ -102,6 +102,6 @@ MedicalTeamPatientInviteWarning: "Bitte prüfen Sie, ob die obigen Angaben mit d
 MedicalTeamPatientInviteWarning2: "Wenn Sie sich unsicher sind, sollten Sie sich an Ihren Arzt wenden und die Einladung vorerst nicht annehmen."
 MedicalTeamPatientInviteInfo: "Wenn Sie diesem Team beitreten, stimmen Sie zu, dass Ihre persönlichen und medizinischen Daten an die jeweiligen Mitglieder (autorisierte medizinische Fachkräfte, die bei YourLoops registriert sind) weitergegeben werden dürfen."
 #Shared
-ReadDataPrivacy: "Read our <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
-RespondToInvite: "Respond to invitation"
-ConfirmationSubject: "Verify your email address"
+ReadDataPrivacy: "Weitere Informationen finden Sie in unserer <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>Datenschutzerklärung</a>."
+RespondToInvite: "Auf Einladung antworten"
+ConfirmationSubject: "Bestätigen Sie Ihre E-Mail-Adresse"
