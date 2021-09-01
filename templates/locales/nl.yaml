@@ -102,6 +102,6 @@ MedicalTeamPatientInviteWarning: "Controleer of de bovenstaande gegevens overeen
 MedicalTeamPatientInviteWarning2: "Neem bij twijfel contact op met je zorgverlener en accepteer deze uitnodiging niet."
 MedicalTeamPatientInviteInfo: "Door dit team toe te voegen, stem je ermee in om je persoonlijke gegevens (inclusief gezondheidsgegevens) te delen met de leden van het team, die geautoriseerde zorgverleners zijn die geregistreerd zijn op YourLoops."
 #Shared
-ReadDataPrivacy: "Read our <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
-RespondToInvite: "Respond to invitation"
-ConfirmationSubject: "Verify your email address"
+ReadDataPrivacy: "Lees ons <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacybeleid</a> voor meer informatie."
+RespondToInvite: "Reageren op uitnodiging"
+ConfirmationSubject: "Verifieer je e-mailadres"
