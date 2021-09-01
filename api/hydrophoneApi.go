@@ -47,6 +47,7 @@ type (
 		AllowPatientResetPassword bool   `json:"allowPatientResetPassword"` // true means that patients can reset their password, false means that only clinicianc can reset their password
 		PatientPasswordResetURL   string `json:"patientPasswordResetUrl"`   // URL of the help web site that is used to give instructions to reset password for patients
 		Protocol                  string `json:"protocol"`
+		EnableTestRoutes          bool   `json:"test"`
 	}
 
 	group struct {
@@ -177,6 +178,9 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// PUT /confirm/dismiss/team/invite/{teamid}
 	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
 	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
+	if a.Config.EnableTestRoutes {
+		rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
+	}
 
 	// PUT /confirm/:userid/invited/:invited_address
 	// PUT /confirm/signup/:userid
@@ -280,7 +284,7 @@ func (a *Api) checkFoundConfirmations(token string, res http.ResponseWriter, res
 }
 
 //Generate a notification from the given confirmation,write the error if it fails
-func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirmation, content map[string]interface{}, lang string) bool {
+func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirmation, content map[string]string, lang string) bool {
 	log.Printf("trying notification with template '%s' to %s with language '%s'", conf.TemplateName, conf.Email, lang)
 
 	// Get the template name based on the requested communication type
@@ -327,7 +331,7 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 
 	mail, ok := content["Email"]
 	if ok {
-		content["EncodedEmail"] = url.QueryEscape(mail.(string))
+		content["EncodedEmail"] = url.QueryEscape(mail)
 	}
 
 	// Retrieve the template from all the preloaded templates
@@ -346,8 +350,14 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 		return false
 	}
 
+	var tags = make(map[string]string)
+	tags["hydrophoneTemplate"] = templateName.String()
+	if traceSession := req.Header.Get(TP_TRACE_SESSION); traceSession != "" {
+		tags[TP_TRACE_SESSION] = traceSession
+	}
+
 	// Finally send the email
-	if status, details := a.notifier.Send([]string{conf.Email}, subject, body); status != http.StatusOK {
+	if status, details := a.notifier.Send([]string{conf.Email}, subject, body, tags); status != http.StatusOK {
 		log.Printf("Issue sending email: Status [%d] Message [%s]", status, details)
 		return false
 	}

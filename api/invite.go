@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -887,6 +888,49 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 	a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
 }
 
+// @Summary Cancel all invites
+// @Description Server token can cancel all team invites for a given user
+// @ID hydrophone-api-cancelAllInvites
+// @Accept  json
+// @Produce  json
+// @Param email path string true "invitee email address"
+// @Success 200 {string} string "OK"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
+// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 500 {object} status.Status "Error (internal) while processing the data"
+// @Router /cancel/all/{email} [post]
+// @security TidepoolAuth
+func (a *Api) CancelAllInvites(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	token := a.token(res, req)
+	inviteeEmail := vars["email"]
+	if !token.IsServer {
+		a.sendError(res, http.StatusUnauthorized, STATUS_UNAUTHORIZED)
+		return
+	}
+
+	invites, _ := a.Store.FindConfirmations(
+		req.Context(),
+		&models.Confirmation{CreatorId: "", Email: inviteeEmail},
+		[]models.Status{models.StatusPending},
+		[]models.Type{},
+	)
+	if len(invites) == 0 {
+		return
+	}
+
+	for _, inv := range invites {
+		inv.UpdateStatus(models.StatusCanceled)
+		if !a.addOrUpdateConfirmation(req.Context(), inv, res) {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
+			log.Printf("CancelAllInvite failed: [%s]", statusErr.Error())
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+			return
+		}
+	}
+	log.Printf("cancel invites for [%s]", inviteeEmail)
+	res.WriteHeader(http.StatusOK)
+}
+
 // @Summary Send a invite to join a patient's team
 // @Description  Send a invite to new or existing users to join the patient's team
 // @ID hydrophone-api-SendInvite
@@ -985,7 +1029,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 						webPath = "login"
 					}
 
-					emailContent := map[string]interface{}{
+					emailContent := map[string]string{
 						"PatientName": fullName,
 						"Email":       invite.Email,
 						"WebPath":     webPath,
@@ -1126,9 +1170,9 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 					webPath = "signup"
 				}
 
-				emailContent := map[string]interface{}{
+				emailContent := map[string]string{
 					"MedicalteamName":          team.Name,
-					"MedicalteamAddress":       team.Address,
+					"MedicalteamAddress":       formatAddress(team.Address),
 					"MedicalteamPhone":         team.Phone,
 					"MedicalteamIentification": team.Code,
 					"CreatorName":              invite.Creator.Profile.FullName,
@@ -1151,6 +1195,14 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		}
 	}
 
+}
+
+func formatAddress(addr store.Address) string {
+	if addr.Line2 != "" {
+		return fmt.Sprintf("%s %s, %s %s, %s", addr.Line1, addr.Line2, addr.Zip, addr.City, addr.Country)
+	} else {
+		return fmt.Sprintf("%s, %s %s, %s", addr.Line1, addr.Zip, addr.City, addr.Country)
+	}
 }
 
 func (a *Api) invitePatient(invitedUsr *schema.UserData, member store.Member, token string) *status.StatusError {
@@ -1291,7 +1343,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 				log.Println("SendInvite: ", err.Error())
 			} else {
 
-				emailContent := map[string]interface{}{
+				emailContent := map[string]string{
 					"MedicalteamName": team.Name,
 					"Email":           invite.Email,
 					"Language":        inviteeLanguage,
@@ -1409,7 +1461,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 			log.Println("SendInvite: ", err.Error())
 		} else {
 
-			emailContent := map[string]interface{}{
+			emailContent := map[string]string{
 				"MedicalteamName": team.Name,
 				"Email":           invite.Email,
 				"Language":        inviteeLanguage,
