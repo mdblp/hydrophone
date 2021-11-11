@@ -519,7 +519,7 @@ func (a *Api) verifySendAttempts(ctx context.Context, confirmationType models.Ty
 	if err != nil {
 		return false, 0, err
 	}
-	if count > a.Config.ConfirmationAttempts {
+	if count >= a.Config.ConfirmationAttempts {
 		return false, count, nil
 	}
 	return true, count, nil
