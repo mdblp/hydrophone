@@ -56,6 +56,7 @@ pipeline {
                     sh 'docker stop mongo4hydrotest${RUN_ID} && docker network rm hydrotest${RUN_ID}'
                     junit 'test-report.xml'
                     archiveArtifacts artifacts: 'coverage.html', allowEmptyArchive: true
+                    cobertura coberturaReportFile: 'coverage.xml'
                 }
             }
         }
