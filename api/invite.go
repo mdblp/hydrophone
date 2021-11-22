@@ -1511,7 +1511,6 @@ func (a *Api) getTeamForUser(token, teamID, userID string, res http.ResponseWrit
 	var auth = false
 	team, err := a.perms.GetTeam(token, teamID)
 	if err != nil {
-		// Should it be 404 not found ?
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return auth, store.Team{}, err

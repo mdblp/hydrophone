@@ -330,7 +330,7 @@ func initTests() []toTest {
 				"teamId": "teamInvitePatient",
 			},
 		},
-		// returns a 400 when everything goes well to set member role
+		// returns a 400 when everything goes wrong to set member role
 		{
 			method:   "PUT",
 			url:      fmt.Sprintf("/send/team/role/%s", testing_uid5),
