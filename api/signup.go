@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/mdblp/go-common/clients/status"
 	"github.com/mdblp/hydrophone/models"
 	"github.com/mdblp/shoreline/schema"
-	"github.com/tidepool-org/go-common/clients/status"
 )
 
 const (

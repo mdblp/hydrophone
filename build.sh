@@ -6,13 +6,13 @@ mkdir dist
 # generate version number
 if [ -n "${TRAVIS_TAG:-}" ]; then
     VERSION_BASE=${TRAVIS_TAG}
-else 
+else
     VERSION_BASE=$(git describe --abbrev=0 --tags 2> /dev/null || echo 'dblp.0.0.0')
 fi
 VERSION_SHORT_COMMIT=$(git rev-parse --short HEAD)
 VERSION_FULL_COMMIT=$(git rev-parse HEAD)
 
-GO_COMMON_PATH="github.com/tidepool-org/go-common"
+GO_COMMON_PATH="github.com/mdblp/go-common"
 export GOPRIVATE=github.com/mdblp/crew
 
 echo "Build hydrophone $VERSION_BASE+$VERSION_FULL_COMMIT"

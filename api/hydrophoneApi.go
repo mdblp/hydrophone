@@ -16,14 +16,14 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	crewClient "github.com/mdblp/crew/client"
+	commonClients "github.com/mdblp/go-common/clients"
+	"github.com/mdblp/go-common/clients/portal"
+	"github.com/mdblp/go-common/clients/status"
 	"github.com/mdblp/hydrophone/clients"
 	"github.com/mdblp/hydrophone/models"
 	"github.com/mdblp/shoreline/clients/shoreline"
 	"github.com/mdblp/shoreline/schema"
 	"github.com/mdblp/shoreline/token"
-	commonClients "github.com/tidepool-org/go-common/clients"
-	"github.com/tidepool-org/go-common/clients/portal"
-	"github.com/tidepool-org/go-common/clients/status"
 )
 
 type (

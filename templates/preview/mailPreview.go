@@ -10,7 +10,7 @@ import (
 	"syscall"
 
 	"github.com/gorilla/mux"
-	common "github.com/tidepool-org/go-common"
+	common "github.com/mdblp/go-common"
 
 	"github.com/mdblp/hydrophone/localize"
 	"github.com/mdblp/hydrophone/templates"
