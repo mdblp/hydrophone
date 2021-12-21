@@ -77,7 +77,7 @@ func main() {
 		servicePort = "9157"
 	}
 	// Load configuration from environment variables
-	if err := common.LoadEnvironmentConfig([]string{"TIDEPOOL_HYDROPHONE_ENV", "TIDEPOOL_HYDROPHONE_SERVICE"}, &config); err != nil {
+	if err := common.LoadEnvironmentConfig([]string{"TIDEPOOL_HYDROPHONE_SERVICE"}, &config); err != nil {
 		logger.Panic("Problem loading config ", err)
 	}
 	isTestEnv, found := os.LookupEnv("TEST")
