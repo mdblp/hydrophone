@@ -2,20 +2,15 @@ module github.com/mdblp/hydrophone
 
 go 1.15
 
-replace github.com/tidepool-org/go-common => github.com/mdblp/go-common v0.7.2-0.20210323141933-6b225f5dacf1
-
 require (
-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/aws/aws-sdk-go v1.34.24
 	github.com/gorilla/mux v1.8.0
-	github.com/mdblp/crew v0.2.1-0.20210520130101-e923243fc406
-	// Retrieved through go get github.com/mdblp/shoreline/clients/shoreline@dblp.1.5.1
-	github.com/mdblp/shoreline v0.14.2-0.20210503074837-5c41e0d08861
+	github.com/mdblp/crew v0.9.1-0.20211220165702-d3a41a7abbbd
+	github.com/mdblp/go-common v1.2.0
+	github.com/mdblp/shoreline v1.8.4
 	github.com/nicksnyder/go-i18n/v2 v2.0.3
-	github.com/swaggo/swag v1.7.0
-	github.com/tidepool-org/go-common v0.0.0-00010101000000-000000000000
-	go.mongodb.org/mongo-driver v1.4.1
-	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
-	golang.org/x/text v0.3.5
+	github.com/sirupsen/logrus v1.8.1
+	go.mongodb.org/mongo-driver v1.8.1
+	golang.org/x/text v0.3.6
 	gopkg.in/yaml.v2 v2.4.0
 )

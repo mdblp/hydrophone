@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tidepool-org/go-common/clients/status"
+	"github.com/mdblp/go-common/clients/status"
 )
 
 const (

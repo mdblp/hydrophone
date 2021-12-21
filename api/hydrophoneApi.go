@@ -16,14 +16,14 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	crewClient "github.com/mdblp/crew/client"
+	"github.com/mdblp/go-common/clients/portal"
+	"github.com/mdblp/go-common/clients/seagull"
+	"github.com/mdblp/go-common/clients/status"
 	"github.com/mdblp/hydrophone/clients"
 	"github.com/mdblp/hydrophone/models"
 	"github.com/mdblp/shoreline/clients/shoreline"
 	"github.com/mdblp/shoreline/schema"
 	"github.com/mdblp/shoreline/token"
-	commonClients "github.com/tidepool-org/go-common/clients"
-	"github.com/tidepool-org/go-common/clients/portal"
-	"github.com/tidepool-org/go-common/clients/status"
 )
 
 type (
@@ -33,8 +33,8 @@ type (
 		templates      models.Templates
 		sl             shoreline.ClientInterface
 		perms          crewClient.Crew
-		seagull        commonClients.Seagull
-		portal         portal.Client
+		seagull        seagull.API
+		portal         portal.API
 		Config         Config
 		LanguageBundle *i18n.Bundle
 		logger         *log.Logger
@@ -101,8 +101,8 @@ func InitApi(
 	ntf clients.Notifier,
 	sl shoreline.ClientInterface,
 	perms crewClient.Crew,
-	seagull commonClients.Seagull,
-	portal portal.Client,
+	seagull seagull.API,
+	portal portal.API,
 	templates models.Templates,
 ) *Api {
 	logger := log.New(os.Stdout, CONFIRM_API_PREFIX, log.LstdFlags)
