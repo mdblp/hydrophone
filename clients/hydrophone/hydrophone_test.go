@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/mdblp/hydrophone/models"
 )
 
 func buildServer(t *testing.T, userID string, testToken string, confirmType string) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		urlPath := req.URL.Path
-		t.Log(urlPath)
 		if strings.HasPrefix(urlPath, "/"+confirmType+"/") {
 			if req.Method != "GET" {
 				t.Errorf("Incorrect HTTP Method [%s]", req.Method)
@@ -98,7 +100,7 @@ func testWrongToken(t *testing.T, hydrophoneClient *Client, confirmType string) 
 	if err == nil {
 		t.Error("Unauthorized request should return an error")
 	}
-	if confirms != nil {
+	if !reflect.ValueOf(confirms).IsNil() {
 		t.Error("When unauthorized no confirmations should be sent")
 	}
 }
@@ -109,8 +111,19 @@ func testEmptyData(t *testing.T, hydrophoneClient *Client, testToken string, con
 	if err != nil {
 		t.Errorf("Failed empty test with error[%v]", err)
 	}
-	if confirms != nil {
-		t.Error("Failed empty test returned non nil confirmation")
+
+	switch v := confirms.(type) {
+	case *models.Confirmation:
+		if v != nil {
+			t.Error("empty test returned non nil confirmation")
+		}
+	case []models.Confirmation:
+		length := len(v)
+		if length != 0 {
+			t.Errorf("empty test returned %v elements expected %v", length, 0)
+		}
+	default:
+		t.Errorf("unknown type")
 	}
 }
 
@@ -120,7 +133,7 @@ func testError(t *testing.T, hydrophoneClient *Client, testToken string, confirm
 	if err == nil {
 		t.Error("Error from service should be forwarded")
 	}
-	if confirms != nil {
+	if !reflect.ValueOf(confirms).IsNil() {
 		t.Error("On error no confirmations should be sent")
 	}
 }
