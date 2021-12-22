@@ -8,22 +8,25 @@ import (
 	"testing"
 )
 
-func TestGetPendingInvitations(t *testing.T) {
-	testToken := "a.b.c"
-	var userID string
-	srvr := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+func buildServer(t *testing.T, userID string, testToken string, confirmType string) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		urlPath := req.URL.Path
-		if strings.HasPrefix(urlPath, "/invite/") {
+		t.Log(urlPath)
+		if strings.HasPrefix(urlPath, "/"+confirmType+"/") {
 			if req.Method != "GET" {
 				t.Errorf("Incorrect HTTP Method [%s]", req.Method)
 			} else if req.Header.Get("x-tidepool-session-token") != testToken {
 				res.WriteHeader(http.StatusUnauthorized)
 			} else {
-				userID = strings.TrimPrefix(urlPath, "/invite/")
+				userID = strings.TrimPrefix(urlPath, "/"+confirmType+"/")
 				switch userID {
 				case "authorizedWithData":
 					res.WriteHeader(http.StatusOK)
-					fmt.Fprint(res, `[{"key":"key1","type":"medicalteam_invitation"}, {"key":"key2","type":"medicalteam_do_admin"}]`)
+					if confirmType == "invite" {
+						fmt.Fprint(res, `[{"key":"key1","type":"medicalteam_invitation"}, {"key":"key2","type":"medicalteam_do_admin"}]`)
+					} else {
+						fmt.Fprint(res, `[{"key":"key3","type":"signup_confirmation"}]`)
+					}
 				case "authorizedWithoutData":
 					res.WriteHeader(http.StatusNotFound)
 				case "error":
@@ -34,6 +37,12 @@ func TestGetPendingInvitations(t *testing.T) {
 			t.Errorf("Unknown path[%s]", urlPath)
 		}
 	}))
+}
+
+func TestGetPendingInvitations(t *testing.T) {
+	testToken := "a.b.c"
+	var userID string
+	srvr := buildServer(t, userID, testToken, "invite")
 	defer srvr.Close()
 
 	hydrophoneClient := NewHydrophoneClientBuilder().
@@ -54,27 +63,72 @@ func TestGetPendingInvitations(t *testing.T) {
 		t.Errorf("Failed GetPendingInvitations wrong data returned, second element: %v", confirms[1])
 	}
 
-	confirms, err = hydrophoneClient.GetPendingInvitations("authorizedWithData", "wrong.token")
-	if err == nil {
-		t.Error("Failed GetPendingInvitations unauthorized request should return an error")
-	}
-	if confirms != nil {
-		t.Error("Failed GetPendingInvitations when unauthorized no confirmations should be sent")
-	}
+	testWrongToken(t, hydrophoneClient, "invite")
+	testEmptyData(t, hydrophoneClient, testToken, "invite")
+	testError(t, hydrophoneClient, testToken, "invite")
+}
 
-	confirms, err = hydrophoneClient.GetPendingInvitations("authorizedWithoutData", testToken)
+func TestGetPendingSignup(t *testing.T) {
+	testToken := "a.b.c"
+	var userID string
+	srvr := buildServer(t, userID, testToken, "signup")
+	defer srvr.Close()
+
+	hydrophoneClient := NewHydrophoneClientBuilder().
+		WithHost(srvr.URL).
+		Build()
+
+	confirms, err := hydrophoneClient.GetPendingSignup("authorizedWithData", testToken)
 	if err != nil {
-		t.Errorf("Failed GetPendingInvitations with error[%v]", err)
+		t.Errorf("Failed GetPendingSignup with error[%v]", err)
 	}
-	if len(confirms) != 0 {
-		t.Errorf("Failed GetPendingInvitations returned %v elements expected %v", len(confirms), 0)
+	if confirms.Key != "key3" && confirms.Type != "signup_confirmation" {
+		t.Errorf("Failed GetPendingSignup wrong data returned, first element: %v", confirms)
 	}
 
-	confirms, err = hydrophoneClient.GetPendingInvitations("error", testToken)
+	testWrongToken(t, hydrophoneClient, "signup")
+	testEmptyData(t, hydrophoneClient, testToken, "signup")
+	testError(t, hydrophoneClient, testToken, "signup")
+}
+
+func testWrongToken(t *testing.T, hydrophoneClient *Client, confirmType string) {
+	userID := "authorizedWithData"
+	testToken := "wrong.token"
+	confirms, err := getPending(hydrophoneClient, userID, testToken, confirmType)
 	if err == nil {
-		t.Error("Failed GetPendingInvitations error from service should be forwarded")
+		t.Error("Unauthorized request should return an error")
 	}
 	if confirms != nil {
-		t.Error("Failed GetPendingInvitations on error no confirmations should be sent")
+		t.Error("When unauthorized no confirmations should be sent")
+	}
+}
+
+func testEmptyData(t *testing.T, hydrophoneClient *Client, testToken string, confirmType string) {
+	userID := "authorizedWithoutData"
+	confirms, err := getPending(hydrophoneClient, userID, testToken, confirmType)
+	if err != nil {
+		t.Errorf("Failed empty test with error[%v]", err)
+	}
+	if confirms != nil {
+		t.Error("Failed empty test returned non nil confirmation")
+	}
+}
+
+func testError(t *testing.T, hydrophoneClient *Client, testToken string, confirmType string) {
+	userID := "error"
+	confirms, err := getPending(hydrophoneClient, userID, testToken, confirmType)
+	if err == nil {
+		t.Error("Error from service should be forwarded")
+	}
+	if confirms != nil {
+		t.Error("On error no confirmations should be sent")
+	}
+}
+
+func getPending(hydrophoneClient *Client, userID string, token string, confirmType string) (interface{}, error) {
+	if confirmType == "signup" {
+		return hydrophoneClient.GetPendingSignup(userID, token)
+	} else {
+		return hydrophoneClient.GetPendingInvitations(userID, token)
 	}
 }
