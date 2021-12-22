@@ -1,9 +1,10 @@
 package api
 
 import (
-	"log"
 	"net/http"
 	"regexp"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mdblp/shoreline/schema"
 

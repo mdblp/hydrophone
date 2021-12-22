@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"runtime"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -104,8 +104,8 @@ func InitApi(
 	seagull seagull.API,
 	portal portal.API,
 	templates models.Templates,
+	logger *log.Logger,
 ) *Api {
-	logger := log.New(os.Stdout, CONFIRM_API_PREFIX, log.LstdFlags)
 	return &Api{
 		Store:          store,
 		Config:         cfg,

@@ -1,8 +1,9 @@
 package api
 
 import (
-	"log"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mdblp/go-common/clients/status"
 )

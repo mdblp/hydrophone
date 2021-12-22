@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"path"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 

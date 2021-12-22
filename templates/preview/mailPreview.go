@@ -2,12 +2,13 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	common "github.com/mdblp/go-common"

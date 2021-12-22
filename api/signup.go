@@ -3,10 +3,11 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"regexp"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mdblp/go-common/clients/status"
 	"github.com/mdblp/hydrophone/models"

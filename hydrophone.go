@@ -200,7 +200,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates)
+	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, seagull, portal, emailTemplates, logger)
 	api.SetHandlers("", rtr)
 
 	/*
