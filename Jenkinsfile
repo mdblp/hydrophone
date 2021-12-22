@@ -65,7 +65,7 @@ pipeline {
             steps {
                 withCredentials ([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     pack()
-                    sh 'docker build -f Dockerfile.hydromail --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t hydromail:${GIT_COMMIT} .'
+                    sh 'docker build -f Dockerfile.hydromail --build-arg APP_VERSION=$version --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t hydromail:${GIT_COMMIT} .'
                 }
             }
         }
