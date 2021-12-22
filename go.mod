@@ -5,8 +5,7 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.34.24
 	github.com/gorilla/mux v1.8.0
-	// commit id from PR#27 https://github.com/mdblp/crew/pull/27
-	github.com/mdblp/crew v0.9.1-0.20211220165702-d3a41a7abbbd
+	github.com/mdblp/crew v1.0.0
 	github.com/mdblp/go-common v1.2.0
 	github.com/mdblp/shoreline v1.8.4
 	github.com/nicksnyder/go-i18n/v2 v2.0.3
