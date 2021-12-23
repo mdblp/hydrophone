@@ -1,8 +1,10 @@
 package hydrophone
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -18,7 +20,7 @@ type (
 	ClientInterface interface {
 		GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error)
 		GetPendingSignup(userID string, authToken string) (*models.Confirmation, error)
-		CancelSignup(userID string, authToken string) error
+		CancelSignup(confirm models.Confirmation, authToken string) error
 	}
 
 	Client struct {
@@ -140,16 +142,23 @@ func (client *Client) GetPendingInvitOrSignup(userID string, authToken string, c
 	}
 }
 
-func (client *Client) CancelSignup(userID string, authToken string) error {
+func (client *Client) CancelSignup(confirm models.Confirmation, authToken string) error {
 	host, err := client.getHost()
 	if err != nil {
 		return errors.New("No known hydrophone hosts")
 	}
 
-	host.Path = path.Join(host.Path, "signup", userID)
+	host.Path = path.Join(host.Path, "signup", confirm.UserId)
 
 	req, _ := http.NewRequest("PUT", host.String(), nil)
 	req.Header.Add("x-tidepool-session-token", authToken)
+
+	data, err := json.Marshal(confirm)
+	if err != nil {
+		return errors.Wrap(err, "Failure to marshal confirmation")
+	}
+
+	req.Body = ioutil.NopCloser(bytes.NewReader(data))
 
 	res, err := client.httpClient.Do(req)
 	if err != nil {
