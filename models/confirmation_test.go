@@ -74,6 +74,11 @@ func Test_NewConfirmation(t *testing.T) {
 		t.Fail()
 	}
 
+	if confirmation.IsExpired() {
+		t.Logf("the confirmation is not expired")
+		t.Fail()
+	}
+
 	confirmation.UpdateStatus(StatusCompleted)
 
 	if confirmation.Status != StatusCompleted {
@@ -135,6 +140,11 @@ func Test_NewPatientPasswordResetConfirmation(t *testing.T) {
 
 	if confirmation.Creator.UserId != "" {
 		t.Logf("expected `` actual [%s]", confirmation.Creator.UserId)
+		t.Fail()
+	}
+
+	if confirmation.GetReadableDuration() != "1" {
+		t.Logf("expected `1` actual [%s]", confirmation.GetReadableDuration())
 		t.Fail()
 	}
 
