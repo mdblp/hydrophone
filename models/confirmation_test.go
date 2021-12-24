@@ -511,10 +511,6 @@ func TestConfirmationTeamDoAdmin(t *testing.T) {
 		t.Logf("expected `` actual [%s]", confirmation.Creator.UserId)
 		t.Fail()
 	}
-	if confirmation.GetReadableDuration() != "7" {
-		t.Logf("expected `7` actual [%s]", confirmation.GetReadableDuration())
-		t.Fail()
-	}
 }
 
 func TestConfirmationCareteamInvite(t *testing.T) {

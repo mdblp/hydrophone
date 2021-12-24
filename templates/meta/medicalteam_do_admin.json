@@ -12,14 +12,12 @@
         "MedicalTeamDoAdminListItem3",
         "ReadDataPrivacy",
         "MedicalTeamDoAdminAction",
-        "EmailExpirationDays",
         "FooterGetSupport"
     ],
     "escapeContentParts":[
         "MedicalteamName",
         "CreatorName",
         "AssetURL",
-        "Language",
-        "Duration"
+        "Language"
     ]
 }

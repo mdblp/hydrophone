@@ -100,7 +100,6 @@ var (
 		TypePatientPasswordReset:     ConfirmationDuration{"hour", 1 * time.Hour},
 		TypeMedicalTeamInvite:        ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeMedicalTeamPatientInvite: ConfirmationDuration{"day", 7 * 24 * time.Hour},
-		TypeMedicalTeamDoAdmin:       ConfirmationDuration{"day", 7 * 24 * time.Hour},
 	}
 )
 
