@@ -87,11 +87,11 @@ func (client *Client) getHost() (*url.URL, error) {
 }
 
 func (client *Client) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
-	return client.GetPendingInvitOrSignup(userID, authToken, models.TypeCareteamInvite)
+	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeCareteamInvite)
 }
 
 func (client *Client) GetPendingSignup(userID string, authToken string) (*models.Confirmation, error) {
-	res, err := client.GetPendingInvitOrSignup(userID, authToken, models.TypeSignUp)
+	res, err := client.GetPendingInviteOrSignup(userID, authToken, models.TypeSignUp)
 
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (client *Client) GetPendingSignup(userID string, authToken string) (*models
 	}
 }
 
-func (client *Client) GetPendingInvitOrSignup(userID string, authToken string, confirmType models.Type) ([]models.Confirmation, error) {
+func (client *Client) GetPendingInviteOrSignup(userID string, authToken string, confirmType models.Type) ([]models.Confirmation, error) {
 	host, err := client.getHost()
 	if err != nil {
 		return nil, errors.New("No known hydrophone hosts")
@@ -120,7 +120,7 @@ func (client *Client) GetPendingInvitOrSignup(userID string, authToken string, c
 
 	res, err := client.httpClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failure to get pending signup")
+		return nil, errors.Wrap(err, "Failure to get pending confirm")
 	}
 	defer res.Body.Close()
 
