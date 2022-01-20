@@ -49,7 +49,7 @@ div[style*='margin: 16px 0'] {
 
 /* Social links */
 .social {
-  background-color: #006c71;
+  background-color: #ffffff;
 }
 
 /* Paragraphs */
@@ -63,6 +63,7 @@ p {
 
 p.h1 {
   font-weight: bold;
+  font-size: 18px;
 }
 
 p.content-width {
@@ -75,6 +76,7 @@ p.content-width {
 
 a {
   text-decoration: none;
+  color: #00a3e2;
 }
 
 a.btn {
@@ -85,7 +87,7 @@ a.btn {
 a.btn.primary {
   border-radius: 4px;
   padding: 10px 20px;
-  background-color: #6fc3bb;
+  background-color: #00a3e2;
   font-size: 16px;
   font-weight:bold;
   color: #ffffff;
@@ -95,6 +97,18 @@ a.btn.primary {
 }
 
 a.btn.secondary {
+  border: 2px solid #ffffff;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: normal;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left:20px;
+  padding-right:20px;
+  color:#ffffff;
+}
+
+a.btn.third {
   border: 2px solid #006c71;
   border-radius: 15px;
   font-size: 12px;
@@ -121,8 +135,8 @@ img.logo {
 }
 
 img.social {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
 }
 
 /* Tables */
