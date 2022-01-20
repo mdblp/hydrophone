@@ -7,6 +7,9 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Added
 - YLP-1107 Update mail templating to indicate validity 
 
+### Changed
+- YLP-1179 update email templates according to new layout
+
 ## 1.8.0 - 2021-12-22
 ### Added
 - New client functionality to get and cancel pending signup
