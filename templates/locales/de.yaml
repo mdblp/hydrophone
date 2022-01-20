@@ -55,11 +55,11 @@ SignupCustodialHeadline: "Herzlichen Glückwunsch zur Einrichtung Ihres YourLoop
 SignupCustodialVerify: "Verify Your Account"
 #Signup Custodial Clinic => SUPPRIMER
 #(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
+SignupCustodialClinicConfirmationSubject: "Diabetes-Klinik Nachsorge - Beantragen Sie Ihr Konto"
 SignupCustodialClinicHello: "Hallo, {{ .FullName }}!"
 SignupCustodialClinicAccount: "{{ .CreatorName }} hat ein YourLoops-Konto für Ihre Diabetes-Gerätedaten erstellt."
-SignupCustodialClinicOwnership: "You can take ownership of your free account to view and upload data from home."
-SignupCustodialClinicClaim: "Claim Your Account"
+SignupCustodialClinicOwnership: "Sie können Ihr kostenloses Konto nutzen, um Daten von zu Hause aus einzusehen und hochzuladen."
+SignupCustodialClinicClaim: "Beantragen Sie Ihr Konto"
 #Patient Information
 PatientInfoSubject: "Willkommen bei YourLoops!"
 PatientInfoHeadline: "Melden Sie sich an, um Ihre DBL-Daten anzusehen."
