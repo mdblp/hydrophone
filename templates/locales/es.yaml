@@ -104,6 +104,6 @@ MedicalTeamPatientInviteWarning: "Compruebe que los detalles anteriores coincide
 MedicalTeamPatientInviteWarning2: "Si no está seguro, póngase en contacto con el personal sanitario y no acepte la invitación."
 MedicalTeamPatientInviteInfo: "Al añadir este equipo consiente en compartir sus datos personales (incluidos los datos de salud) con sus miembros, quienes son personal sanitario autorizado registrado en YourLoops."
 #Shared
-ReadDataPrivacy: "Lea nuestra <a href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>política de confidencialidad</a> para obtener más información."
+ReadDataPrivacy: "Lea nuestra <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>política de confidencialidad</a> para obtener más información."
 RespondToInvite: "Responder a la invitación"
 ConfirmationSubject: "Verifique su dirección de correo electrónico"
