@@ -42,7 +42,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Fixed
 - YLP-909: adapt confirmation record creations to work with the new version of Crew
 
-## 1.7.2
+## 1.7.2 - 2021-09-16
 ### Fixed
 - YLP-975: support email link is not correctly rendered on email "patient password info"
 - YLP-992: Modify email pronoun for a neutral form in German
@@ -88,12 +88,12 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Added
 - New generic route to cancel invites (caregiver and team invites)
 
-## 1.6.3
+## 1.6.3 - 2021-05-14
 ### Fixed 
 - Encoded emails are missing in email templates.
 - Hydromail: correct the preview of new emails (caregiver invitation)
 
-## 1.6.2 
+## 1.6.2 - 2021-05-11
 ### Changed
 - YLP-682 Add team information in received invitations
 
@@ -254,29 +254,29 @@ This API sends notifications to users for things like forgotten passwords, initi
 ### Changed
 - Review Look & Feel for Diabeloop
 
-## 0.2.1
+## 0.2.1 - 2019-03-05
 
 ### Changed
 - PT-117 Review hydrophone emails support link
 
-## 0.2.0
+## 0.2.0 - 2019-02-15
 
 ### Added
 - PT-156 Don't allow a patient to reset his password
 - Add I18n framework to dblp
 - Diabeloop Look & Feel
 
-## 0.1.2
+## 0.1.2 - 2018-12-13
 
 ### Changed
 - Include fix for rsync on Dockerfile
 
-## 0.1.1
+## 0.1.1 - 2018-12-05
 
 ### Added
 - Add internationalization to hydrophone emails
 
-## 0.1.0
+## 0.1.0 - 2018-11-19
 
 ### Added
 - Add multi-language
