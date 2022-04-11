@@ -40,9 +40,12 @@ const (
 	testing_token_hcp       = "a.fake.token.for.hcp"
 	testing_token_caregiver = "a.fake.token.for.caregiver"
 
-	testing_uid3 = "UID002"
-	testing_uid4 = "UID004"
-	testing_uid5 = "UID005"
+	testing_uid3         = "UID002"
+	testing_uid4         = "UID004"
+	testing_uid5         = "UID005"
+	testing_uid_patient1 = "PATIENT001"
+	testing_uid_patient2 = "PATIENT002"
+	testing_uid_patient3 = "PATIENT003"
 )
 
 var (

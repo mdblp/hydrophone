@@ -192,6 +192,32 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		Members:     membersDismissInviteAsAdmin,
 		ID:          "teamDismissInvitePatient",
 	}
+	membersMonitoringTeam := []store.Member{
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamMonitoring",
+			Role:             "admin",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           testing_uid_patient1,
+			TeamID:           "teamMonitoring",
+			Role:             "patient",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           testing_uid_patient2,
+			TeamID:           "teamMonitoring",
+			Role:             "patient",
+			InvitationStatus: "pending",
+		},
+	}
+	teamMonitoring := store.Team{
+		Name:        "team monitoring",
+		Description: "team monitoring",
+		Members:     membersMonitoringTeam,
+		ID:          "teamMonitoring",
+	}
 
 	member_uid3 := store.Member{
 		TeamID:           "1",
@@ -239,10 +265,13 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamAlreadyMember", []store.Member{member_dup}, nil)
 	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamInvitePatient", []store.Member{}, nil)
 	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"123456", []store.Member{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring", membersMonitoringTeam, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring_empty", []store.Member{}, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamInvitePatient", &teamAddPatientAsMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoring", &teamMonitoring, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"key.to.be.dismissed", &member_dismissed, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"patient.key.to.be.dismissed", &patient_dismissed, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
@@ -576,6 +605,75 @@ func initTests() []toTest {
 				"reason": statusExistingInviteMessage,
 			},
 		},
+		{
+			method:   "POST",
+			url:      "/send/team/monitoring/teamAlreadyMember/UID123",
+			respCode: 409,
+			token:    testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(409),
+				"error":  float64(1001),
+				"reason": statusExistingInviteMessage,
+			},
+		},
+		// here we start
+		{
+			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoring/" + testing_uid_patient1,
+			returnNone: true,
+			respCode:   200,
+			token:      testing_token_uid1,
+		},
+		{
+			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoring/" + testing_uid_patient2,
+			returnNone: false,
+			respCode:   409,
+			token:      testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(409),
+				"error":  float64(1001),
+				"reason": statusExistingInviteMessage,
+			},
+		},
+		{
+			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoring/doesnotexist@myemail.com",
+			returnNone: true,
+			respCode:   400,
+			token:      testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(400),
+				"error":  float64(1001),
+				"reason": STATUS_ERR_FINDING_USER,
+			},
+		},
+		// STATUS_ERR_FINDING_TEAM
+		{
+			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoring_empty/" + testing_uid_patient1,
+			returnNone: true,
+			respCode:   400,
+			token:      testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(400),
+				"error":  float64(1001),
+				"reason": STATUS_ERR_FINDING_TEAM,
+			},
+		},
+		// STATUS_ERR_PATIENT_NOT_MBR
+		// {
+		// 	method:     "POST",
+		// 	url:        "/send/team/monitoring/teamMonitoring.notMember/" + testing_uid_patient3,
+		// 	returnNone: true,
+		// 	respCode:   500,
+		// 	token:      testing_token_uid1,
+		// 	response: testJSONObject{
+		// 		"code":   float64(500),
+		// 		"error":  float64(1001),
+		// 		"reason": STATUS_ERR_PATIENT_NOT_MBR,
+		// 	},
+		// },
 	}
 	return tests
 }

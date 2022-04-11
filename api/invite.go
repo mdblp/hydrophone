@@ -84,18 +84,24 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 //Or are they an existing user and already in the group?
 func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *schema.UserData) {
 
+	confirmation := &models.Confirmation{
+		Email: inviteeEmail,
+		Team: &models.Team{
+			ID: team.ID,
+		},
+		Type: invite}
+
 	//already has invite from this user?
 	invites, _ := a.Store.FindConfirmations(
 		ctx,
-		&models.Confirmation{
-			Email: inviteeEmail,
-			Team: &models.Team{
-				ID: team.ID,
-			},
-			Type: invite},
+		confirmation,
 		[]models.Status{models.StatusPending},
 		[]models.Type{},
 	)
+	inviteeID := confirmation.Email
+	if confirmation.Email == "" {
+		inviteeID = confirmation.UserId
+	}
 
 	if len(invites) > 0 {
 		//rule is we cannot send if the invite is not yet expired
@@ -108,11 +114,11 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 		}
 	}
 
-	invitedUsr := a.findExistingUser(inviteeEmail, a.sl.TokenProvide())
-	// call the teams service to check if the user is already a member
+	invitedUsr := a.findExistingUser(inviteeID, a.sl.TokenProvide())
+	// call the teams service to check if the hcp user is already a member
 	if invitedUsr != nil && invite == models.TypeMedicalTeamInvite {
 		if isMember := a.isTeamMember(invitedUsr.UserID, team, false); isMember {
-			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeEmail, team.Name)
+			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeID, team.Name)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingMemberMessage)}
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
 			return true, invitedUsr
@@ -135,6 +141,55 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 		}
 		return false, invitedUsr
 	}
+	return false, nil
+}
+
+// return the user and its status in the team, true it can be invited for monitor, otherwise it returns false
+func (a *Api) checkForMonitoringTeamInviteById(ctx context.Context, inviteeID, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *schema.UserData) {
+
+	confirmation := &models.Confirmation{
+		UserId: inviteeID,
+		Team: &models.Team{
+			ID: team.ID,
+		},
+		Type: invite}
+	//already has invite from this user?
+	invites, _ := a.Store.FindConfirmations(
+		ctx,
+		confirmation,
+		[]models.Status{},
+		[]models.Type{},
+	)
+	if len(invites) > 0 {
+		//rule is we cannot send if the invite is not yet expired
+		if !invites[0].IsExpired() {
+			log.Println(statusExistingInviteMessage)
+			log.Println("last invite not yet expired")
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingInviteMessage)}
+			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
+			return false, nil
+		}
+	}
+	invitedUsr := a.findExistingUser(inviteeID, a.sl.TokenProvide())
+	// the invitedUser has to be a patient of the team
+	if invitedUsr != nil {
+		members, err := a.perms.GetTeamPatients(token, team.ID)
+		if err != nil {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_TEAM)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return false, invitedUsr
+		}
+		for i := 0; i < len(members); i++ {
+			if members[i].UserID == invitedUsr.UserID && members[i].InvitationStatus == "accepted" {
+				return true, invitedUsr
+			}
+		}
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_PATIENT_NOT_MBR)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return false, invitedUsr
+	}
+	statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_USER)}
+	a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 	return false, nil
 }
 
@@ -1198,6 +1253,93 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		}
 	}
 
+}
+
+// @Summary Send invitation to a patient for monitoring purpose
+// @Description  create a notification for the invitee and send him an email with the invitation to be monitored. The patient account has to exist and the patient has to be a member of the team otherwise the invitation is rejected.
+// @ID hydrophone-api-SendMonitoringTeamInvite
+// @Accept  json
+// @Produce  json
+// @Param teamid path string true "Team ID"
+// @Param userid path string true "invited user id"
+// @Success 200 {object} models.Confirmation "invite details"
+// @Failure 400 {object} status.Status "teamId is not found"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
+// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 409 {object} status.Status "user already has a pending or declined invite OR user is already part of the team"
+// @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
+// @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
+// @Router /send/team/monitoring/{teamid}/{userid} [post]
+// @security TidepoolAuth
+func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
+	// By default, the invitee language will be "en" for English (as we don't know which language suits him)
+	// In case the invitee is a known user, the language will be overriden in a later step
+	var inviteeLanguage = GetUserChosenLanguage(req)
+	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	token := a.token(res, req)
+	if token == nil {
+		return
+	}
+
+	invitorID := token.UserId
+	if invitorID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	userid := vars["userid"]
+	teamid := vars["teamid"]
+
+	_, team, _ := a.getTeamForUser(tokenValue, teamid, token.UserId, res)
+
+	// check the patient is already a invite and if user is already a patient
+	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), userid, invitorID, tokenValue, team, models.TypeMedicalTeamMonitoringInvite, res); !canBeInvited {
+		log.Printf("SendInvite: invited user [%s] cannot be invited", userid)
+		return
+	} else if invitedUsr != nil {
+		// the user is member of the team nad has not yet been invited
+		var invite *models.Confirmation
+		invite, _ = models.NewConfirmation(
+			models.TypeMedicalTeamMonitoringInvite,
+			models.TemplateNameMedicalteamMonitoringInvite,
+			invitorID)
+		invite.Team = &models.Team{ID: teamid, Name: team.Name}
+		if invitedUsr != nil {
+			invite.UserId = invitedUsr.UserID
+			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
+		}
+		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
+			a.logAudit(req, "invite created")
+
+			if err := a.addProfile(invite); err != nil {
+				log.Println("SendInvite: ", err.Error())
+			} else {
+				var webPath = ""
+
+				emailContent := map[string]string{
+					"MedicalteamName":    team.Name,
+					"MedicalteamAddress": formatAddress(team.Address),
+					"MedicalteamPhone":   team.Phone,
+					"CreatorName":        invite.Creator.Profile.FullName,
+					"Email":              invite.Email,
+					"WebPath":            webPath,
+					"Duration":           invite.GetReadableDuration(),
+				}
+
+				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
+					a.logAudit(req, "invite sent")
+				} else {
+					a.logAudit(req, "invite failed to be sent")
+					log.Print("Something happened generating an invite email")
+					res.WriteHeader(http.StatusUnprocessableEntity)
+					return
+				}
+			}
+
+			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
+			return
+		}
+	}
 }
 
 func formatAddress(addr store.Address) string {

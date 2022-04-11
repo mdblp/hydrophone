@@ -76,20 +76,21 @@ const (
 	StatusCanceled  Status = "canceled"
 	StatusDeclined  Status = "declined"
 	//Available Type's
-	TypePasswordReset            Type = "password_reset"
-	TypePatientPasswordReset     Type = "patient_password_reset"
-	TypePatientPasswordInfo      Type = "patient_password_info"
-	TypeCareteamInvite           Type = "careteam_invitation"    // invite and share data to a caregiver
-	TypeMedicalTeamInvite        Type = "medicalteam_invitation" // invite an hcp to a medical team
-	TypeMedicalTeamPatientInvite Type = "medicalteam_patient_invitation"
-	TypeMedicalTeamDoAdmin       Type = "medicalteam_do_admin"
-	TypeMedicalTeamRemove        Type = "medicalteam_remove"
-	TypeSignUp                   Type = "signup_confirmation"
-	TypeNoAccount                Type = "no_account"
-	TypeInformation              Type = "patient_information"
-	TypePatientPinReset          Type = "patient_pin_reset"
-	shortKeyLength                    = 8
-	letterBytes                       = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	TypePasswordReset               Type = "password_reset"
+	TypePatientPasswordReset        Type = "patient_password_reset"
+	TypePatientPasswordInfo         Type = "patient_password_info"
+	TypeCareteamInvite              Type = "careteam_invitation"    // invite and share data to a caregiver
+	TypeMedicalTeamInvite           Type = "medicalteam_invitation" // invite an hcp to a medical team
+	TypeMedicalTeamPatientInvite    Type = "medicalteam_patient_invitation"
+	TypeMedicalTeamMonitoringInvite Type = "medicalteam_monitoring_invitation"
+	TypeMedicalTeamDoAdmin          Type = "medicalteam_do_admin"
+	TypeMedicalTeamRemove           Type = "medicalteam_remove"
+	TypeSignUp                      Type = "signup_confirmation"
+	TypeNoAccount                   Type = "no_account"
+	TypeInformation                 Type = "patient_information"
+	TypePatientPinReset             Type = "patient_pin_reset"
+	shortKeyLength                       = 8
+	letterBytes                          = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 var (
