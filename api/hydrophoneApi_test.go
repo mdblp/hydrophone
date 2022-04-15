@@ -130,6 +130,12 @@ func (m *testingShorelingMock) GetUser(userID, token string) (*schema.UserData, 
 func (m *testingShorelingMock) UpdateUser(userID string, userUpdate schema.UserUpdate, token string) error {
 	return nil
 }
+func (m *testingShorelingMock) GetUnverifiedUsers() ([]schema.UserData, error) {
+	return []schema.UserData{}, nil
+}
+func (m *testingShorelingMock) DeleteUser(userID string) error {
+	return nil
+}
 func (m *testingShorelingMock) CheckToken(chkToken string) *token.TokenData {
 	if chkToken == testing_token_hcp {
 		return &token.TokenData{UserId: m.userid, IsServer: false, Role: "hcp"}

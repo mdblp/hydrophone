@@ -85,6 +85,7 @@ const (
 	STATUS_ERR_DECODING_INVITE       = "Error decoding the invitation"
 	STATUS_ERR_MISSING_DATA_INVITE   = "Error missing data in the invitation"
 	STATUS_ERR_INVALID_DATA          = "Error invalid data in the invitation"
+	STATUS_ERR_DECODING_BODY         = "Error decoding the message body"
 
 	//returned status messages
 	STATUS_NOT_FOUND           = "Nothing found"
@@ -174,6 +175,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
 	// PUT /confirm/accept/team/invite
 	accept.Handle("/team/invite", varsHandler(a.AcceptTeamNotifs)).Methods("PUT")
+	// PUT /confirm/accept/team/monitoring/{teamid}/{userid}
+	accept.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.AcceptMonitoringInvite)).Methods("PUT")
 
 	// GET /confirm/signup/:userid
 	// GET /confirm/invite/:userid
