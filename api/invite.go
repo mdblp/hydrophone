@@ -582,7 +582,6 @@ func (a *Api) AcceptTeamNotifs(res http.ResponseWriter, req *http.Request, vars 
 // @Produce  json
 // @Param teamid path string true "Team ID"
 // @Param userid path string true "User ID"
-// @Param invitation body models.Confirmation true "invitation details"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "the payload is missing or malformed"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
@@ -1050,104 +1049,99 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 }
 
 // @Summary Dismiss a monitoring invite
-// @Description Invitee or Admin can dismiss a team invite. A patient can dismiss a care team invite.
+// @Description Patient or Admin can dismiss a monitoring invite.
 // @ID hydrophone-api-dismissMonitoringInvite
 // @Accept  json
 // @Produce  json
 // @Param teamid path string true "Team ID"
+// @Param userid path string true "User ID"
 // @Success 200 {string} string "OK"
-// @NotModified 304 {string} "not modified"
-// @Failure 400 {object} status.Status "inviteeid or/and the payload is missing or malformed"
-// @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
-// @Failure 403 {object} status.Status "Authorization token is invalid"
+// @Failure 400 {object} status.Status "teamid or/and userid are missing"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
 // @Failure 404 {object} status.Status "invitation not found"
 // @Failure 500 {object} status.Status "Error (internal) while processing the data"
-// @Router /dismiss/team/invite/{teamid} [put]
+// @Router /dismiss/team/monitoring/{teamid}/{userid} [put]
 // @security TidepoolAuth
 func (a *Api) DismissMonitoringInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	token := a.token(res, req)
 	if token == nil {
 		return
 	}
+	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 
-	teamID := vars["teamid"]
+	teamid := vars["teamid"]
+	patientid := vars["userid"]
+
 	// either the token is the inviteeID or the admin ID
 	// let's find out what type of user it is later on
-	userID := token.UserId
+	userid := token.UserId
 
-	if teamID == "" {
-		res.WriteHeader(http.StatusBadRequest)
+	// not sure it's necessary
+	if teamid == "" || patientid == "" {
+		a.sendModelAsResWithStatus(res, &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_INVALID_DATA)}, http.StatusBadRequest)
 		return
 	}
 
-	dismiss := &models.Confirmation{}
-	if err := json.NewDecoder(req.Body).Decode(dismiss); err != nil {
-		log.Printf("DismissInvite: error decoding invite to dismiss [%v]", err)
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_CONFIRMATION)}
-		a.sendModelAsResWithStatus(res, statusErr, http.StatusBadRequest)
-		return
+	dismiss := &models.Confirmation{
+		UserId: patientid,
+		Team:   &models.Team{ID: teamid},
+		Type:   models.TypeMedicalTeamMonitoringInvite,
+		Status: models.StatusPending,
 	}
 
-	// key of the request
-	if dismiss.Key == "" {
-		res.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
-	// by default you can just act on your records
-	dismiss.UserId = userID
-	dismiss.Team = &models.Team{ID: teamID}
-
-	if isAdmin, _, err := a.getTeamForUser(tokenValue, teamID, token.UserId, res); isAdmin && err == nil {
-		// as team admin you can act on behalf of members
-		// for any invitation for the given team
-		dismiss.UserId = ""
+	// Not needed as it is checked by the UpdatePatientMonitoring call
+	if userid != patientid {
+		// by default you can just act on your records
+		if isAdmin, _, err := a.getTeamForUser(tokenValue, teamid, token.UserId, res); !isAdmin || err != nil {
+			// you are not a team admin for the given team
+			log.Printf("DismissMonitoring: [%s] not authorized for [%s]", token.UserId, teamid)
+			a.sendModelAsResWithStatus(res, &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}, http.StatusForbidden)
+			return
+		}
 	}
 
 	if conf, err := a.findExistingConfirmation(req.Context(), dismiss, res); err != nil {
-		log.Printf("DismissInvite: finding [%s]", err.Error())
+		log.Printf("DismissMonitoring: finding [%s]", err.Error())
 		a.sendModelAsResWithStatus(res, err, http.StatusInternalServerError)
 		return
 	} else if conf != nil {
-
-		if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
-
-			var member = store.Member{
-				UserID:           conf.UserId,
-				TeamID:           teamID,
-				InvitationStatus: "rejected",
-			}
-
-			var err error
-			switch conf.Type {
-			case models.TypeMedicalTeamPatientInvite:
-				_, err = a.perms.AddOrUpdatePatient(tokenValue, member)
-			default:
-				_, err = a.perms.UpdateTeamMember(tokenValue, member)
-			}
-			if err != nil {
-				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
-				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-				return
-			}
-
-			conf.UpdateStatus(models.StatusDeclined)
-
-			if a.addOrUpdateConfirmation(req.Context(), conf, res) {
-				log.Printf("dismiss invite [%s] for [%s]", dismiss.Key, dismiss.Team.ID)
-				a.logAudit(req, "dismissinvite ")
-				res.WriteHeader(http.StatusOK)
-				return
-			}
+		// the pending confirmation exists
+		monitored := false
+		var patient = store.Patient{
+			UserID:     conf.UserId,
+			TeamID:     teamid,
+			Monitoring: &store.RemoteMonitoring{Enabled: &monitored},
 		}
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotModified, statusInviteNotActiveMessage)}
-		log.Printf("DismissInvite: [%s]", statusErr.Error())
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return
+
+		// this one will check permissions and memberships
+		_, err = a.perms.UpdatePatientMonitoring(tokenValue, patient)
+		if err != nil {
+			log.Printf("DismissMonitoring error setting permissions [%v]\n", err)
+			a.sendModelAsResWithStatus(
+				res,
+				&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, err.Error())},
+				http.StatusInternalServerError,
+			)
+			return
+		}
+
+		if userid != patientid {
+			// canceled by team
+			conf.UpdateStatus(models.StatusCanceled)
+		} else {
+			// declined by patient
+			conf.UpdateStatus(models.StatusDeclined)
+		}
+
+		if a.addOrUpdateConfirmation(req.Context(), conf, res) {
+			log.Printf("User [%s] has dismissed the monitoring in team [%s] for patient [%s]", token.UserId, patient.TeamID, patient.UserID)
+			a.logAudit(req, "dismissmonitoring ")
+			res.WriteHeader(http.StatusOK)
+			return
+		}
 	}
 	statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
-	log.Printf("DismissInvite: [%s]", statusErr.Error())
+	log.Printf("DismissMonitoring: [%s]", statusErr.Error())
 	a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
 }
 

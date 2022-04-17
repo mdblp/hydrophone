@@ -38,6 +38,7 @@ const (
 	testing_uid2       = "UID999"
 
 	testing_token_hcp       = "a.fake.token.for.hcp"
+	testing_token_hcp2      = "a.2nd.fake.token.for.hcp"
 	testing_token_caregiver = "a.fake.token.for.caregiver"
 
 	testing_uid3         = "UID002"
@@ -142,6 +143,9 @@ func (m *testingShorelingMock) CheckToken(chkToken string) *token.TokenData {
 	}
 	if chkToken == testing_token_caregiver {
 		return &token.TokenData{UserId: m.userid, IsServer: false, Role: "caregiver"}
+	}
+	if chkToken == testing_token_hcp2 {
+		return &token.TokenData{UserId: testing_token_hcp2, IsServer: false, Role: "hcp"}
 	}
 	return &token.TokenData{UserId: m.userid, IsServer: false, Role: "patient"}
 }

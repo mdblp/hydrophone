@@ -195,6 +195,9 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 		varsHandler(a.dismissSignUp)).Methods("PUT")
 	// PUT /confirm/dismiss/team/invite/{teamid}
 	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
+	// PUT /confirm/dismiss/team/monitoring/{teamid}/{userid}
+	dismiss.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.DismissMonitoringInvite)).Methods("PUT")
+
 	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
 	if a.Config.EnableTestRoutes {
 		rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
