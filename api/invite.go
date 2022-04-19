@@ -1473,9 +1473,6 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 // @Router /send/team/monitoring/{teamid}/{userid} [post]
 // @security TidepoolAuth
 func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	// By default, the invitee language will be "en" for English (as we don't know which language suits him)
-	// In case the invitee is a known user, the language will be overriden in a later step
-	var inviteeLanguage = GetUserChosenLanguage(req)
 	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 	token := a.token(res, req)
 	if token == nil {
@@ -1495,10 +1492,10 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 
 	// check the patient is already a invite and if user is already a patient
 	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), userid, invitorID, tokenValue, team, models.TypeMedicalTeamMonitoringInvite, res); !canBeInvited {
-		log.Printf("SendInvite: invited user [%s] cannot be invited", userid)
+		log.Printf("SendMonitoringInvite: invited user [%s] cannot be invited", userid)
 		return
 	} else if invitedUsr != nil {
-		// the user is member of the team nad has not yet been invited
+		// the user is member of the team and has not yet been invited
 		var invite *models.Confirmation
 		invite, _ = models.NewConfirmation(
 			models.TypeMedicalTeamMonitoringInvite,
@@ -1506,38 +1503,34 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 			invitorID)
 		invite.Team = &models.Team{ID: teamid, Name: team.Name}
 		invite.Status = models.StatusPending
-		if invitedUsr != nil {
-			invite.UserId = invitedUsr.UserID
-			inviteeLanguage = a.getUserLanguage(invite.UserId, res)
-		}
+		invite.UserId = invitedUsr.UserID
+		inviteeLanguage := a.getUserLanguage(invite.UserId, res)
+
 		if a.addOrUpdateConfirmation(req.Context(), invite, res) {
-			a.logAudit(req, "invite created")
+			a.logAudit(req, "monitoring invite created")
 
 			if err := a.addProfile(invite); err != nil {
-				log.Println("SendInvite: ", err.Error())
+				log.Println("SendMonitoringInvite: ", err.Error())
 			} else {
-				var webPath = ""
-
 				emailContent := map[string]string{
 					"MedicalteamName":    team.Name,
 					"MedicalteamAddress": formatAddress(team.Address),
 					"MedicalteamPhone":   team.Phone,
 					"CreatorName":        invite.Creator.Profile.FullName,
 					"Email":              invite.Email,
-					"WebPath":            webPath,
+					"WebPath":            "notifications",
 					"Duration":           invite.GetReadableDuration(),
 				}
 
 				if a.createAndSendNotification(req, invite, emailContent, inviteeLanguage) {
-					a.logAudit(req, "invite sent")
+					a.logAudit(req, "monitoring invite sent")
 				} else {
-					a.logAudit(req, "invite failed to be sent")
-					log.Print("Something happened generating an invite email")
+					a.logAudit(req, "monitoring invite failed to be sent")
+					log.Print("Something happened generating a monitoring invite email")
 					res.WriteHeader(http.StatusUnprocessableEntity)
 					return
 				}
 			}
-
 			a.sendModelAsResWithStatus(res, invite, http.StatusOK)
 			return
 		}

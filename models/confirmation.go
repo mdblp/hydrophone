@@ -95,12 +95,13 @@ const (
 
 var (
 	Timeouts TypeDurations = TypeDurations{
-		TypeCareteamInvite:           ConfirmationDuration{"day", 7 * 24 * time.Hour},
-		TypePasswordReset:            ConfirmationDuration{"day", 7 * 24 * time.Hour},
-		TypeSignUp:                   ConfirmationDuration{"day", 31 * 24 * time.Hour},
-		TypePatientPasswordReset:     ConfirmationDuration{"hour", 1 * time.Hour},
-		TypeMedicalTeamInvite:        ConfirmationDuration{"day", 7 * 24 * time.Hour},
-		TypeMedicalTeamPatientInvite: ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeCareteamInvite:              ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypePasswordReset:               ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeSignUp:                      ConfirmationDuration{"day", 31 * 24 * time.Hour},
+		TypePatientPasswordReset:        ConfirmationDuration{"hour", 1 * time.Hour},
+		TypeMedicalTeamInvite:           ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeMedicalTeamPatientInvite:    ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeMedicalTeamMonitoringInvite: ConfirmationDuration{"day", 7 * 24 * time.Hour},
 	}
 )
 
