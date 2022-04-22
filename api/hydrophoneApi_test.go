@@ -125,6 +125,9 @@ func (m *testingShorelingMock) GetUser(userID, token string) (*schema.UserData, 
 	if userID == "doesnotexist@myemail.com" {
 		return nil, nil
 	}
+	if userID == "PATIENT001" {
+		return &schema.UserData{UserID: userID, Emails: []string{m.userid + "@email.org"}, Username: m.userid + "@email.org", Roles: []string{"patient"}}, nil
+	}
 
 	return &schema.UserData{UserID: m.userid, Emails: []string{m.userid + "@email.org"}, Username: m.userid + "@email.org", Roles: []string{"hcp"}}, nil
 }

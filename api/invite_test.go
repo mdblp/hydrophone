@@ -212,6 +212,25 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "pending",
 		},
 	}
+
+	patientsMonitoringTeam := []store.Patient{
+		{
+			UserID:           testing_uid_patient1,
+			TeamID:           "teamMonitoring",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamMonitoring",
+			InvitationStatus: "accepted",
+		},
+		{
+			UserID:           testing_uid_patient2,
+			TeamID:           "teamMonitoring",
+			InvitationStatus: "pending",
+		},
+	}
+
 	teamMonitoring := store.Team{
 		Name:        "team monitoring",
 		Description: "team monitoring",
@@ -219,22 +238,36 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		ID:          "teamMonitoring",
 	}
 
+	membersMonitoringTeamNotMember := []store.Member{
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamMonitoring",
+			Role:             "admin",
+			InvitationStatus: "accepted",
+		},
+	}
+
+	teamMonitoringNotMember := store.Team{
+		Name:        "teamMonitoring.notMember",
+		Description: "teamMonitoring.notMember",
+		Members:     membersMonitoringTeamNotMember,
+		ID:          "teamMonitoring.notMember",
+	}
+
 	member_uid3 := store.Member{
 		TeamID:           "1",
 		InvitationStatus: "pending",
 	}
 
-	member_uid4 := store.Member{
+	patient_uid4 := store.Patient{
 		UserID:           testing_uid4,
 		TeamID:           "123456",
-		Role:             "patient",
 		InvitationStatus: "pending",
 	}
 
-	member_dup := store.Member{
+	patient_dup := store.Patient{
 		UserID:           testing_uid4,
 		TeamID:           "teamAlreadyMember",
-		Role:             "patient",
 		InvitationStatus: "pending",
 	}
 
@@ -244,10 +277,10 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		Role:             "member",
 		InvitationStatus: "pending",
 	}
-	patient_dismissed := store.Member{
-		UserID:           testing_uid4,
-		TeamID:           "123456",
-		Role:             "patient",
+	patient_dismissed := store.Patient{
+		UserID: testing_uid4,
+		TeamID: "123456",
+		// Role:             "patient",
 		InvitationStatus: "pending",
 	}
 
@@ -262,28 +295,32 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamSetAdminRole", &teamSetAdminRole, nil)
 
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamAlreadyMember", &teamAlreadyMember, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamAlreadyMember", []store.Member{member_dup}, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamInvitePatient", []store.Member{}, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"123456", []store.Member{}, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring", membersMonitoringTeam, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring_empty", []store.Member{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamAlreadyMember", []store.Patient{patient_dup}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamInvitePatient", []store.Patient{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"123456", []store.Patient{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring", patientsMonitoringTeam, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring_empty", []store.Patient{}, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoring.notMember", &teamMonitoringNotMember, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring.notMember", []store.Patient{}, nil)
+
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamInvitePatient", &teamAddPatientAsMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoring", &teamMonitoring, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"key.to.be.dismissed", &member_dismissed, nil)
-	mockPerms.SetMockNextCall(testing_token_uid1+"patient.key.to.be.dismissed", &patient_dismissed, nil)
+	mockPerms.SetMockNextCall("UpdatePatient"+testing_token_uid1+"patient.key.to.be.dismissed", &patient_dismissed, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvitePatient", &teamDismissInvitePatient, nil)
 
-	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid4, &member_uid4, nil)
+	mockPerms.SetMockNextCall("AddPatient"+testing_token_uid1+testing_uid4, &patient_uid4, nil)
 
 	mockSeagull.SetMockNextCollectionCall(testing_uid1+"profile", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall("patient.team@myemail.com"+"profile", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid1+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid3+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid4+"preferences", `{"Something":"anit no thing"}`, nil)
+	mockSeagull.SetMockNextCollectionCall(testing_uid_patient1+"preferences", `{"Something":"anit no thing"}`, nil)
 
 	hydrophone := InitApi(
 		FAKE_CONFIG,
@@ -455,6 +492,7 @@ func initTests() []toTest {
 				"email": "me2@myemail.com",
 			},
 		},
+
 		// returns a 400 when body is not well formed to delete a member
 		{
 			method:   "DELETE",
@@ -487,6 +525,7 @@ func initTests() []toTest {
 				"key": "key.to.be.dismissed",
 			},
 		},
+
 		// returns a 400 when dismiss a team invite of non existing team as Admin
 		{
 			method:     "PUT",
@@ -616,7 +655,7 @@ func initTests() []toTest {
 				"reason": statusExistingInviteMessage,
 			},
 		},
-		// here we start
+		// // here we start
 		{
 			method:     "POST",
 			url:        "/send/team/monitoring/teamMonitoring/" + testing_uid_patient1,
@@ -662,18 +701,18 @@ func initTests() []toTest {
 			},
 		},
 		// STATUS_ERR_PATIENT_NOT_MBR
-		// {
-		// 	method:     "POST",
-		// 	url:        "/send/team/monitoring/teamMonitoring.notMember/" + testing_uid_patient3,
-		// 	returnNone: true,
-		// 	respCode:   500,
-		// 	token:      testing_token_uid1,
-		// 	response: testJSONObject{
-		// 		"code":   float64(500),
-		// 		"error":  float64(1001),
-		// 		"reason": STATUS_ERR_PATIENT_NOT_MBR,
-		// 	},
-		// },
+		{
+			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoring.notMember/" + testing_uid_patient3,
+			returnNone: true,
+			respCode:   500,
+			token:      testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(500),
+				"error":  float64(1001),
+				"reason": STATUS_ERR_PATIENT_NOT_MBR,
+			},
+		},
 	}
 	return tests
 }
@@ -1466,10 +1505,15 @@ func TestAcceptTeamInvite(t *testing.T) {
 			TeamID:           "123456",
 			InvitationStatus: "accepted",
 		}
+		patientsAccepted := store.Patient{
+			UserID:           testing_uid1,
+			TeamID:           "123456",
+			InvitationStatus: "accepted",
+		}
 
 		mockPerms.SetMockNextCall(testing_token, teams1, nil)
 		mockPerms.SetMockNextCall(testing_token+testing_uid1, &membersAccepted, nil)
-		mockPerms.SetMockNextCall(inviteTest.token+testing_uid1, &membersAccepted, nil)
+		mockPerms.SetMockNextCall("UpdatePatient"+testing_token_uid1+testing_uid1, &patientsAccepted, nil)
 
 		//default flow, fully authorized
 		hydrophone := InitApi(

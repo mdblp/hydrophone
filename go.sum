@@ -299,8 +299,8 @@ github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNx
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/mattn/go-runewidth v0.0.2/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
-github.com/mdblp/crew v1.1.0-RC1.0.20220415145828-21451cb26ed7 h1:EfCIo6p2+dkzV5c2OInRJ9gNDs4cDfnOjhfKUz0/EDs=
-github.com/mdblp/crew v1.1.0-RC1.0.20220415145828-21451cb26ed7/go.mod h1:B+wcZ1wp8xeWeBko5IYWfasvTG7PjN0omWaX2FHLHQI=
+github.com/mdblp/crew v1.1.0-RC1.0.20220422155620-8a0ee6771d8c h1:uYgMedKyICT2/UHHvqTWg+rB7jDYwuIxDlVlTzs7p3k=
+github.com/mdblp/crew v1.1.0-RC1.0.20220422155620-8a0ee6771d8c/go.mod h1:B+wcZ1wp8xeWeBko5IYWfasvTG7PjN0omWaX2FHLHQI=
 github.com/mdblp/go-common v1.2.0 h1:Us8qlAob77JBWmAmpYLNnEb2Mp92ZUsgLHzk8iDAPb8=
 github.com/mdblp/go-common v1.2.0/go.mod h1:2wzi36N7JwmpOPaqSDqFIcWx+9h2hA7SId5GA3+MRNA=
 github.com/mdblp/go-routers v0.3.1/go.mod h1:aV0+zTjJJoGTCJ+FHsHwIpHi4bElKfzdqsEeQKF8oJA=

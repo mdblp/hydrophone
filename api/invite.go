@@ -690,18 +690,23 @@ func (a *Api) acceptAnyInvite(res http.ResponseWriter, req *http.Request, conf *
 
 func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf *models.Confirmation) {
 
-	var member = store.Member{
-		UserID:           conf.UserId,
-		TeamID:           conf.Team.ID,
-		InvitationStatus: "accepted",
-		Role:             conf.Role,
-	}
 	// are we updating a team member or a patient
 	var err error
 	if conf.Role != "patient" {
+		member := store.Member{
+			UserID:           conf.UserId,
+			TeamID:           conf.Team.ID,
+			InvitationStatus: "accepted",
+			Role:             conf.Role,
+		}
 		_, err = a.perms.AddTeamMember(a.sl.TokenProvide(), member)
 	} else {
-		_, err = a.perms.AddOrUpdatePatient(req.Header.Get(TP_SESSION_TOKEN), member)
+		patient := store.Patient{
+			UserID:           conf.UserId,
+			TeamID:           conf.Team.ID,
+			InvitationStatus: "accepted",
+		}
+		_, err = a.perms.UpdatePatient(req.Header.Get(TP_SESSION_TOKEN), patient)
 	}
 	if err != nil {
 		log.Printf("AcceptInvite error setting permissions [%v]\n", err)
@@ -928,7 +933,12 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 			var err error
 			switch conf.Type {
 			case models.TypeMedicalTeamPatientInvite:
-				_, err = a.perms.AddOrUpdatePatient(tokenValue, member)
+				patient := store.Patient{
+					UserID:           conf.UserId,
+					TeamID:           teamID,
+					InvitationStatus: "rejected",
+				}
+				_, err = a.perms.UpdatePatient(tokenValue, patient)
 			default:
 				_, err = a.perms.UpdateTeamMember(tokenValue, member)
 			}
@@ -1485,14 +1495,18 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	userid := vars["userid"]
+	patientid := vars["userid"]
 	teamid := vars["teamid"]
 
 	_, team, _ := a.getTeamForUser(tokenValue, teamid, token.UserId, res)
 
+	if team.ID == "" {
+		// not a patient of the team
+		return
+	}
 	// check the patient is already a invite and if user is already a patient
-	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), userid, invitorID, tokenValue, team, models.TypeMedicalTeamMonitoringInvite, res); !canBeInvited {
-		log.Printf("SendMonitoringInvite: invited user [%s] cannot be invited", userid)
+	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), patientid, invitorID, tokenValue, team, models.TypeMedicalTeamMonitoringInvite, res); !canBeInvited {
+		log.Printf("SendMonitoringInvite: invited user [%s] cannot be invited", patientid)
 		return
 	} else if invitedUsr != nil {
 		// the user is member of the team and has not yet been invited
@@ -1554,8 +1568,12 @@ func (a *Api) invitePatient(invitedUsr *schema.UserData, member store.Member, to
 	if !invitedUsr.HasRole("patient") {
 		return &status.StatusError{Status: status.NewStatus(http.StatusMethodNotAllowed, STATUS_MEMBER_NOT_AUTH)}
 	}
-	member.UserID = invitedUsr.UserID
-	if _, err := a.perms.AddOrUpdatePatient(token, member); err != nil {
+	patient := store.Patient{
+		UserID:           invitedUsr.UserID,
+		TeamID:           member.TeamID,
+		InvitationStatus: member.InvitationStatus,
+	}
+	if _, err := a.perms.AddPatient(token, patient); err != nil {
 		return &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 	} else {
 		log.Printf("Add patient %s in Team %s", invitedUsr.UserID, member.TeamID)

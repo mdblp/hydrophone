@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.42.25
 	github.com/gorilla/mux v1.8.0
-	github.com/mdblp/crew v1.1.0-RC1.0.20220415145828-21451cb26ed7
+	github.com/mdblp/crew v1.1.0-RC1.0.20220422155620-8a0ee6771d8c
 	github.com/mdblp/go-common v1.2.0
 	github.com/mdblp/shoreline v1.9.2
 	github.com/microcosm-cc/bluemonday v1.0.16
