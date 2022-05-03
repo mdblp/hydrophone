@@ -5,7 +5,8 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.42.25
 	github.com/gorilla/mux v1.8.0
-	github.com/mdblp/crew v1.1.0-RC1.0.20220422155620-8a0ee6771d8c
+	github.com/k3a/html2text v1.0.8
+	github.com/mdblp/crew v1.1.0-RC2.0.20220503093331-55392f2b80cb
 	github.com/mdblp/go-common v1.2.0
 	github.com/mdblp/shoreline v1.9.2
 	github.com/microcosm-cc/bluemonday v1.0.16
@@ -35,7 +36,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/k3a/html2text v1.0.8 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
