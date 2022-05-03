@@ -230,6 +230,21 @@ func (a *Api) isTeamAdmin(userid string, team store.Team) bool {
 	return false
 }
 
+func handlerGood(s string) string {
+	escapedString := strings.Replace(s, "\n", "", -1)
+	escapedString = strings.Replace(escapedString, "\r", "", -1)
+	return escapedString
+}
+
+func checkInviteBody(ib *inviteBody) *inviteBody {
+	var out = &inviteBody{
+		Email:  handlerGood(ib.Email),
+		Role:   handlerGood(ib.Role),
+		TeamID: handlerGood(ib.TeamID),
+	}
+	return out
+}
+
 // @Summary Get list of received invitations for logged-in user
 // @Description  Get list of received invitations that have been sent to this user but not yet acted upon.
 // @ID hydrophone-api-GetReceivedInvitations
@@ -1635,13 +1650,14 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 	}
 
 	defer req.Body.Close()
-	var ib = &inviteBody{}
-	if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
+	var unescapedIb = &inviteBody{}
+	if err := json.NewDecoder(req.Body).Decode(unescapedIb); err != nil {
 		log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
+	var ib = checkInviteBody(unescapedIb)
 
 	if ib.TeamID == "" || ib.Email == "" {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
