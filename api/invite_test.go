@@ -37,6 +37,8 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	var testRtr = mux.NewRouter()
 
 	// Init mock data
+	remoteMonitored := true
+	notRemoteMonitored := false
 	token1 := "00000"
 	teams1 := []store.Team{}
 	members := []store.Member{
@@ -45,12 +47,6 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			TeamID:           "1",
 			Role:             "admin",
 			InvitationStatus: "accepted",
-		},
-		{
-			UserID:           "4567",
-			TeamID:           "2",
-			Role:             "patient",
-			InvitationStatus: "pending",
 		},
 	}
 	membersSetMemberRole := []store.Member{
@@ -100,12 +96,6 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			Role:             "member",
 			InvitationStatus: "accepted",
 		},
-		{
-			UserID:           testing_uid4,
-			TeamID:           "teamAlreadyMember",
-			Role:             "patient",
-			InvitationStatus: "accepted",
-		},
 	}
 	team123456 := store.Team{
 		Name:        "Led Zep",
@@ -130,6 +120,9 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		Description: "Fake Team",
 		Members:     membersAlready,
 		ID:          "teamAlreadyMember",
+		RemotePatientMonitoring: &store.RemoteMonitoring{
+			Enabled: &remoteMonitored,
+		},
 	}
 	teamDeleteMember := store.Team{
 		Name:        "team already member",
@@ -199,18 +192,6 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			Role:             "admin",
 			InvitationStatus: "accepted",
 		},
-		{
-			UserID:           testing_uid_patient1,
-			TeamID:           "teamMonitoring",
-			Role:             "patient",
-			InvitationStatus: "accepted",
-		},
-		{
-			UserID:           testing_uid_patient2,
-			TeamID:           "teamMonitoring",
-			Role:             "patient",
-			InvitationStatus: "pending",
-		},
 	}
 
 	patientsMonitoringTeam := []store.Patient{
@@ -236,6 +217,38 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		Description: "team monitoring",
 		Members:     membersMonitoringTeam,
 		ID:          "teamMonitoring",
+		RemotePatientMonitoring: &store.RemoteMonitoring{
+			Enabled: &remoteMonitored,
+		},
+	}
+
+	membersMonitoringTeamNotAdmin := []store.Member{
+		{
+			UserID:           testing_uid1,
+			TeamID:           "teamMonitoring",
+			Role:             "member",
+			InvitationStatus: "accepted",
+		},
+	}
+
+	teamMonitoringNotAdmin := store.Team{
+		Name:        "team monitoring",
+		Description: "team monitoring",
+		Members:     membersMonitoringTeamNotAdmin,
+		ID:          "teamMonitoring",
+		RemotePatientMonitoring: &store.RemoteMonitoring{
+			Enabled: &remoteMonitored,
+		},
+	}
+
+	teamMonitoringNotMonitored := store.Team{
+		Name:        "team monitoring",
+		Description: "team monitoring",
+		Members:     membersMonitoringTeam,
+		ID:          "teamMonitoring",
+		RemotePatientMonitoring: &store.RemoteMonitoring{
+			Enabled: &notRemoteMonitored,
+		},
 	}
 
 	membersMonitoringTeamNotMember := []store.Member{
@@ -248,10 +261,13 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	}
 
 	teamMonitoringNotMember := store.Team{
-		Name:        "teamMonitoring.notMember",
-		Description: "teamMonitoring.notMember",
+		Name:        "teamMonitoringNotMember",
+		Description: "teamMonitoringNotMember",
 		Members:     membersMonitoringTeamNotMember,
-		ID:          "teamMonitoring.notMember",
+		ID:          "teamMonitoringNotMember",
+		RemotePatientMonitoring: &store.RemoteMonitoring{
+			Enabled: &remoteMonitored,
+		},
 	}
 
 	member_uid3 := store.Member{
@@ -278,9 +294,8 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		InvitationStatus: "pending",
 	}
 	patient_dismissed := store.Patient{
-		UserID: testing_uid4,
-		TeamID: "123456",
-		// Role:             "patient",
+		UserID:           testing_uid4,
+		TeamID:           "123456",
 		InvitationStatus: "pending",
 	}
 
@@ -299,15 +314,18 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamInvitePatient", []store.Patient{}, nil)
 	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"123456", []store.Patient{}, nil)
 	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring", patientsMonitoringTeam, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring_empty", []store.Patient{}, nil)
-	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoring.notMember", &teamMonitoringNotMember, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoring.notMember", []store.Patient{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoringEmpty", []store.Patient{}, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoringNotMember", &teamMonitoringNotMember, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamMonitoringNotMember", []store.Patient{}, nil)
 
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamInvitePatient", &teamAddPatientAsMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+testing_uid1, &membersDismissInvite_uid1, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInvite", &teamDismissInvite, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoring", &teamMonitoring, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoringNotAdmin", &teamMonitoringNotAdmin, nil)
+	mockPerms.SetMockNextCall(testing_token_uid1+"teamMonitoringNotMonitored", &teamMonitoringNotMonitored, nil)
+
 	mockPerms.SetMockNextCall(testing_token_uid1+"key.to.be.dismissed", &member_dismissed, nil)
 	mockPerms.SetMockNextCall("UpdatePatient"+testing_token_uid1+"patient.key.to.be.dismissed", &patient_dismissed, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDismissInviteAsAdmin", &teamDismissInviteAsAdmin, nil)
@@ -655,7 +673,6 @@ func initTests() []toTest {
 				"reason": statusExistingInviteMessage,
 			},
 		},
-		// // here we start
 		{
 			method:     "POST",
 			url:        "/send/team/monitoring/teamMonitoring/" + testing_uid_patient1,
@@ -677,6 +694,30 @@ func initTests() []toTest {
 		},
 		{
 			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoringNotAdmin/" + testing_uid_patient2,
+			returnNone: true,
+			respCode:   401,
+			token:      testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(401),
+				"error":  float64(1001),
+				"reason": STATUS_NOT_ADMIN,
+			},
+		},
+		{
+			method:     "POST",
+			url:        "/send/team/monitoring/teamMonitoringNotMonitored/" + testing_uid_patient1,
+			returnNone: true,
+			respCode:   400,
+			token:      testing_token_uid1,
+			response: testJSONObject{
+				"code":   float64(400),
+				"error":  float64(1001),
+				"reason": STATUS_NOT_TEAM_MONITORING,
+			},
+		},
+		{
+			method:     "POST",
 			url:        "/send/team/monitoring/teamMonitoring/doesnotexist@myemail.com",
 			returnNone: true,
 			respCode:   400,
@@ -690,7 +731,7 @@ func initTests() []toTest {
 		// STATUS_ERR_FINDING_TEAM
 		{
 			method:     "POST",
-			url:        "/send/team/monitoring/teamMonitoring_empty/" + testing_uid_patient1,
+			url:        "/send/team/monitoring/teamMonitoringEmpty/" + testing_uid_patient1,
 			returnNone: true,
 			respCode:   400,
 			token:      testing_token_uid1,
@@ -703,7 +744,7 @@ func initTests() []toTest {
 		// STATUS_ERR_PATIENT_NOT_MBR
 		{
 			method:     "POST",
-			url:        "/send/team/monitoring/teamMonitoring.notMember/" + testing_uid_patient3,
+			url:        "/send/team/monitoring/teamMonitoringNotMember/" + testing_uid_patient3,
 			returnNone: true,
 			respCode:   500,
 			token:      testing_token_uid1,

@@ -95,6 +95,7 @@ const (
 	STATUS_ROLE_ALRDY_ASSIGNED = "Role already assigned to user"
 	STATUS_NOT_MEMBER          = "User is not a member"
 	STATUS_NOT_ADMIN           = STATUS_UNAUTHORIZED
+	STATUS_NOT_TEAM_MONITORING = "Not a monitoring team"
 	STATUS_OK                  = "OK"
 )
 

@@ -1489,8 +1489,8 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 // @Param teamid path string true "Team ID"
 // @Param userid path string true "invited user id"
 // @Success 200 {object} models.Confirmation "invite details"
-// @Failure 400 {object} status.Status "teamId is not found"
-// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
+// @Failure 400 {object} status.Status "teamId is not found, team is not a monitoring team"
+// @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges, requesting user is not an admin of the team"
 // @Failure 403 {object} status.Status "Authorization token is invalid"
 // @Failure 409 {object} status.Status "user already has a pending or declined invite OR user is already part of the team"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
@@ -1513,12 +1513,25 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 	patientid := vars["userid"]
 	teamid := vars["teamid"]
 
-	_, team, _ := a.getTeamForUser(tokenValue, teamid, token.UserId, res)
-
+	// check requesting user is admin of the team
+	isTeamAdmin, team, _ := a.getTeamForUser(tokenValue, teamid, token.UserId, res)
 	if team.ID == "" {
-		// not a patient of the team
+		// not a member of the team
 		return
 	}
+	if !isTeamAdmin {
+		// not an admin of the team
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_NOT_ADMIN)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+	if team.RemotePatientMonitoring == nil || (team.RemotePatientMonitoring != nil && !*(team.RemotePatientMonitoring).Enabled) {
+		// monitoring not enabled for the given team
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_NOT_TEAM_MONITORING)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+
 	// check the patient is already a invite and if user is already a patient
 	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), patientid, invitorID, tokenValue, team, models.TypeMedicalTeamMonitoringInvite, res); !canBeInvited {
 		log.Printf("SendMonitoringInvite: invited user [%s] cannot be invited", patientid)
