@@ -280,7 +280,10 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 		types := []models.Type{}
 		// Show invites relevant for the type of user
 		if invitedUsr.HasRole("patient") {
-			types = append(types, models.TypeMedicalTeamPatientInvite)
+			types = append(types,
+				models.TypeMedicalTeamPatientInvite,
+				models.TypeMedicalTeamMonitoringInvite,
+			)
 		}
 		if invitedUsr.HasRole("caregiver") {
 			types = append(types, models.TypeCareteamInvite, models.TypeMedicalTeamInvite)
@@ -359,9 +362,18 @@ func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, var
 	//find all invites I have sent that are pending or declined
 	found, err := a.Store.FindConfirmations(
 		req.Context(),
-		&models.Confirmation{CreatorId: invitorID, Type: models.TypeCareteamInvite},
-		[]models.Status{models.StatusPending},
-		[]models.Type{models.TypeCareteamInvite, models.TypeMedicalTeamInvite, models.TypeMedicalTeamPatientInvite},
+		&models.Confirmation{
+			CreatorId: invitorID,
+		},
+		[]models.Status{
+			models.StatusPending,
+		},
+		[]models.Type{
+			models.TypeCareteamInvite,
+			models.TypeMedicalTeamInvite,
+			models.TypeMedicalTeamPatientInvite,
+			models.TypeMedicalTeamMonitoringInvite,
+		},
 	)
 	if invitations := a.checkFoundConfirmations(tokenValue, res, found, err); invitations != nil {
 		a.logAudit(req, "get sent invites")
