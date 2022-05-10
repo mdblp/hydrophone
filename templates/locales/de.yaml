@@ -105,6 +105,11 @@ MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} bittet Sie, Ihre Daten an 
 MedicalTeamPatientInviteWarning: "Bitte prüfen Sie, ob die obigen Angaben mit den Informationen übereinstimmen, die Sie von Ihrem Arzt erhalten haben, bevor Sie auf die Einladung reagieren."
 MedicalTeamPatientInviteWarning2: "Wenn Sie sich unsicher sind, sollten Sie sich an Ihren Arzt wenden und die Einladung vorerst nicht annehmen."
 MedicalTeamPatientInviteInfo: "Wenn Sie diesem Team beitreten, stimmen Sie zu, dass Ihre persönlichen und medizinischen Daten an die jeweiligen Mitglieder (autorisierte medizinische Fachkräfte, die bei YourLoops registriert sind) weitergegeben werden dürfen."
+#Medical/Care team patient monitoring invitation
+MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
+MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
+MedicalTeamMonitoringInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
+MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
 #Shared
 ReadDataPrivacy: "Weitere Informationen finden Sie in unserer <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>Datenschutzerklärung</a>."
 RespondToInvite: "Auf Einladung antworten"
