@@ -121,15 +121,13 @@ func TestForgotResponds(t *testing.T) {
 			respCode: 200,
 		},
 		{
-			// always returns a 200 for clinician
-			// without shortKey
+			// returns a 403 for clinician
 			method:   "POST",
 			url:      "/send/forgot/clinic@myemail.com",
 			respCode: 403,
 		},
 		{
-			// always returns a 200 for clinician
-			// without shortKey
+			// returns a 403 for caregivers
 			method:   "POST",
 			url:      "/send/forgot/caregiver@myemail.com",
 			respCode: 403,
@@ -168,6 +166,7 @@ func TestForgotResponds(t *testing.T) {
 				"password": "myN3wpa55w0rd",
 			},
 		},
+		// returns a 403 for caregivers
 		{
 			method:   "PUT",
 			url:      "/accept/forgot",

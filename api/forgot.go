@@ -46,6 +46,7 @@ type (
 // @Param Accept-Language header string false "Browser defined languages as array of languages such as fr-FR"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "useremail was not provided"
+// @failure 403 {object} status.Status "Cannot send reset password to non patients users, Cannot send confirmation, too many attempts"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
 // @Failure 500 {object} status.Status "Error finding the user, message returned:\"Error finding the user\" "
 // @Router /send/forgot/{useremail} [post]
@@ -185,6 +186,7 @@ func (a *Api) findResetConfirmation(ctx context.Context, conf *models.Confirmati
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} status.Status "Error while decoding the confirmation or while resetting password or missing key in the payload"
 // @Failure 401 {object} status.Status "Password reset confirmation has expired"
+// @failure 403 {object} status.Status "Cannot send reset password to non patients users"
 // @Failure 404 {object} status.Status "No matching reset confirmation was found"
 // @Failure 500 {object} status.Status "Internal error while searching the confirmation"
 // @Router /accept/forgot [put]
