@@ -39,10 +39,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
-github.com/mdblp/crew v1.1.1-0.20220511160301-2a9c731ba855 h1:dogQt2Y7i0mHnk03QN4GEWqTN6OW583aX12Vr3l4TBw=
-github.com/mdblp/crew v1.1.1-0.20220511160301-2a9c731ba855/go.mod h1:Ya4s1NVVTqdu32+I6GrNnOq7CwlvZdyKYurPJaaTaGA=
-github.com/mdblp/crew v1.1.2-0.20220512070627-9e69955a7d1a h1:/D1hPqheTDb0uBnWxdd8xPO+Vn/cD0hsI9LfslKLGpo=
-github.com/mdblp/crew v1.1.2-0.20220512070627-9e69955a7d1a/go.mod h1:Ya4s1NVVTqdu32+I6GrNnOq7CwlvZdyKYurPJaaTaGA=
+github.com/mdblp/crew v1.2.0 h1:dCb46QbPOv8XzNpgeln4aZ2GjwOi8S7BYQOS288WR1g=
+github.com/mdblp/crew v1.2.0/go.mod h1:Ya4s1NVVTqdu32+I6GrNnOq7CwlvZdyKYurPJaaTaGA=
 github.com/mdblp/go-common v1.2.0 h1:Us8qlAob77JBWmAmpYLNnEb2Mp92ZUsgLHzk8iDAPb8=
 github.com/mdblp/go-common v1.2.0/go.mod h1:2wzi36N7JwmpOPaqSDqFIcWx+9h2hA7SId5GA3+MRNA=
 github.com/mdblp/shoreline v1.9.2 h1:J5hlsjBbz+kZAMOr27O2FlenQB1Ii/P4dMkCbMePvsY=
