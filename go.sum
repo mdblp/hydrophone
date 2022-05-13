@@ -1,5 +1,7 @@
 github.com/BurntSushi/toml v1.0.0 h1:dtDWrepsVPfW9H/4y7dDgFc2MBUSeJhlaDtK13CxFlU=
 github.com/BurntSushi/toml v1.0.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
+github.com/auth0/go-jwt-middleware/v2 v2.0.1 h1:zAgDKL7nsfVBFl31GGxsSXkhuRzYe1fVtJcO3aMSrFU=
+github.com/auth0/go-jwt-middleware/v2 v2.0.1/go.mod h1:kDt7JgUuDEp1VutfUmO4ZxBLL51vlNu/56oDfXc5E0Y=
 github.com/aws/aws-sdk-go v1.42.25 h1:BbdvHAi+t9LRiaYUyd53noq9jcaAcfzOhSVbKfr6Avs=
 github.com/aws/aws-sdk-go v1.42.25/go.mod h1:gyRszuZ/icHmHAVE4gc/r+cfCmhA1AD+vqfWbgI+eHs=
 github.com/aymerick/douceur v0.2.0 h1:Mv+mAeH1Q+n9Fr+oyamOlAkUNPWPlA8PPGR0QAaYuPk=
@@ -43,6 +45,10 @@ github.com/mdblp/crew v1.2.1 h1:q860qmFbxj2eoD/eZ3rk/8QvV5OVg2f0ZRN1CG9dktE=
 github.com/mdblp/crew v1.2.1/go.mod h1:A+dqi51Gi/QU+uu0EgfX7a5y6/eCJ+qXhfx+Cm2q1Pk=
 github.com/mdblp/go-common v1.2.0 h1:Us8qlAob77JBWmAmpYLNnEb2Mp92ZUsgLHzk8iDAPb8=
 github.com/mdblp/go-common v1.2.0/go.mod h1:2wzi36N7JwmpOPaqSDqFIcWx+9h2hA7SId5GA3+MRNA=
+github.com/mdblp/go-common v1.2.1-0.20220513043241-2fa7e1c53708 h1:9LL1lkab38ZCGYL/HFA3Mywvw3nmk/1EsmHAy15HVyY=
+github.com/mdblp/go-common v1.2.1-0.20220513043241-2fa7e1c53708/go.mod h1:XIdb0Q3dhsp4oFeczoZu4eFsy6FZ36o/DGazEwW5OD0=
+github.com/mdblp/go-common v1.3.0 h1:F3HgpUAtPbEGijKK1IJOobNEJS9/Crv0BwQVRn1JBqk=
+github.com/mdblp/go-common v1.3.0/go.mod h1:XIdb0Q3dhsp4oFeczoZu4eFsy6FZ36o/DGazEwW5OD0=
 github.com/mdblp/shoreline v1.9.2 h1:J5hlsjBbz+kZAMOr27O2FlenQB1Ii/P4dMkCbMePvsY=
 github.com/mdblp/shoreline v1.9.2/go.mod h1:+Q30W/bW6ujtV8VWte3ludcY7xbggPOVzIE4/aldsaw=
 github.com/microcosm-cc/bluemonday v1.0.16 h1:kHmAq2t7WPWLjiGvzKa5o3HzSfahUKiOq7fAPUiMNIc=
@@ -80,6 +86,8 @@ github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d h1:splanxYIlg+5LfHAM
 github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d/go.mod h1:rHwXgn7JulP+udvsHwJoVG1YGAP6VLg4y9I5dyZdqmA=
 go.mongodb.org/mongo-driver v1.8.1 h1:OZE4Wni/SJlrcmSIBRYNzunX5TKxjrTS4jKSnA99oKU=
 go.mongodb.org/mongo-driver v1.8.1/go.mod h1:0sQWfOeY63QTntERDJJ/0SuKK0T1uVSgKCuAROlKEPY=
+go.mongodb.org/mongo-driver v1.9.1 h1:m078y9v7sBItkt1aaoe2YlvWEXcD263e1a4E1fBrJ1c=
+go.mongodb.org/mongo-driver v1.9.1/go.mod h1:0sQWfOeY63QTntERDJJ/0SuKK0T1uVSgKCuAROlKEPY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
 golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd h1:XcWmESyNjXJMLahc3mqVQJcgSTDxFxhETVlfk9uGc38=
@@ -114,6 +122,8 @@ golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 h1:go1bK/D/BFZV2I8cIQd1N
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b h1:QRR6H1YWRnHb4Y/HeNFCTJLFVxaq6wH4YuVdsUOr75U=
+gopkg.in/square/go-jose.v2 v2.6.0 h1:NGk74WTnPKBNUhNzQX7PYcTLUjoq7mzKk2OKbvwk2iI=
+gopkg.in/square/go-jose.v2 v2.6.0/go.mod h1:M9dMgbHiYLoDGQrXy7OpJDJWiKiU//h+vD76mk0e1AI=
 gopkg.in/yaml.v2 v2.2.8/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.3.0/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.4.0 h1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=

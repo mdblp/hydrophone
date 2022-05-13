@@ -6,19 +6,20 @@ require (
 	github.com/aws/aws-sdk-go v1.42.25
 	github.com/gorilla/mux v1.8.0
 	github.com/k3a/html2text v1.0.8
-	github.com/mdblp/crew v1.2.1
-	github.com/mdblp/go-common v1.2.0
+	github.com/mdblp/crew v1.2.0
+	github.com/mdblp/go-common v1.3.0
 	github.com/mdblp/shoreline v1.9.2
 	github.com/microcosm-cc/bluemonday v1.0.16
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.1
-	go.mongodb.org/mongo-driver v1.8.1
+	go.mongodb.org/mongo-driver v1.9.1
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
+	github.com/auth0/go-jwt-middleware/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
@@ -40,5 +41,6 @@ require (
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211019181941-9d821ace8654 // indirect
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
