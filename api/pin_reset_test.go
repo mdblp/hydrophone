@@ -24,12 +24,15 @@ type (
 
 func beforeTests() {
 	// for these tests series, we do not consider server token for shoreline
+	mockShoreline.On("TokenProvide").Return(testing_token)
 	mockShoreline.IsServer = false
+	mockAuth.IsServer = false
 }
 
 func afterTests() {
 	// for these tests series, we do not consider server token for shoreline
 	mockShoreline.IsServer = true
+	mockAuth.IsServer = true
 }
 
 func TestPinResetResponds(t *testing.T) {
@@ -153,11 +156,11 @@ func TestPinResetResponds(t *testing.T) {
 		//testing when there is nothing to return from the store
 		if pinResetTest.test.returnNone {
 			mockStoreEmpty.CounterLatestConfirmations = pinResetTest.test.counterLatestConfirmations
-			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates, logger)
+			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, mockPortal, mockTemplates, logger)
 			hydrophoneFindsNothing.SetHandlers("", testRtr)
 		} else {
 			mockStore.CounterLatestConfirmations = pinResetTest.test.counterLatestConfirmations
-			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates, logger)
+			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, mockPortal, mockTemplates, logger)
 			hydrophone.SetHandlers("", testRtr)
 		}
 

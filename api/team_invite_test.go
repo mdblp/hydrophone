@@ -331,6 +331,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockSeagull.SetMockNextCollectionCall(testing_uid3+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid4+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid_patient1+"preferences", `{"Something":"anit no thing"}`, nil)
+	mockAuth.UserID = testing_uid1
 
 	hydrophone := InitApi(
 		FAKE_CONFIG,
@@ -338,6 +339,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 		mockNotifier,
 		mock_uid1Shoreline,
 		mockPerms,
+		mockAuth,
 		mockSeagull,
 		mockPortal,
 		mockTemplates,
@@ -350,6 +352,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			mockNotifier,
 			mock_uid1Shoreline,
 			mockPerms,
+			mockAuth,
 			mockSeagull,
 			mockPortal,
 			mockTemplates,
@@ -1058,6 +1061,8 @@ func TestAcceptTeamInvite(t *testing.T) {
 	}
 	mockTemplates, _ = templates.New(FAKE_CONFIG.I18nTemplatesPath, mockLocalizer)
 
+	mockAuth := NewAuthMock(testing_uid1)
+
 	for idx, inviteTest := range inviteTests {
 		// don't run a test if it says to skip it
 		if inviteTest.skip {
@@ -1091,6 +1096,7 @@ func TestAcceptTeamInvite(t *testing.T) {
 			mockNotifier,
 			mock_uid1Shoreline,
 			mockPerms,
+			mockAuth,
 			mockSeagull,
 			mockPortal,
 			mockTemplates,
@@ -1105,6 +1111,7 @@ func TestAcceptTeamInvite(t *testing.T) {
 				mockNotifier,
 				mock_uid1Shoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,
@@ -1119,6 +1126,7 @@ func TestAcceptTeamInvite(t *testing.T) {
 				mockNotifier,
 				mock_uid1Shoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,
@@ -1236,6 +1244,7 @@ func TestAcceptMonitoringInvite(t *testing.T) {
 	mockPerms.SetMockNextCall(testing_token, teams1, nil)
 	mockPerms.SetMockNextCall(testing_token+testing_uid1, &membersAccepted, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &store.Patient{}, nil)
+	mockAuth := NewAuthMock(testing_uid1)
 
 	for idx, inviteTest := range inviteTests {
 		// don't run a test if it says to skip it
@@ -1251,6 +1260,7 @@ func TestAcceptMonitoringInvite(t *testing.T) {
 			mockNotifier,
 			mock_uid1Shoreline,
 			mockPerms,
+			mockAuth,
 			mockSeagull,
 			mockPortal,
 			mockTemplates,
@@ -1265,6 +1275,7 @@ func TestAcceptMonitoringInvite(t *testing.T) {
 				mockNotifier,
 				mock_uid1Shoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,
@@ -1279,6 +1290,7 @@ func TestAcceptMonitoringInvite(t *testing.T) {
 				mockNotifier,
 				mock_uid1Shoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,
@@ -1385,7 +1397,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 	}
 	mockTemplates, _ = templates.New(FAKE_CONFIG.I18nTemplatesPath, mockLocalizer)
 
-	patient := store.Patient{}
+	//patient := store.Patient{}
 	members := []store.Member{
 		{
 			UserID:           testing_token_hcp2,
@@ -1414,7 +1426,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 		Members:     notAdmin,
 		ID:          "dismiss.team.not.admin",
 	}
-	mockPerms.SetMockNextCall(testing_token_uid1+"dismiss.team", &patient, nil)
+	//mockPerms.SetMockNextCall(testing_token_uid1+"dismiss.team", &patient, nil)
 	mockPerms.SetMockNextCall(testing_token_hcp2+"dismiss.team", &team, nil)
 	mockPerms.SetMockNextCall(testing_token_hcp2+"dismiss.team.not.admin", &teamNotAdmin, nil)
 
@@ -1426,6 +1438,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 	).Return(&store.Patient{}, nil)
 
 	for idx, inviteTest := range inviteTests {
+		mockAuth := NewAuthMock(inviteTest.token)
 		// don't run a test if it says to skip it
 		if inviteTest.skip {
 			continue
@@ -1439,6 +1452,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 			mockNotifier,
 			mock_uid1Shoreline,
 			mockPerms,
+			mockAuth,
 			mockSeagull,
 			mockPortal,
 			mockTemplates,
@@ -1453,6 +1467,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 				mockNotifier,
 				mock_uid1Shoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,
@@ -1467,6 +1482,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 				mockNotifier,
 				mock_uid1Shoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,

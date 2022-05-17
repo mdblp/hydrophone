@@ -11,17 +11,22 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mdblp/crew/store"
+	"github.com/mdblp/go-common/clients/auth"
 	"github.com/mdblp/hydrophone/templates"
 )
 
 func initTestingRouterNoPerms() *mux.Router {
 	testRtr := mux.NewRouter()
+	mockAuth := auth.NewMock("123")
+	mockAuth.UserID = testing_uid1
+	mockAuth.IsServer = false
 	hydrophone := InitApi(
 		FAKE_CONFIG,
 		mockStoreEmpty,
 		mockNotifier,
 		mock_uid1Shoreline,
 		mockPerms,
+		mockAuth,
 		mockSeagull,
 		mockPortal,
 		mockTemplates,
@@ -181,16 +186,16 @@ func TestSendInvite_NoPerms(t *testing.T) {
 			"note": testJSONObject{},
 		},
 	})
-
+	//mockAuth.Unauthorized = true
 	request, _ := http.NewRequest("POST", fmt.Sprintf("/send/invite/%s", testing_uid2), sendBody)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
 	response := httptest.NewRecorder()
 	tstRtr.ServeHTTP(response, request)
-
 	if response.Code != http.StatusUnauthorized {
 		t.Logf("expected %d actual %d", http.StatusUnauthorized, response.Code)
 		t.Fail()
 	}
+	mockAuth.Unauthorized = false
 }
 
 func TestSendInvite_ToAnother_Patient_Should_Respond_MethodNotAllowed(t *testing.T) {
@@ -404,6 +409,8 @@ func TestCaregiverInvite(t *testing.T) {
 		mockSeagull.SetMockNextCollectionCall(testing_uid1+"@email.org"+"preferences", `{"Something":"anit no thing"}`, nil)
 		mockSeagull.SetMockNextCollectionCall(testing_uid2+"@email.org"+"preferences", `{"Something":"anit no thing"}`, nil)
 		mockSeagull.SetMockNextCollectionCall(testing_uid2+"hcp@email.org"+"preferences", `{"Something":"anit no thing"}`, nil)
+		mockShoreline.On("TokenProvide").Return(testing_token)
+		mockAuth = auth.NewMock(testing_uid1)
 
 		teams1 := []store.Team{}
 		membersAccepted := store.Member{
@@ -422,6 +429,7 @@ func TestCaregiverInvite(t *testing.T) {
 			mockNotifier,
 			mockShoreline,
 			mockPerms,
+			mockAuth,
 			mockSeagull,
 			mockPortal,
 			mockTemplates,
@@ -436,6 +444,7 @@ func TestCaregiverInvite(t *testing.T) {
 				mockNotifier,
 				mockShoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,
@@ -450,6 +459,7 @@ func TestCaregiverInvite(t *testing.T) {
 				mockNotifier,
 				mockShoreline,
 				mockPerms,
+				mockAuth,
 				mockSeagull,
 				mockPortal,
 				mockTemplates,

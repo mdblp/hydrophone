@@ -167,9 +167,10 @@ func (a *Api) isTeamAdmin(userid string, team store.Team) bool {
 // @Failure 404 {object} status.Status "invitation not found"
 // @Failure 500 {object} status.Status "Error (internal) while processing the data"
 // @Router /accept/team/invite [put]
-// @security TidepoolAuth
+// @security Authorization Bearer token
 func (a *Api) AcceptTeamNotifs(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	token := a.token(res, req)
+
 	if token == nil {
 		return
 	}
