@@ -323,6 +323,7 @@ func TestSignupResponds(t *testing.T) {
 		mockSeagull.SetMockNextCollectionCall("profile", `{"Something":"anit no thing"}`, nil)
 		mockSeagull.SetMockNextCollectionCall("WithoutPassword"+"profile", `{"Something":"anit no thing"}`, nil)
 		mockSeagull.SetMockNextCollectionCall("UID"+"profile", `{"Something":"anit no thing"}`, nil)
+		mockShoreline.On("TokenProvide").Return(testing_token)
 
 		if test.returnNone {
 			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates, logger)

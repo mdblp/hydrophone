@@ -49,6 +49,7 @@ func TestSanityCheckResponds(t *testing.T) {
 
 		//fresh each time
 		var testRtr = mux.NewRouter()
+		mockShoreline.On("TokenProvide").Return(testing_token)
 
 		if test.returnNone {
 			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockSeagull, mockPortal, mockTemplates, logger)
