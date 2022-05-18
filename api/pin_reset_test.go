@@ -12,6 +12,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mdblp/go-common/clients/portal"
 	"github.com/mdblp/hydrophone/templates"
+	"github.com/mdblp/shoreline/token"
+	"github.com/stretchr/testify/mock"
 )
 
 type (
@@ -26,17 +28,15 @@ func beforeTests() {
 	// for these tests series, we do not consider server token for shoreline
 	mockShoreline.On("TokenProvide").Return(testing_token)
 	mockShoreline.IsServer = false
-	mockAuth.IsServer = false
+	mockAuth.ExpectedCalls = nil
 }
 
 func afterTests() {
 	// for these tests series, we do not consider server token for shoreline
 	mockShoreline.IsServer = true
-	mockAuth.IsServer = true
 }
 
 func TestPinResetResponds(t *testing.T) {
-
 	pinResetTests := []pinResetTest{
 		{
 			// if you leave off the /{userid}, it goes 404 (not found)
@@ -134,6 +134,13 @@ func TestPinResetResponds(t *testing.T) {
 		if pinResetTest.test.skip {
 			continue
 		}
+		mockAuth.ExpectedCalls = nil
+		if pinResetTest.test.token == "" {
+			mockAuth.On("Authenticate", mock.Anything).Return(nil)
+		} else {
+			mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
+		}
+
 		var testRtr = mux.NewRouter()
 		// if the token is not provided, shoreline will consider the requester as unauthorized
 		if pinResetTest.test.token == "" {

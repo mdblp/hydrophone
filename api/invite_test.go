@@ -13,13 +13,13 @@ import (
 	"github.com/mdblp/crew/store"
 	"github.com/mdblp/go-common/clients/auth"
 	"github.com/mdblp/hydrophone/templates"
+	"github.com/mdblp/shoreline/token"
+	"github.com/stretchr/testify/mock"
 )
 
 func initTestingRouterNoPerms() *mux.Router {
 	testRtr := mux.NewRouter()
-	mockAuth := auth.NewMock("123")
-	mockAuth.UserID = testing_uid1
-	mockAuth.IsServer = false
+	mockAuth.ExpectedCalls = nil
 	hydrophone := InitApi(
 		FAKE_CONFIG,
 		mockStoreEmpty,
@@ -142,6 +142,7 @@ func TestInvitesLocales(t *testing.T) {
 				request.Header.Set(header, value)
 			}
 		}
+		mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 		response := httptest.NewRecorder()
 		testRtr.ServeHTTP(response, request)
 
@@ -189,6 +190,7 @@ func TestSendInvite_NoPerms(t *testing.T) {
 	//mockAuth.Unauthorized = true
 	request, _ := http.NewRequest("POST", fmt.Sprintf("/send/invite/%s", testing_uid2), sendBody)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	response := httptest.NewRecorder()
 	tstRtr.ServeHTTP(response, request)
 	if response.Code != http.StatusUnauthorized {
@@ -212,6 +214,7 @@ func TestSendInvite_ToAnother_Patient_Should_Respond_MethodNotAllowed(t *testing
 
 	request, _ := http.NewRequest("POST", fmt.Sprintf("/send/invite/%s", testing_uid1), sendBody)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	response := httptest.NewRecorder()
 	tstRtr.ServeHTTP(response, request)
 
@@ -228,6 +231,7 @@ func TestGetReceivedInvitations_NoPerms(t *testing.T) {
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/invitations/%s", testing_uid2), nil)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
 	response := httptest.NewRecorder()
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	tstRtr.ServeHTTP(response, request)
 
 	if response.Code != http.StatusUnauthorized {
@@ -242,6 +246,7 @@ func TestGetSentInvitations_NoPerms(t *testing.T) {
 
 	request, _ := http.NewRequest("GET", fmt.Sprintf("/invite/%s", testing_uid2), nil)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	response := httptest.NewRecorder()
 	tstRtr.ServeHTTP(response, request)
 
@@ -254,7 +259,7 @@ func TestGetSentInvitations_NoPerms(t *testing.T) {
 func TestAcceptInvite_NoPerms(t *testing.T) {
 
 	tstRtr := initTestingRouterNoPerms()
-
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	request, _ := http.NewRequest("PUT", fmt.Sprintf("/accept/invite/%s/%s", testing_uid2, testing_uid1), nil)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
 	response := httptest.NewRecorder()
@@ -269,7 +274,7 @@ func TestAcceptInvite_NoPerms(t *testing.T) {
 func TestDismissInvite_NoPerms(t *testing.T) {
 
 	tstRtr := initTestingRouterNoPerms()
-
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	request, _ := http.NewRequest("PUT", fmt.Sprintf("/dismiss/invite/%s/%s", testing_uid2, testing_uid1), nil)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
 	response := httptest.NewRecorder()
@@ -410,7 +415,7 @@ func TestCaregiverInvite(t *testing.T) {
 		mockSeagull.SetMockNextCollectionCall(testing_uid2+"@email.org"+"preferences", `{"Something":"anit no thing"}`, nil)
 		mockSeagull.SetMockNextCollectionCall(testing_uid2+"hcp@email.org"+"preferences", `{"Something":"anit no thing"}`, nil)
 		mockShoreline.On("TokenProvide").Return(testing_token)
-		mockAuth = auth.NewMock(testing_uid1)
+		mockAuth = auth.NewMock(false)
 
 		teams1 := []store.Team{}
 		membersAccepted := store.Member{
@@ -466,7 +471,7 @@ func TestCaregiverInvite(t *testing.T) {
 				logger,
 			)
 		}
-
+		mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: true})
 		hydrophone.SetHandlers("", testRtr)
 
 		var body = &bytes.Buffer{}

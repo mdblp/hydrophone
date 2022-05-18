@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mdblp/crew/store"
 	"github.com/mdblp/hydrophone/templates"
+	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -331,7 +332,6 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockSeagull.SetMockNextCollectionCall(testing_uid3+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid4+"preferences", `{"Something":"anit no thing"}`, nil)
 	mockSeagull.SetMockNextCollectionCall(testing_uid_patient1+"preferences", `{"Something":"anit no thing"}`, nil)
-	mockAuth.UserID = testing_uid1
 
 	hydrophone := InitApi(
 		FAKE_CONFIG,
@@ -760,6 +760,7 @@ func TestTeam(t *testing.T) {
 		FAKE_CONFIG.I18nTemplatesPath = templatesPath
 	}
 	mockTemplates, _ = templates.New(FAKE_CONFIG.I18nTemplatesPath, mockLocalizer)
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 
 	for idx, test := range tests {
 		var testRtr = initTestingTeamRouter(test.returnNone)
@@ -842,6 +843,7 @@ func initWrongBodies() []testJSONObject {
 func sendTeamInvite(method, path string, t *testing.T) {
 	tstRtr := initTestingRouterNoPerms()
 	wrongBodies := initWrongBodies()
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	for i := 0; i < len(wrongBodies); i++ {
 		body := &bytes.Buffer{}
 		json.NewEncoder(body).Encode(wrongBodies[i])
@@ -874,7 +876,7 @@ func TestUpdateTeamRole_NoToken(t *testing.T) {
 	tstRtr := initTestingRouterNoPerms()
 	body := &bytes.Buffer{}
 	json.NewEncoder(body).Encode(testJSONObject{})
-
+	mockAuth.On("Authenticate", mock.Anything).Return(nil)
 	request, _ := http.NewRequest("PUT", "/send/team/role/UID0000", body)
 	response := httptest.NewRecorder()
 	tstRtr.ServeHTTP(response, request)
@@ -887,6 +889,7 @@ func TestUpdateTeamRole_NoToken(t *testing.T) {
 
 func TestUpdateTeamRole_InvalidBody(t *testing.T) {
 	tstRtr := initTestingRouterNoPerms()
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	body := strings.NewReader("[Invalid JSON]")
 
 	request, _ := http.NewRequest("PUT", "/send/team/role/UID0000", body)
@@ -907,6 +910,7 @@ func TestUpdateTeamRole_InvalidBody(t *testing.T) {
 
 func TestUpdateTeamRole_NoinviteeID(t *testing.T) {
 	tstRtr := initTestingRouterNoPerms()
+	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
 	body := &bytes.Buffer{}
 	json.NewEncoder(body).Encode(testJSONObject{})
 

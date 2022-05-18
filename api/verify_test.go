@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+	"github.com/mdblp/shoreline/token"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestSanityCheckResponds(t *testing.T) {
@@ -50,6 +52,12 @@ func TestSanityCheckResponds(t *testing.T) {
 		//fresh each time
 		var testRtr = mux.NewRouter()
 		mockShoreline.On("TokenProvide").Return(testing_token)
+		mockAuth.ExpectedCalls = nil
+		if test.token == "" {
+			mockAuth.On("Authenticate", mock.Anything).Return(nil)
+		} else {
+			mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
+		}
 
 		if test.returnNone {
 			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, mockPortal, mockTemplates, logger)
