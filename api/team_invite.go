@@ -918,7 +918,7 @@ func (a *Api) invitePatient(invitedUsr *schema.UserData, member store.Member, to
 	if _, err := a.perms.AddPatient(token, patient); err != nil {
 		return &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 	} else {
-		log.Printf("Add patient %s in Team %s", invitedUsr.UserID, member.TeamID)
+		log.Printf("Add patient %s in Team %s", invitedUsr.UserID, sanitize(member.TeamID))
 		return nil
 	}
 }
@@ -935,7 +935,7 @@ func (a *Api) inviteHcp(invitedUsr *schema.UserData, member store.Member, token 
 	if _, err := a.perms.AddTeamMember(token, member); err != nil {
 		return &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 	} else {
-		log.Printf("Add member %s in Team %s", sanitize(invitedUsr.UserID), (member.TeamID))
+		log.Printf("Add member %s in Team %s", sanitize(invitedUsr.UserID), sanitize(member.TeamID))
 		return nil
 	}
 }
