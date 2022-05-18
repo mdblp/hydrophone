@@ -62,7 +62,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 	// call the teams service to check if the hcp user is already a member
 	if invitedUsr != nil && invite == models.TypeMedicalTeamInvite {
 		if isMember := a.isTeamMember(invitedUsr.UserID, team, false); isMember {
-			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", inviteeID, team.Name)
+			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", sanitize(inviteeID), team.Name)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingMemberMessage)}
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
 			return true, invitedUsr
@@ -415,7 +415,7 @@ func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf 
 		return
 	}
 
-	log.Printf("AcceptInvite: permissions were set for [%v -> %v] after an invite was accepted", conf.Team.ID, conf.UserId)
+	log.Printf("AcceptInvite: permissions were set for [%v -> %v] after an invite was accepted", sanitize(conf.Team.ID), sanitize(conf.UserId))
 	conf.UpdateStatus(models.StatusCompleted)
 	if !a.addOrUpdateConfirmation(req.Context(), conf, res) {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_SAVING_CONFIRMATION)}
@@ -519,7 +519,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 			conf.UpdateStatus(models.StatusDeclined)
 
 			if a.addOrUpdateConfirmation(req.Context(), conf, res) {
-				log.Printf("dismiss invite [%s] for [%s]", dismiss.Key, dismiss.Team.ID)
+				log.Printf("dismiss invite [%s] for [%s]", sanitize(dismiss.Key), sanitize(dismiss.Team.ID))
 				a.logAudit(req, "dismissinvite ")
 				res.WriteHeader(http.StatusOK)
 				return
@@ -556,8 +556,8 @@ func (a *Api) DismissMonitoringInvite(res http.ResponseWriter, req *http.Request
 	}
 	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
 
-	teamid := vars["teamid"]
-	patientid := vars["userid"]
+	teamid := sanitize(vars["teamid"])
+	patientid := sanitize(vars["userid"])
 
 	// either the token is the inviteeID or the admin ID
 	// let's find out what type of user it is later on
@@ -808,8 +808,8 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	patientid := vars["userid"]
-	teamid := vars["teamid"]
+	patientid := sanitize(vars["userid"])
+	teamid := sanitize(vars["teamid"])
 
 	// check requesting user is admin of the team
 	isTeamAdmin, team, _ := a.getTeamForUser(tokenValue, teamid, token.UserId, res)
@@ -935,7 +935,7 @@ func (a *Api) inviteHcp(invitedUsr *schema.UserData, member store.Member, token 
 	if _, err := a.perms.AddTeamMember(token, member); err != nil {
 		return &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 	} else {
-		log.Printf("Add member %s in Team %s", invitedUsr.UserID, member.TeamID)
+		log.Printf("Add member %s in Team %s", sanitize(invitedUsr.UserID), (member.TeamID))
 		return nil
 	}
 }
