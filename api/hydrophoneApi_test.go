@@ -62,12 +62,11 @@ var (
 	/*
 	 * basics setup
 	 */
-	rtr                   = mux.NewRouter()
-	mockNotifier          = clients.NewMockNotifier()
-	mockShoreline         = shoreline.NewMock(testing_token)
-	mockPerms             = crewClient.NewMock()
-	mockAuth              = auth.NewMock(false)
-	mockAuthNotAuthorized = auth.NewMock(true)
+	rtr           = mux.NewRouter()
+	mockNotifier  = clients.NewMockNotifier()
+	mockShoreline = shoreline.NewMock(testing_token)
+	mockPerms     = crewClient.NewMock()
+	mockAuth      = auth.NewMock(false)
 
 	mockSeagull = seagull.NewSeagullMock()
 
