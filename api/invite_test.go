@@ -187,7 +187,6 @@ func TestSendInvite_NoPerms(t *testing.T) {
 			"note": testJSONObject{},
 		},
 	})
-	//mockAuth.Unauthorized = true
 	request, _ := http.NewRequest("POST", fmt.Sprintf("/send/invite/%s", testing_uid2), sendBody)
 	request.Header.Set(TP_SESSION_TOKEN, testing_uid1)
 	mockAuth.On("Authenticate", mock.Anything).Return(&token.TokenData{UserId: testing_uid1, IsServer: false, Role: "patient"})
@@ -197,7 +196,6 @@ func TestSendInvite_NoPerms(t *testing.T) {
 		t.Logf("expected %d actual %d", http.StatusUnauthorized, response.Code)
 		t.Fail()
 	}
-	mockAuth.Unauthorized = false
 }
 
 func TestSendInvite_ToAnother_Patient_Should_Respond_MethodNotAllowed(t *testing.T) {
