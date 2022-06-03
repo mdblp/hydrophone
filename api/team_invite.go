@@ -434,6 +434,7 @@ func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf 
 // @Accept  json
 // @Produce  json
 // @Param teamid path string true "Team ID"
+// @Param payload body models.Confirmation true "invitation details"
 // @Success 200 {string} string "OK"
 // @NotModified 304 {string} "not modified"
 // @Failure 400 {object} status.Status "inviteeid or/and the payload is missing or malformed"
@@ -640,6 +641,7 @@ func (a *Api) DismissMonitoringInvite(res http.ResponseWriter, req *http.Request
 // @ID hydrophone-api-SendTeamInvite
 // @Accept  json
 // @Produce  json
+// @Param payload body inviteBody true "invitation details"
 // @Success 200 {object} models.Confirmation "invite details"
 // @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
@@ -786,6 +788,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 // @Produce  json
 // @Param teamid path string true "Team ID"
 // @Param userid path string true "invited user id"
+// @Param monitoringInfo body inviteMonitoringBody true "Monitoring info i.e end of monitoring period"
 // @Success 200 {object} models.Confirmation "invite details"
 // @Failure 400 {object} status.Status "teamId is not found, team is not a monitoring team"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges, requesting user is not an admin of the team"
@@ -957,6 +960,7 @@ func (a *Api) inviteHcp(invitedUsr *schema.UserData, member store.Member, token 
 // @Accept  json
 // @Produce  json
 // @Param userid path string true "user id"
+// @Param payload body inviteBody true "invitation details"
 // @Success 200 {object} models.Confirmation "invite details"
 // @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
@@ -1088,6 +1092,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 // @Accept  json
 // @Produce  json
 // @Param userid path string true "user id"
+// @Param payload body inviteBody true "invitation details"
 // @Success 200 {object} models.Confirmation "delete member"
 // @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
