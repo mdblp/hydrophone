@@ -89,20 +89,18 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 }
 
 // return the user and its status in the team, true it can be invited for monitor, otherwise it returns false
-func (a *Api) checkForMonitoringTeamInviteById(ctx context.Context, inviteeID, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *schema.UserData) {
-
+func (a *Api) checkForMonitoringTeamInviteById(ctx context.Context, inviteeID, invitorID, token string, team store.Team, res http.ResponseWriter) (bool, *schema.UserData) {
 	confirmation := &models.Confirmation{
 		UserId: inviteeID,
 		Team: &models.Team{
 			ID: team.ID,
-		},
-		Type: invite}
+		}}
 	//already has invite from this user?
 	invites, _ := a.Store.FindConfirmations(
 		ctx,
 		confirmation,
-		[]models.Status{},
-		[]models.Type{},
+		[]models.Status{models.StatusPending},
+		[]models.Type{models.TypeMedicalTeamMonitoringInvite},
 	)
 	if len(invites) > 0 {
 		//rule is we cannot send if the invite is not yet expired
@@ -846,7 +844,7 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 	}
 
 	// check the patient is already a invite and if user is already a patient
-	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), patientid, invitorID, tokenValue, team, models.TypeMedicalTeamMonitoringInvite, res); !canBeInvited {
+	if canBeInvited, invitedUsr := a.checkForMonitoringTeamInviteById(req.Context(), patientid, invitorID, tokenValue, team, res); !canBeInvited {
 		log.Printf("SendMonitoringInvite: invited user [%s] cannot be invited", patientid)
 		return
 	} else if invitedUsr != nil {
