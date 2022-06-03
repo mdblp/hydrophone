@@ -3,11 +3,12 @@ module github.com/mdblp/hydrophone
 go 1.17
 
 require (
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/aws/aws-sdk-go v1.42.25
 	github.com/gorilla/mux v1.8.0
 	github.com/k3a/html2text v1.0.8
 	github.com/mdblp/crew v1.2.3
-	github.com/mdblp/go-common v1.3.2
+	github.com/mdblp/go-common v1.3.3-0.20220603142106-723111c98ddf
 	github.com/mdblp/shoreline v1.9.2
 	github.com/microcosm-cc/bluemonday v1.0.16
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
