@@ -3,11 +3,11 @@ module github.com/mdblp/hydrophone
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.44.26
+	github.com/aws/aws-sdk-go v1.44.27
 	github.com/gorilla/mux v1.8.0
 	github.com/k3a/html2text v1.0.8
-	github.com/mdblp/crew v1.2.4
-	github.com/mdblp/go-common v1.3.2
+	github.com/mdblp/crew v1.3.2
+	github.com/mdblp/go-common v1.3.3
 	github.com/mdblp/shoreline v1.9.3
 	github.com/microcosm-cc/bluemonday v1.0.18
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
@@ -37,7 +37,7 @@ require (
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/klauspost/compress v1.15.5 // indirect
+	github.com/klauspost/compress v1.15.6 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

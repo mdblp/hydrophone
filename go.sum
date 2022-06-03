@@ -8,8 +8,8 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 h1:d+Bc7a5rLufV
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/auth0/go-jwt-middleware/v2 v2.0.1 h1:zAgDKL7nsfVBFl31GGxsSXkhuRzYe1fVtJcO3aMSrFU=
 github.com/auth0/go-jwt-middleware/v2 v2.0.1/go.mod h1:kDt7JgUuDEp1VutfUmO4ZxBLL51vlNu/56oDfXc5E0Y=
-github.com/aws/aws-sdk-go v1.44.26 h1:fOvltAUcUA3IFe0ddPSlmCBSwPKifsXJf4beI0f8XS0=
-github.com/aws/aws-sdk-go v1.44.26/go.mod h1:y4AeaBuwd2Lk+GepC1E9v0qOiTws0MIWAX4oIKwKHZo=
+github.com/aws/aws-sdk-go v1.44.27 h1:8CMspeZSrewnbvAwgl8qo5R7orDLwQnTGBf/OKPiHxI=
+github.com/aws/aws-sdk-go v1.44.27/go.mod h1:y4AeaBuwd2Lk+GepC1E9v0qOiTws0MIWAX4oIKwKHZo=
 github.com/aymerick/douceur v0.2.0 h1:Mv+mAeH1Q+n9Fr+oyamOlAkUNPWPlA8PPGR0QAaYuPk=
 github.com/aymerick/douceur v0.2.0/go.mod h1:wlT5vV2O3h55X9m7iVYN0TBM0NH/MmbLnd30/FjWUq4=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
@@ -56,8 +56,8 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/k3a/html2text v1.0.8 h1:rVanLhKilpnJUJs/CNKWzMC4YaQINGxK0rSG8ssmnV0=
 github.com/k3a/html2text v1.0.8/go.mod h1:ieEXykM67iT8lTvEWBh6fhpH4B23kB9OMKPdIBmgUqA=
 github.com/klauspost/compress v1.13.6/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
-github.com/klauspost/compress v1.15.5 h1:qyCLMz2JCrKADihKOh9FxnW3houKeNsp2h5OEz0QSEA=
-github.com/klauspost/compress v1.15.5/go.mod h1:PhcZ0MbTNciWF3rruxRgKxI5NkcHHrHUDtV4Yw2GlzU=
+github.com/klauspost/compress v1.15.6 h1:6D9PcO8QWu0JyaQ2zUMmu16T1T+zjjEpP91guRsvDfY=
+github.com/klauspost/compress v1.15.6/go.mod h1:PhcZ0MbTNciWF3rruxRgKxI5NkcHHrHUDtV4Yw2GlzU=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
@@ -67,10 +67,10 @@ github.com/mailru/easyjson v0.0.0-20190614124828-94de47d64c63/go.mod h1:C1wdFJiN
 github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
 github.com/mailru/easyjson v0.7.6 h1:8yTIVnZgCoiM1TgqoeTl+LfU5Jg6/xL3QhGQnimLYnA=
 github.com/mailru/easyjson v0.7.6/go.mod h1:xzfreul335JAWq5oZzymOObrkdz5UnU4kGfJJLY9Nlc=
-github.com/mdblp/crew v1.2.4 h1:zSeR54c0jX1AKRwxkTkJp796eQ8NLPwq08F9wKtOvSk=
-github.com/mdblp/crew v1.2.4/go.mod h1:ukDWM+Kr7STBC+f2ySAhCvV3e0qsEefNgd1jBYoRJhE=
-github.com/mdblp/go-common v1.3.2 h1:8L9Y4tsMdHbxfpZddqoSeasRG98Ye9Tn4V2bppnvmkc=
-github.com/mdblp/go-common v1.3.2/go.mod h1:U/6Aapha2XbFlXuwrDUHW7kdZChPvj10TElT7ybDBNU=
+github.com/mdblp/crew v1.3.2 h1:eLRa4j0Fcs7x/lu9w7J+aNeUsz8ab01DyAaAYH17mLQ=
+github.com/mdblp/crew v1.3.2/go.mod h1:ukDWM+Kr7STBC+f2ySAhCvV3e0qsEefNgd1jBYoRJhE=
+github.com/mdblp/go-common v1.3.3 h1:9MP7vlpvJq5hUvl6LGejIodXgvi9dxcOllLLodTaGyU=
+github.com/mdblp/go-common v1.3.3/go.mod h1:U/6Aapha2XbFlXuwrDUHW7kdZChPvj10TElT7ybDBNU=
 github.com/mdblp/shoreline v1.9.3 h1:LBB3ghkjCv2EyblabcOHjqIyyptHuGx6tLKwmEbR2N4=
 github.com/mdblp/shoreline v1.9.3/go.mod h1:+Q30W/bW6ujtV8VWte3ludcY7xbggPOVzIE4/aldsaw=
 github.com/microcosm-cc/bluemonday v1.0.18 h1:6HcxvXDAi3ARt3slx6nTesbvorIc3QeTzBNRvWktHBo=
