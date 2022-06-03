@@ -478,7 +478,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	dismiss.UserId = userID
 	dismiss.Team = &models.Team{ID: teamID}
 
-	if isAdmin, _, err := a.getTeamForUser(tokenValue, teamID, token.UserId, res); isAdmin && err == nil {
+	if isAdmin, _, err := a.getTeamForUser(nil, tokenValue, teamID, token.UserId, res); isAdmin && err == nil {
 		// as team admin you can act on behalf of members
 		// for any invitation for the given team
 		dismiss.UserId = ""
@@ -580,7 +580,7 @@ func (a *Api) DismissMonitoringInvite(res http.ResponseWriter, req *http.Request
 	//(and because as a patient this route is forbidden)
 	if userid != patientid {
 		// by default you can just act on your records
-		if isAdmin, _, err := a.getTeamForUser(tokenValue, teamid, token.UserId, res); !isAdmin || err != nil {
+		if isAdmin, _, err := a.getTeamForUser(nil, tokenValue, teamid, token.UserId, res); !isAdmin || err != nil {
 			// you are not a team admin for the given team
 			log.Printf("DismissMonitoring: [%s] not authorized for [%s]", token.UserId, teamid)
 			a.sendModelAsResWithStatus(res, &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}, http.StatusForbidden)
@@ -693,7 +693,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		ib.Role = "member"
 	}
 
-	auth, team, _ := a.getTeamForUser(tokenValue, ib.TeamID, token.UserId, res)
+	auth, team, _ := a.getTeamForUser(nil, tokenValue, ib.TeamID, token.UserId, res)
 
 	// only for team management
 	if !auth && !managePatients {
@@ -808,13 +808,25 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 		return
 	}
 
+	var ib = &inviteMonitoringBody{}
+	if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
+		log.Printf("SendMonitoringTeamInvite: error decoding invite to detail %v\n", err)
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+	if ib.MonitoringEnd.IsZero() {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
+
 	patientid := sanitize(vars["userid"])
 	teamid := sanitize(vars["teamid"])
 
 	// check requesting user is admin of the team
-	isTeamAdmin, team, _ := a.getTeamForUser(tokenValue, teamid, token.UserId, res)
+	isTeamAdmin, team, _ := a.getTeamForUser(req.Context(), tokenValue, teamid, token.UserId, res)
 	if team.ID == "" {
-		// not a member of the team
 		return
 	}
 	if !isTeamAdmin {
@@ -875,12 +887,11 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 
 			// Updating crew patient monitoring
 			// Default prescription for 90 days
-			monitoringEnd := time.Now().UTC().Add(90 * 24 * time.Hour)
 			crewPatient := store.Patient{
 				UserID: invitedUsr.UserID,
 				TeamID: teamid,
 				Monitoring: &store.PatientMonitoring{
-					MonitoringEnd: &monitoringEnd,
+					MonitoringEnd: &ib.MonitoringEnd,
 					Status:        "pending",
 				},
 			}
@@ -1001,7 +1012,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, invitorID, res)
+	_, team, err := a.getTeamForUser(nil, tokenValue, ib.TeamID, invitorID, res)
 	if err != nil {
 		return
 	}
@@ -1123,7 +1134,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		return
 	}
 
-	_, team, err := a.getTeamForUser(tokenValue, ib.TeamID, token.UserId, res)
+	_, team, err := a.getTeamForUser(nil, tokenValue, ib.TeamID, token.UserId, res)
 	if err != nil {
 		return
 	}
@@ -1208,9 +1219,16 @@ func (a *Api) isTeamMember(userID string, team store.Team, all bool) bool {
 // it returns the Team object corresponding to the team
 // if any error occurs during the search, it returns an error with the
 // related code
-func (a *Api) getTeamForUser(token, teamID, userID string, res http.ResponseWriter) (bool, store.Team, error) {
+func (a *Api) getTeamForUser(ctx context.Context, token, teamID, userID string, res http.ResponseWriter) (bool, store.Team, error) {
 	var auth = false
-	team, err := a.perms.GetTeam(token, teamID)
+	var team *store.Team
+	var err error
+	if ctx == nil {
+		team, err = a.perms.GetTeam(token, teamID)
+	} else {
+		team, err = a.perms.GetTeamWithContext(ctx, token, teamID)
+	}
+
 	if err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
