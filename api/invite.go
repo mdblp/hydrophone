@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -30,6 +31,10 @@ type (
 		Email  string `json:"email"`
 		TeamID string `json:"teamId"`
 		Role   string `json:"role"`
+	}
+	//Invite details for generating a new patient monitoring invite
+	inviteMonitoringBody struct {
+		MonitoringEnd time.Time `json:"monitoringEnd"`
 	}
 )
 
@@ -552,7 +557,7 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 		case models.TypeMedicalTeamPatientInvite:
 			err = a.perms.RemovePatient(tokenValue, conf.Team.ID, conf.UserId)
 		case models.TypeMedicalTeamInvite:
-			if requestorIsAdmin, _, err := a.getTeamForUser(tokenValue, cancel.Team.ID, token.UserId, res); err != nil {
+			if requestorIsAdmin, _, err := a.getTeamForUser(nil, tokenValue, cancel.Team.ID, token.UserId, res); err != nil {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
@@ -570,7 +575,7 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 				return
 			}
 		case models.TypeMedicalTeamMonitoringInvite:
-			if requestorIsAdmin, _, err := a.getTeamForUser(tokenValue, conf.Team.ID, token.UserId, res); err != nil {
+			if requestorIsAdmin, _, err := a.getTeamForUser(nil, tokenValue, conf.Team.ID, token.UserId, res); err != nil {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_CANCELING_MONITORING)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
