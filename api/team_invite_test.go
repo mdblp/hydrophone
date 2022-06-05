@@ -1138,6 +1138,12 @@ func TestAcceptTeamInvite(t *testing.T) {
 		mockPerms.SetMockNextCall(testing_token, teams1, nil)
 		mockPerms.SetMockNextCall(testing_token+testing_uid1, &membersAccepted, nil)
 		mockPerms.SetMockNextCall("UpdatePatient"+testing_token_uid1+testing_uid1, &patientsAccepted, nil)
+		mockPerms.On(
+			"UpdatePatientMonitoringWithContext", mock.Anything, mock.Anything, mock.Anything,
+		).Return(nil, nil)
+		mockPerms.On(
+			"GetPatientMonitoring", mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(&store.Patient{}, nil)
 
 		//default flow, fully authorized
 		hydrophone := InitApi(
@@ -1248,6 +1254,14 @@ func TestAcceptMonitoringInvite(t *testing.T) {
 			token:    testing_token_uid1,
 			respCode: http.StatusForbidden,
 		},
+		// Forbidden request on expired invitation
+		{
+			desc:     "forbidden request to accept a monitoring invite that is expired",
+			method:   http.MethodPut,
+			url:      "/accept/team/monitoring/expired/" + testing_uid1,
+			token:    testing_token_uid1,
+			respCode: http.StatusConflict,
+		},
 		// Wrong user to access an invitation
 		{
 			desc:     "valid request to accept a monitoring invite",
@@ -1295,6 +1309,9 @@ func TestAcceptMonitoringInvite(t *testing.T) {
 	mockPerms.SetMockNextCall(testing_token+testing_uid1, &membersAccepted, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"123456", &store.Patient{}, nil)
 	mockAuth := NewAuthMock(testing_uid1)
+	mockPerms.On(
+		"GetPatientMonitoring", mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+	).Return(&store.Patient{}, nil)
 
 	for idx, inviteTest := range inviteTests {
 		// don't run a test if it says to skip it
@@ -1421,7 +1438,7 @@ func TestDismissMonitoringInvite(t *testing.T) {
 			method:   http.MethodPut,
 			url:      "/dismiss/team/monitoring/dismiss.team.not.admin/" + testing_uid1,
 			token:    testing_token_hcp2,
-			respCode: http.StatusForbidden,
+			respCode: http.StatusUnauthorized,
 		},
 		{
 			desc:     "Store returns error",
