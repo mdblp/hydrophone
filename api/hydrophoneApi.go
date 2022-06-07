@@ -283,7 +283,7 @@ func (a *Api) addProfile(conf *models.Confirmation) error {
 
 //Find these confirmations
 //write error if fails or write no-content if it doesn't exist
-func (a *Api) checkFoundConfirmations(token string, res http.ResponseWriter, results []*models.Confirmation, err error) []*models.Confirmation {
+func (a *Api) checkFoundConfirmations(res http.ResponseWriter, results []*models.Confirmation, err error) []*models.Confirmation {
 	if err != nil {
 		log.Println("Error finding confirmations ", err)
 		statusErr := &status.StatusError{status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_CONFIRMATION)}
