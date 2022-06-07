@@ -312,7 +312,7 @@ func (a *Api) AcceptMonitoringInvite(res http.ResponseWriter, req *http.Request,
 		return
 	}
 	if conf.IsExpired() {
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, statusExpiredMessage)}
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExpiredMessage)}
 		log.Printf("%s: [%s] ", action, statusErr.Error())
 		a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
 		return
