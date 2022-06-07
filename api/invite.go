@@ -23,6 +23,7 @@ const (
 	statusInviteCanceledMessage  = "Invite has been canceled"
 	statusInviteNotActiveMessage = "Invite already canceled"
 	statusForbiddenMessage       = "Forbidden to perform requested operation"
+	statusExpiredMessage         = "Invite has expired"
 )
 
 type (

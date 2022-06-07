@@ -263,6 +263,7 @@ func (a *Api) AcceptTeamNotifs(res http.ResponseWriter, req *http.Request, vars 
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provided sufficient privileges"
 // @Failure 403 {object} status.Status "Operation is forbiden. The invitation cannot be accepted for this given user"
 // @Failure 404 {object} status.Status "invitation not found"
+// @Failure 409 {object} status.Status "invitation is expired"
 // @Failure 500 {object} status.Status "Error (internal) while processing the data"
 // @Router /accept/team/monitoring/{teamid}/{userid} [put]
 // @security TidepoolAuth
@@ -308,6 +309,12 @@ func (a *Api) AcceptMonitoringInvite(res http.ResponseWriter, req *http.Request,
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusNotFound, statusInviteNotFoundMessage)}
 		log.Printf("%s: [%s] ", action, statusErr.Error())
 		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
+		return
+	}
+	if conf.IsExpired() {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExpiredMessage)}
+		log.Printf("%s: [%s] ", action, statusErr.Error())
+		a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
 		return
 	}
 
@@ -582,7 +589,7 @@ func (a *Api) DismissMonitoringInvite(res http.ResponseWriter, req *http.Request
 		if isAdmin, _, err := a.getTeamForUser(nil, tokenValue, teamid, token.UserId, res); !isAdmin || err != nil {
 			// you are not a team admin for the given team
 			log.Printf("DismissMonitoring: [%s] not authorized for [%s]", token.UserId, teamid)
-			a.sendModelAsResWithStatus(res, &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}, http.StatusForbidden)
+			a.sendModelAsResWithStatus(res, &status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)}, http.StatusUnauthorized)
 			return
 		}
 	}
