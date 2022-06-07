@@ -61,7 +61,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 	invitedUsr := a.findExistingUser(inviteeID, a.sl.TokenProvide())
 	// call the teams service to check if the hcp user is already a member
 	if invitedUsr != nil && invite == models.TypeMedicalTeamInvite {
-		if isMember := a.isTeamMember(invitedUsr.UserID, team, false); isMember {
+		if isMember, _ := a.isTeamMember(invitedUsr.UserID, team, false); isMember {
 			log.Printf("checkForDuplicateTeamInvite: invited [%s] user is already a member of [%s]", sanitize(inviteeID), team.Name)
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusConflict, statusExistingMemberMessage)}
 			a.sendModelAsResWithStatus(res, statusErr, http.StatusConflict)
@@ -1025,7 +1025,8 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 	if err != nil {
 		return
 	}
-	if !a.isTeamMember(inviteeID, team, false) {
+
+	if isMember, _ := a.isTeamMember(inviteeID, team, false); !isMember {
 		// the invitee is not an accepted member of the team
 		log.Printf("UpdateInvite: %s is not a member of %s", inviteeID, team.ID)
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_NOT_ADMIN)}
@@ -1096,8 +1097,9 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 // @ID hydrophone-api-DeleteTeamMember
 // @Accept  json
 // @Produce  json
-// @Param userid path string true "user id"
-// @Param teamid path string true "teamid"
+// @Param userid path string true "user id to remove from team"
+// @Param teamid path string true "team id"
+// @Param email query string false "email of the user id to remove from team"
 // @Success 200 {object} models.Confirmation "delete member"
 // @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
@@ -1127,33 +1129,30 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	invitorID := token.UserId
 	if invitorID == "" {
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	defer req.Body.Close()
-	var ib = &inviteBody{}
-	if err := json.NewDecoder(req.Body).Decode(ib); err != nil {
-		log.Printf("UpdateInvite: error decoding invite to detail %v\n", err)
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_DECODING_INVITE)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return
+	email := req.URL.Query().Get("email")
+	if email == "" {
+		user, err := a.sl.GetUser(inviteeID, a.sl.TokenProvide())
+		if err != nil || user == nil || user.Username == "" {
+			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_USR)}
+			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+			return
+		}
+		email = user.Username
 	}
 
-	if ib.Email == "" || ib.TeamID == "" {
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_MISSING_DATA_INVITE)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return
-	}
-
-	_, team, err := a.getTeamForUser(nil, tokenValue, ib.TeamID, token.UserId, res)
+	_, team, err := a.getTeamForUser(nil, tokenValue, teamID, token.UserId, res)
 	if err != nil {
 		return
 	}
 
-	if isMember := a.isTeamMember(inviteeID, team, true); !isMember {
+	isMember, teamMember := a.isTeamMember(inviteeID, team, true)
+	if !isMember {
 		// the invitee is not a member of the team
 		log.Printf("UpdateInvite: %s is not a member of %s", inviteeID, team.ID)
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_NOT_MEMBER)}
@@ -1173,15 +1172,15 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		invitorID)
 
 	// let's use the user preferences
-	invite.Team.ID = ib.TeamID
+	invite.Team.ID = teamID
 	invite.Team.Name = team.Name
-	invite.Email = ib.Email
-	invite.Role = ib.Role
+	invite.Email = email
+	invite.Role = teamMember.Role
 	invite.UserId = inviteeID
 	// does the invitee have a preferred language?
 	inviteeLanguage = a.getUserLanguage(invite.UserId, res)
 
-	if err := a.perms.RemoveTeamMember(tokenValue, ib.TeamID, invite.UserId); err != nil {
+	if err := a.perms.RemoveTeamMember(tokenValue, teamID, invite.UserId); err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
@@ -1219,13 +1218,13 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 
 // userId is member of a Team
 // Settings the all parameter to true will return all the members while it will only return the accepted members if the parameter is set false
-func (a *Api) isTeamMember(userID string, team store.Team, all bool) bool {
+func (a *Api) isTeamMember(userID string, team store.Team, all bool) (bool, *store.Member) {
 	for i := 0; i < len(team.Members); i++ {
 		if team.Members[i].UserID == userID && (team.Members[i].InvitationStatus == "accepted" || all) {
-			return true
+			return true, &team.Members[i]
 		}
 	}
-	return false
+	return false, nil
 }
 
 //
