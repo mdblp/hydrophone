@@ -223,6 +223,20 @@ func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	h(res, req, vars)
 }
 
+func getSessionToken(req *http.Request) string {
+	// time:= c.Params.ByName("time")
+	sessionToken := req.Header.Get(token.TP_SESSION_TOKEN)
+	if sessionToken != "" {
+		return sessionToken
+	}
+	sessionToken = strings.Trim(req.Header.Get("Authorization"), " ")
+	if sessionToken != "" && strings.HasPrefix(sessionToken, "Bearer ") {
+		tokenParts := strings.Split(sessionToken, " ")
+		sessionToken = tokenParts[1]
+	}
+	return sessionToken
+}
+
 // @Summary Get the api status
 // @Description Get the api status
 // @ID hydrophone-api-getstatus
@@ -401,13 +415,10 @@ func (a *Api) token(res http.ResponseWriter, req *http.Request) *token.TokenData
 // logAudit Variatic log for audit trails
 func (a *Api) logAudit(req *http.Request, format string, args ...interface{}) {
 	var prefix string
-	var isServer bool = false
 
 	// Get token from request
-	if token := req.Header.Get(TP_SESSION_TOKEN); token != "" {
-		td := a.sl.CheckToken(token)
-		isServer = td != nil && td.IsServer
-	}
+	td := a.auth.Authenticate(req)
+	isServer := td != nil && td.IsServer
 
 	if req.RemoteAddr != "" {
 		prefix = fmt.Sprintf("remoteAddr{%s}, ", req.RemoteAddr)

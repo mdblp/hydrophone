@@ -408,7 +408,7 @@ func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf 
 			TeamID:           conf.Team.ID,
 			InvitationStatus: "accepted",
 		}
-		_, err = a.perms.UpdatePatient(req.Header.Get(TP_SESSION_TOKEN), patient)
+		_, err = a.perms.UpdatePatient(getSessionToken(req), patient)
 	}
 	if err != nil {
 		log.Printf("AcceptInvite error setting permissions [%v]\n", err)
@@ -479,7 +479,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 		return
 	}
 
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 	// by default you can just act on your records
 	dismiss.UserId = userID
 	dismiss.Team = &models.Team{ID: teamID}
@@ -560,7 +560,7 @@ func (a *Api) DismissMonitoringInvite(res http.ResponseWriter, req *http.Request
 	if token == nil {
 		return
 	}
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 
 	teamid := sanitize(vars["teamid"])
 	patientid := sanitize(vars["userid"])
@@ -661,7 +661,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 	// By default, the invitee language will be "en" for English (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = GetUserChosenLanguage(req)
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 	token := a.token(res, req)
 	if token == nil {
 		return
@@ -804,7 +804,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 // @Router /send/team/monitoring/{teamid}/{userid} [post]
 // @security TidepoolAuth
 func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Request, vars map[string]string) {
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 	token := a.token(res, req)
 	if token == nil {
 		return
@@ -979,7 +979,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = GetUserChosenLanguage(req)
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 	token := a.token(res, req)
 	if token == nil {
 		return
@@ -1097,7 +1097,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 // @Accept  json
 // @Produce  json
 // @Param userid path string true "user id"
-// @Param payload body inviteBody true "invitation details"
+// @Param teamid path string true "teamid"
 // @Success 200 {object} models.Confirmation "delete member"
 // @Failure 400 {object} status.Status "userId, teamId and isAdmin were not provided or the payload is missing/malformed"
 // @Failure 401 {object} status.Status "Authorization token is missing or does not provide sufficient privileges"
@@ -1105,13 +1105,13 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 // @Failure 409 {object} status.Status "No notification and email sent; User is not a member"
 // @Failure 422 {object} status.Status "Error when sending the email (probably caused by the mailling service"
 // @Failure 500 {object} status.Status "Internal error while processing the invite, detailled error returned in the body"
-// @Router /send/team/leave/{userid} [delete]
+// @Router /send/team/leave/{teamid}/{userid} [delete]
 // @security TidepoolAuth
 func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars map[string]string) {
 	// By default, the invitee language will be "en" for Englih (as we don't know which language suits him)
 	// In case the invitee is a known user, the language will be overriden in a later step
 	var inviteeLanguage = GetUserChosenLanguage(req)
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 	token := a.token(res, req)
 	if token == nil {
 		return
@@ -1122,7 +1122,11 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	teamID := vars["teamid"]
+	if teamID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	invitorID := token.UserId
 	if invitorID == "" {
 		res.WriteHeader(http.StatusBadRequest)

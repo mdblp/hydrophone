@@ -525,7 +525,7 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 	if token == nil {
 		return
 	}
-	tokenValue := req.Header.Get(TP_SESSION_TOKEN)
+	tokenValue := getSessionToken(req)
 
 	cancel := &models.Confirmation{}
 	if err := json.NewDecoder(req.Body).Decode(cancel); err != nil {
@@ -716,7 +716,7 @@ func (a *Api) SendInvite(res http.ResponseWriter, req *http.Request, vars map[st
 			return
 		}
 
-		if existingInvite, invitedUsr := a.checkForDuplicateInvite(req.Context(), ib.Email, invitorID, req.Header.Get(TP_SESSION_TOKEN), res); existingInvite == true {
+		if existingInvite, invitedUsr := a.checkForDuplicateInvite(req.Context(), ib.Email, invitorID, getSessionToken(req), res); existingInvite == true {
 			log.Printf("SendInvite: invited [%s] user already has or had an invite", ib.Email)
 			return
 		} else {
