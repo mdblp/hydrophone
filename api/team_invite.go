@@ -338,6 +338,25 @@ func (a *Api) AcceptMonitoringInvite(res http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	monitoring := make(map[string]interface{})
+	monitoring["acceptanceTimestamp"] = time.Now().UTC().Format(time.RFC3339)
+	monitoring["isAccepted"] = true
+	patientMonitoringConsent := make(map[string]interface{})
+	patientMonitoringConsent["monitoring"] = monitoring
+
+	profileUpdate := make(map[string]interface{})
+	profileUpdate["patient"] = patientMonitoringConsent
+
+	err = a.seagull.SetCollection(conf.UserId, "profile", a.sl.TokenProvide(), profileUpdate)
+	if err != nil {
+		log.Printf("%s error getting monitord patient [%v]\n", action, err)
+		a.sendModelAsResWithStatus(
+			res,
+			&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_MONITORED_PATIENT)},
+			http.StatusInternalServerError,
+		)
+		return
+	}
 	patientMonitored, err := a.perms.GetPatientMonitoring(req.Context(), a.sl.TokenProvide(), conf.UserId, conf.Team.ID)
 	if err != nil {
 		log.Printf("%s error getting monitord patient [%v]\n", action, err)
