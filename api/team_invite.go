@@ -911,7 +911,25 @@ func (a *Api) SendMonitoringTeamInvite(res http.ResponseWriter, req *http.Reques
 					return
 				}
 			}
+			// Updating patient profile with referring doctor
+			if ib.ReferringDoctor != nil {
+				patientProfile := make(map[string]interface{})
+				patientProfile["referringDoctor"] = *ib.ReferringDoctor
+				profileUpdate := make(map[string]interface{})
+				profileUpdate["patient"] = patientProfile
 
+				err := a.seagull.SetCollection(invitedUsr.UserID, "profile", a.sl.TokenProvide(), profileUpdate)
+				if err != nil {
+					log.Printf("error updating patient profile [%v]\n", err)
+					a.sendModelAsResWithStatus(
+						res,
+						&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_MONITORED_PATIENT)},
+						http.StatusInternalServerError,
+					)
+					return
+				}
+
+			}
 			// Updating crew patient monitoring
 			// Default prescription for 90 days
 			crewPatient := store.Patient{
