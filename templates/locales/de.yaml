@@ -59,7 +59,7 @@ SignupCustodialVerify: "Verify Your Account"
 #(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialClinicConfirmationSubject: "Diabetes-Klinik Nachsorge - Beantragen Sie Ihr Konto"
 SignupCustodialClinicHello: "Hallo, {{ .FullName }}!"
-SignupCustodialClinicAccount: "{{ .CreatorName }} hat ein YourLoops-Konto für Ihre Diabetes-Gerätedaten erstellt."
+SignupCustodialClinicAccount: "{{ .CreatorName }} hat ein YourLoops-Konto für Ihre Daten vom Diabetes-Device erstellt."
 SignupCustodialClinicOwnership: "Sie können Ihr kostenloses Konto nutzen, um Daten von zu Hause aus einzusehen und hochzuladen."
 SignupCustodialClinicClaim: "Beantragen Sie Ihr Konto"
 #Patient Information
