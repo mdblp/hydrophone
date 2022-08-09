@@ -1,7 +1,7 @@
 ---
 #Footer
 #(for all emails)
-FooterGetSupport: "UNTERSTÜTZUNG"
+FooterGetSupport: "SUPPORT"
 EmailExpirationHours: "Diese Nachricht ist {{ .Duration }} Stunde(n) gültig."
 EmailExpirationDays: "Diese Nachricht ist {{ .Duration }} Tag(e) gültig."
 #FooterSincerely: "Sincerely,"
