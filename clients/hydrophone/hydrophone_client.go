@@ -175,3 +175,41 @@ func (client *Client) CancelSignup(confirm models.Confirmation, authToken string
 		}
 	}
 }
+
+func (h *Client) SendNotification(topic string, notif interface{}, authToken string) error {
+	host, err := h.getHost()
+	if err != nil {
+		return errors.New("No known hydrophone hosts")
+	}
+
+	host.Path = path.Join(host.Path, "notifications", topic)
+
+	req, _ := http.NewRequest("POST", host.String(), nil)
+	req.Header.Add("x-tidepool-session-token", authToken)
+
+	data, err := json.Marshal(notif)
+	if err != nil {
+		return errors.Wrap(err, "Failure to marshal notification")
+	}
+
+	req.Body = ioutil.NopCloser(bytes.NewReader(data))
+
+	res, err := h.httpClient.Do(req)
+	if err != nil {
+		return errors.Wrap(err, "Failure to send notification to hydrophone")
+	}
+	defer res.Body.Close()
+
+	switch res.StatusCode {
+	case http.StatusOK:
+		return nil
+	default:
+		return &status.StatusError{
+			Status: status.NewStatusf(res.StatusCode, "Unknown response code from service[%s]", req.URL),
+		}
+	}
+}
+
+func (h *Client) SendAppPrescriptionNotification(notif models.PrescriptionBody, authToken string) error {
+	return h.SendNotification("submit_app_prescription", notif, authToken)
+}
