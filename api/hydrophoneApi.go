@@ -216,6 +216,9 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 
 	// PUT /confirm/:userid/invited/:invited_address
 	rtr.Handle("/{userid}/invited/{invited_address}", varsHandler(a.CancelInvite)).Methods("PUT")
+
+	// POST /confirm/notifications/:topic_label
+	rtr.Handle("/notifications/{topic}", varsHandler(a.CreateNotification)).Methods("POST")
 }
 
 func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {

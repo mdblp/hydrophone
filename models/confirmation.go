@@ -89,6 +89,7 @@ const (
 	TypeNoAccount                   Type = "no_account"
 	TypeInformation                 Type = "patient_information"
 	TypePatientPinReset             Type = "patient_pin_reset"
+	TypeNotification                Type = "notification"
 	shortKeyLength                       = 8
 	letterBytes                          = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
@@ -156,7 +157,6 @@ func (c *Confirmation) AddContext(data interface{}) {
 
 	jsonData, _ := json.Marshal(data)
 	c.Context = jsonData
-	return
 }
 
 //Decode the context data into the provided type
