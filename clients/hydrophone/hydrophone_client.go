@@ -21,6 +21,7 @@ type (
 		GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error)
 		GetPendingSignup(userID string, authToken string) (*models.Confirmation, error)
 		CancelSignup(confirm models.Confirmation, authToken string) error
+		SendNotification(topic string, notif interface{}, authToken string) error
 	}
 
 	Client struct {
@@ -208,8 +209,4 @@ func (h *Client) SendNotification(topic string, notif interface{}, authToken str
 			Status: status.NewStatusf(res.StatusCode, "Unknown response code from service[%s]", req.URL),
 		}
 	}
-}
-
-func (h *Client) SendAppPrescriptionNotification(notif models.PrescriptionBody, authToken string) error {
-	return h.SendNotification("submit_app_prescription", notif, authToken)
 }
