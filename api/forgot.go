@@ -113,7 +113,7 @@ func (a *Api) passwordReset(res http.ResponseWriter, req *http.Request, vars map
 				"forgot password: error getting resetter user preferences: ",
 				err.Error())
 			return
-		} else if resetterSeagull.Preferences.DisplayLanguageCode != "" {
+		} else if resetterSeagull.Preferences != nil && resetterSeagull.Preferences.DisplayLanguageCode != "" {
 			resetterLanguage = resetterSeagull.Preferences.DisplayLanguageCode
 		}
 	} else {

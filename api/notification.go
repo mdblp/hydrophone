@@ -139,7 +139,7 @@ func (a *Api) processNotification(res http.ResponseWriter, req *http.Request, co
 			res,
 			http.StatusInternalServerError,
 			STATUS_ERR_FINDING_USR,
-			"send invitation: error getting invitor user profile: ", invite.CreatorId
+			"send invitation: error getting invitor user profile: ", invite.CreatorId,
 		)
 		return
 	}

@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -292,6 +293,11 @@ func (a *Api) addProfile(ctx context.Context, conf *models.Confirmation) error {
 	if conf.CreatorId != "" {
 		doc, err := a.seagull.GetCollections(ctx, conf.CreatorId, []string{"profile"}, a.sl.TokenProvide())
 		if err != nil {
+			log.Printf("error getting the creators profile [%v] ", err)
+			return err
+		}
+		if doc.Profile == nil {
+			err := errors.New("profile is empty")
 			log.Printf("error getting the creators profile [%v] ", err)
 			return err
 		}
