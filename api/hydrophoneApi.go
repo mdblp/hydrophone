@@ -21,6 +21,7 @@ import (
 	"github.com/mdblp/go-common/clients/auth"
 	"github.com/mdblp/go-common/clients/portal"
 	"github.com/mdblp/go-common/clients/status"
+	"github.com/mdblp/go-routers/gin-gonic/middlewares"
 	"github.com/mdblp/hydrophone/clients"
 	"github.com/mdblp/hydrophone/models"
 	seagullClient "github.com/mdblp/seagull/client"
@@ -58,9 +59,6 @@ type (
 		ConfirmationAttemptsTimeWindow time.Duration
 	}
 
-	group struct {
-		Members []string
-	}
 	// this just makes it easier to bind a handler for the Handle function
 	varsHandler func(http.ResponseWriter, *http.Request, map[string]string)
 )
@@ -155,6 +153,10 @@ func InitApi(
 	}
 }
 
+type traceSessionKeyType int
+
+const TraceSessionKey traceSessionKeyType = iota + 1
+
 func (a *Api) getWebURL(req *http.Request) string {
 	if a.Config.WebURL == "" {
 		host := req.Header.Get("Host")
@@ -222,6 +224,7 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 
 	// POST /confirm/notifications/:topic_label
 	rtr.Handle("/notifications/{topic}", varsHandler(a.CreateNotification)).Methods("POST")
+	rtr.Use(middlewares.NativeTraceSessionMiddleware)
 }
 
 func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
@@ -325,7 +328,7 @@ func (a *Api) getUserLanguage(userid string, req *http.Request, res http.Respons
 	// let's get the invitee user preferences
 	inviteePreferences := a.getUserPreferences(userid, req, res)
 	// does the invitee have a preferred language?
-	if inviteePreferences.DisplayLanguageCode != "" {
+	if inviteePreferences != nil && inviteePreferences.DisplayLanguageCode != "" {
 		return inviteePreferences.DisplayLanguageCode
 	} else {
 		return GetUserChosenLanguage(req)
