@@ -21,7 +21,7 @@ import (
 	"github.com/mdblp/go-common/clients/auth"
 	"github.com/mdblp/go-common/clients/portal"
 	"github.com/mdblp/go-common/clients/status"
-	"github.com/mdblp/go-routers/gin-gonic/middlewares"
+	muxMiddleware "github.com/mdblp/go-routers/mux"
 	"github.com/mdblp/hydrophone/clients"
 	"github.com/mdblp/hydrophone/models"
 	seagullClient "github.com/mdblp/seagull/client"
@@ -224,7 +224,7 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 
 	// POST /confirm/notifications/:topic_label
 	rtr.Handle("/notifications/{topic}", varsHandler(a.CreateNotification)).Methods("POST")
-	rtr.Use(middlewares.NativeTraceSessionMiddleware)
+	rtr.Use(muxMiddleware.NativeTraceSessionMiddleware)
 }
 
 func (h varsHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {

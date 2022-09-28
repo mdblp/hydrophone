@@ -9,7 +9,7 @@ require (
 	github.com/k3a/html2text v1.0.8
 	github.com/mdblp/crew v1.4.1
 	github.com/mdblp/go-common v1.5.1-0.20220927132004-3670e4a62453
-	github.com/mdblp/seagull v1.3.3-0.20220927150357-99fde832e14b
+	github.com/mdblp/seagull v1.3.3-0.20220928134023-6d4399e01960
 	github.com/mdblp/shoreline v1.9.3
 	github.com/microcosm-cc/bluemonday v1.0.20
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
@@ -55,7 +55,7 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/mdblp/go-routers v0.5.7-0.20220927151656-e01f0a5045af // indirect
+	github.com/mdblp/go-routers v0.5.7-0.20220928084123-33e279d5f713 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect

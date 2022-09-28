@@ -46,7 +46,7 @@ func (a *Api) CreateNotification(res http.ResponseWriter, req *http.Request, var
 	if !token.IsServer {
 		a.sendModelAsResWithStatus(
 			res,
-			&status.StatusError{Status: status.NewStatus(http.StatusUnauthorized, STATUS_UNAUTHORIZED)},
+			&status.StatusError{Status: status.NewStatus(http.StatusForbidden, STATUS_UNAUTHORIZED)},
 			http.StatusForbidden,
 		)
 		return

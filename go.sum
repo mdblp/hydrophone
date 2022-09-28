@@ -371,12 +371,16 @@ github.com/mdblp/go-routers v0.5.7-0.20220927131500-2f7e8adab4b8 h1:Pc/yZL1vR94H
 github.com/mdblp/go-routers v0.5.7-0.20220927131500-2f7e8adab4b8/go.mod h1:tPpqQGKwuHD44fb6ACK3u18ZfWNYMm5hCiFl+tGkFfs=
 github.com/mdblp/go-routers v0.5.7-0.20220927151656-e01f0a5045af h1:EOyJCV+ZB4dyyd6on4MQ+aqefyoS4T1WARoajSPUuN8=
 github.com/mdblp/go-routers v0.5.7-0.20220927151656-e01f0a5045af/go.mod h1:tPpqQGKwuHD44fb6ACK3u18ZfWNYMm5hCiFl+tGkFfs=
+github.com/mdblp/go-routers v0.5.7-0.20220928084123-33e279d5f713 h1:aQwAV7B7OxfTAwVwoxpNFsiF3gGUFH+0MVjQsWWuC4Q=
+github.com/mdblp/go-routers v0.5.7-0.20220928084123-33e279d5f713/go.mod h1:ehgYVtJNjpOE4XupXDQgKRYWVGlJUNPapHu50a3qGwA=
 github.com/mdblp/seagull v1.3.3-0.20220922072316-958046ee03f8 h1:yyxfQP7m9gK7Qf+mM5Ili5d0FQX6pUtFMZZrcsDYUcA=
 github.com/mdblp/seagull v1.3.3-0.20220922072316-958046ee03f8/go.mod h1:J/Wqaw7XBPKU7xzCL5hXbZsNZw6FX9zTYXoE7bzcsIM=
 github.com/mdblp/seagull v1.3.3-0.20220926094135-41a68e701aa4 h1:YvDfFUdE6Gl+nNYZ2+G6cu1GhkJ4oDSLkxWCNdS5CAI=
 github.com/mdblp/seagull v1.3.3-0.20220926094135-41a68e701aa4/go.mod h1:J/Wqaw7XBPKU7xzCL5hXbZsNZw6FX9zTYXoE7bzcsIM=
 github.com/mdblp/seagull v1.3.3-0.20220927150357-99fde832e14b h1:uHXGl7RpxkgVVul7NfbRnRp3ujcnsKxsjSRfreSSp5Q=
 github.com/mdblp/seagull v1.3.3-0.20220927150357-99fde832e14b/go.mod h1:vy+RUcRjIW/ESRCUk/kq4RBc1+Y/r6QIMKFQwSgBt5s=
+github.com/mdblp/seagull v1.3.3-0.20220928134023-6d4399e01960 h1:yVQ5Al42aJY2BOfJeaDiZervAIgS5mxGGL4IBY0H3MA=
+github.com/mdblp/seagull v1.3.3-0.20220928134023-6d4399e01960/go.mod h1:GxKC7pBZTxlZc7wGD0+XbWfCfVEiPqbAgy4CY+jggpk=
 github.com/mdblp/shoreline v1.9.2/go.mod h1:+Q30W/bW6ujtV8VWte3ludcY7xbggPOVzIE4/aldsaw=
 github.com/mdblp/shoreline v1.9.3 h1:LBB3ghkjCv2EyblabcOHjqIyyptHuGx6tLKwmEbR2N4=
 github.com/mdblp/shoreline v1.9.3/go.mod h1:+Q30W/bW6ujtV8VWte3ludcY7xbggPOVzIE4/aldsaw=
