@@ -50,7 +50,7 @@ SignupClinicDeletionWarning: "Wird das Konto nicht innerhalb dieses Zeitraums ak
 SignupClinicVerify: "Aktiviere mein Konto"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialConfirmationSubject: "Überprüfen Sie Ihr YourLoops-Konto"
+SignupCustodialConfirmationSubject: "Überprüfen Sie Ihr YourLoops Konto"
 #SignupCustodialHello: "Hello,"
 SignupCustodialHeadline: "Herzlichen Glückwunsch zur Einrichtung Ihres YourLoops-Kontos!"
 SignupCustodialVerify: "Verify Your Account"
@@ -58,7 +58,7 @@ SignupCustodialVerify: "Verify Your Account"
 #(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialClinicConfirmationSubject: "Diabetes-Klinik Nachsorge - Beantragen Sie Ihr Konto"
 SignupCustodialClinicHello: "Hallo, {{ .FullName }}!"
-SignupCustodialClinicAccount: "{{ .CreatorName }} hat ein YourLoops-Konto für Ihre Daten vom Diabetes-Device erstellt."
+SignupCustodialClinicAccount: "{{ .CreatorName }} Hat ein YourLoops-Konto für Ihre Diabetes-Gerätedaten erstellt."
 SignupCustodialClinicOwnership: "Sie können Ihr kostenloses Konto nutzen, um Daten von zu Hause aus einzusehen und hochzuladen."
 SignupCustodialClinicClaim: "Beantragen Sie Ihr Konto"
 #Patient Information
