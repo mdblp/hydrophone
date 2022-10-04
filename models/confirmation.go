@@ -103,6 +103,7 @@ var (
 		TypeMedicalTeamInvite:           ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeMedicalTeamPatientInvite:    ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeMedicalTeamMonitoringInvite: ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeNotification:                ConfirmationDuration{"day", 7 * 24 * time.Hour},
 	}
 )
 

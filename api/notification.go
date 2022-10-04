@@ -153,6 +153,8 @@ func (a *Api) processNotification(res http.ResponseWriter, req *http.Request, co
 	content["Email"] = invite.Email
 	content["Duration"] = invite.GetReadableDuration()
 
+	invite.Creator.Profile = &models.Profile{FullName: creatorMetaData.Profile.FullName}
+
 	if a.createAndSendNotification(req, invite, content, inviteeLanguage) {
 		a.logAudit(req, "invite sent")
 	} else {
