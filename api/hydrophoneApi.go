@@ -153,10 +153,6 @@ func InitApi(
 	}
 }
 
-type traceSessionKeyType int
-
-const TraceSessionKey traceSessionKeyType = iota + 1
-
 func (a *Api) getWebURL(req *http.Request) string {
 	if a.Config.WebURL == "" {
 		host := req.Header.Get("Host")
