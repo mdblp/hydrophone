@@ -33,7 +33,6 @@ PatientPasswordInfoBody2: "Si ha recibido este mensaje de correo electrónico po
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Invitación del paciente"
-#CareTeamInviteHello: "Hello,"
 CareTeamInviteHeadline: "{{ .PatientName }} desea compartir con usted sus datos de diabetes en YourLoops."
 CareTeamInviteBody: "YourLoops es una plataforma de visualización para el control de la diabetes y la creación de informes. Todos los datos capturados por un DBL se muestran en tablas y gráficos."
 CareTeamInviteBody2: "{{ .PatientName }} eligió compartir sus datos con usted. Para responder, haga clic en el enlace de abajo."
@@ -114,3 +113,9 @@ MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent t
 ReadDataPrivacy: "Lea nuestra <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>política de confidencialidad</a> para obtener más información."
 RespondToInvite: "Responder a la invitación"
 ConfirmationSubject: "Verifique su dirección de correo electrónico"
+#AppPrescription Notification
+#(email for patients)
+AppPrescriptionSubject: "Patient medical prescription"
+AppPrescriptionHeadline: "{{ .Invitor }} prescribed the use of {{ .Product }} for you."
+AppPrescriptionBody: "Your diabetologist prescribed a new product {{ .Product }} for you. Here is your secret code: {{ .PrescriptionCode }}"
+AppPrescriptionBody2: "To accept, !!!TODO: Add detailed instructions here!!!, click on the link below."
