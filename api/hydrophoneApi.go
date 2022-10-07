@@ -308,7 +308,7 @@ func (a *Api) addProfile(ctx context.Context, conf *models.Confirmation) error {
 func (a *Api) getUserLanguage(userid string, req *http.Request, res http.ResponseWriter) string {
 	// let's get the invitee user preferences
 	if seagulDoc, err := a.seagull.GetCollections(req.Context(), userid, []string{"preferences"}, a.sl.TokenProvide()); err != nil {
-		a.logger.Errorf("Preferences not availlable for user %s. Email will be sent using default language.", userid)
+		a.logger.Errorf("Preferences not availlable for user %s. Email will be sent using default language. Error: [%s]", userid, err)
 	} else if seagulDoc.Preferences != nil && seagulDoc.Preferences.DisplayLanguageCode != "" {
 		return seagulDoc.Preferences.DisplayLanguageCode
 	}
