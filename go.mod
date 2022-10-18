@@ -16,6 +16,7 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.7.1
+	github.com/swaggo/swag v1.8.6
 	go.mongodb.org/mongo-driver v1.10.2
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0

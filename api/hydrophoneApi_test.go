@@ -13,9 +13,9 @@ import (
 	"github.com/gorilla/mux"
 
 	crewClient "github.com/mdblp/crew/client"
-	"github.com/mdblp/go-common/clients/auth"
-	"github.com/mdblp/go-common/clients/portal"
-	"github.com/mdblp/go-common/clients/version"
+	"github.com/mdblp/go-common/v2/clients/auth"
+	"github.com/mdblp/go-common/v2/clients/portal"
+	"github.com/mdblp/go-common/v2/clients/version"
 	"github.com/mdblp/hydrophone/clients"
 	"github.com/mdblp/hydrophone/localize"
 	"github.com/mdblp/hydrophone/models"
