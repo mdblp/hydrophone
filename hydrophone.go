@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	tideV2Client "github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
 	"net/http"
 	"os"
 	"os/signal"
@@ -154,10 +155,8 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	portal, err := portal.NewClientFromEnv(httpClient)
-	if err != nil {
-		logger.Fatal(err)
-	}
+	tideV2Client := tideV2Client.NewTideWhispererClientFromEnv(httpClient)
+
 	/*
 	* hydrophone setup
 	 */
@@ -207,7 +206,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, authClient, seagull, portal, emailTemplates, logger)
+	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, authClient, seagull, tideV2Client, emailTemplates, logger)
 	api.SetHandlers("", rtr)
 
 	/*
