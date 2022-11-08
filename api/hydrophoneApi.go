@@ -62,10 +62,6 @@ type (
 	varsHandler func(http.ResponseWriter, *http.Request, map[string]string)
 )
 
-func (*Api) test() {
-
-}
-
 const (
 	//api logging prefix
 	CONFIRM_API_PREFIX = "api/confirm "

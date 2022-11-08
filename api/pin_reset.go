@@ -94,7 +94,7 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 	// first get the IMEI of the patient's handset
 	var patientConfig *tide.SettingsResult
 
-	if patientConfig, err = a.medicalData.GetSettings(req.Context(), userID, getSessionToken(req), false); err != nil {
+	if patientConfig, err = a.medicalData.GetSettings(req.Context(), usrDetails.UserID, getSessionToken(req), false); err != nil {
 		a.sendError(res, http.StatusInternalServerError, statusPinResetErr, "error getting patient config: ", err.Error())
 		return
 	}
