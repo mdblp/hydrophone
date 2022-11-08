@@ -39,7 +39,7 @@ type (
 		perms          crewClient.Crew
 		auth           auth.ClientInterface
 		seagull        seagullClient.API
-		medicalData    *tidewhisperer.Client
+		medicalData    tidewhisperer.ClientInterface
 		Config         Config
 		LanguageBundle *i18n.Bundle
 		logger         *log.Logger
@@ -61,6 +61,10 @@ type (
 	// this just makes it easier to bind a handler for the Handle function
 	varsHandler func(http.ResponseWriter, *http.Request, map[string]string)
 )
+
+func (*Api) test() {
+
+}
 
 const (
 	//api logging prefix
@@ -133,7 +137,7 @@ func InitApi(
 	perms crewClient.Crew,
 	auth auth.ClientInterface,
 	seagull seagullClient.API,
-	medicalData *tidewhisperer.Client,
+	medicalData tidewhisperer.ClientInterface,
 	templates models.Templates,
 	logger *log.Logger,
 ) *Api {

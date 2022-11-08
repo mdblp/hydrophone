@@ -30,14 +30,13 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/mdblp/go-common/v2/clients/auth"
-	"github.com/mdblp/go-common/v2/clients/portal"
 	"github.com/mdblp/go-common/v2/clients/version"
 	seagullClient "github.com/mdblp/seagull/client"
 
 	"github.com/gorilla/mux"
 
 	crewClient "github.com/mdblp/crew/client"
-	common "github.com/mdblp/go-common"
+	"github.com/mdblp/go-common"
 	"github.com/mdblp/go-db/mongo"
 	"github.com/mdblp/hydrophone/api"
 	sc "github.com/mdblp/hydrophone/clients"
