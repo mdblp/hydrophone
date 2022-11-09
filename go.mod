@@ -11,6 +11,7 @@ require (
 	github.com/mdblp/go-common/v2 v2.0.0
 	github.com/mdblp/go-db v1.0.0
 	github.com/mdblp/go-routers v1.0.0
+	github.com/mdblp/orca v0.6.0
 	github.com/mdblp/seagull v1.6.0
 	github.com/mdblp/shoreline v1.9.7
 	github.com/mdblp/tide-whisperer-v2/v2 v2.9.0
@@ -24,7 +25,8 @@ require (
 )
 
 require (
-	github.com/auth0/go-jwt-middleware/v2 v2.1.0 // indirect
+	// Using newer version, aka 2.1.0, is breaking the token decoding operation
+	github.com/auth0/go-jwt-middleware/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -37,7 +39,6 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/mdblp/orca v0.6.0 // indirect
 	github.com/montanaflynn/stats v0.6.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
