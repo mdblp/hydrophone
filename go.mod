@@ -25,8 +25,7 @@ require (
 )
 
 require (
-	// Using newer version, aka 2.1.0, is breaking the token decoding operation
-	github.com/auth0/go-jwt-middleware/v2 v2.0.1 // indirect
+	github.com/auth0/go-jwt-middleware/v2 v2.1.0 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
