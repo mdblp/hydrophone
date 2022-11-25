@@ -50,19 +50,6 @@ SignupClinicConfirmationSubject: "crwdns40424:0crwdne40424:0"
 SignupClinicHeadline: "crwdns40426:0crwdne40426:0"
 SignupClinicBody: "crwdns40428:0crwdne40428:0"
 SignupClinicVerify: "crwdns40430:0crwdne40430:0"
-#Signup Custodial => SUPPRIMER
-#(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialConfirmationSubject: "crwdns40290:0crwdne40290:0"
-#SignupCustodialHello: "Hello,"
-SignupCustodialHeadline: "crwdns40372:0crwdne40372:0"
-SignupCustodialVerify: "crwdns40296:0crwdne40296:0"
-#Signup Custodial Clinic => SUPPRIMER
-#(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialClinicConfirmationSubject: "crwdns40298:0crwdne40298:0"
-SignupCustodialClinicHello: "crwdns40300:0{{ .FullName }}crwdne40300:0"
-SignupCustodialClinicAccount: "crwdns40302:0{{ .CreatorName }}crwdne40302:0"
-SignupCustodialClinicOwnership: "crwdns40304:0crwdne40304:0"
-SignupCustodialClinicClaim: "crwdns40306:0crwdne40306:0"
 #Patient Information
 PatientInfoSubject: "crwdns40432:0crwdne40432:0"
 PatientInfoHeadline: "crwdns43478:0crwdne43478:0"

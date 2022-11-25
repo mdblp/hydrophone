@@ -14,7 +14,7 @@
     ],
     "escapeContentParts":[
         "MedicalteamName",
-        "CreatorName",
+        "FromUser",
         "AssetURL",
         "Language"
     ]

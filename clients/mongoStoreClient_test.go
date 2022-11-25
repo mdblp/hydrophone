@@ -87,7 +87,7 @@ func TestMongoStoreConfirmationOperations(t *testing.T) {
 
 	//Find with other statuses
 	const fromUser, toUser, toEmail, toOtherEmail = "999.111", "312.123", "some@email.org", "some@other.org"
-	c1, _ := models.NewConfirmation(models.TypeCareteamInvite, models.TemplateNameCareteamInvite, fromUser)
+	c1, _ := models.NewConfirmation(models.TypeDataShareInvite, models.TemplateNameCareteamInvite, fromUser)
 	c1.UserId = toUser
 	c1.Email = toEmail
 	c1.UpdateStatus(models.StatusDeclined)
@@ -96,7 +96,7 @@ func TestMongoStoreConfirmationOperations(t *testing.T) {
 	// Sleep some so the second confirmation created time is after the first confirmation created time
 	time.Sleep(time.Second)
 
-	c2, _ := models.NewConfirmation(models.TypeCareteamInvite, models.TemplateNameCareteamInvite, fromUser)
+	c2, _ := models.NewConfirmation(models.TypeDataShareInvite, models.TemplateNameCareteamInvite, fromUser)
 	c2.Email = toOtherEmail
 	c2.UpdateStatus(models.StatusCompleted)
 	mc.UpsertConfirmation(ctx, c2)

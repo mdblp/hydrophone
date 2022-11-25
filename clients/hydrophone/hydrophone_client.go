@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/mdblp/hydrophone/api"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	"github.com/mdblp/hydrophone/api"
 
 	"github.com/mdblp/go-common/clients/status"
 	appContext "github.com/mdblp/go-common/context"
@@ -94,7 +95,7 @@ func (client *Client) getHost() (*url.URL, error) {
 }
 
 func (client *Client) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
-	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeCareteamInvite)
+	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeDataShareInvite)
 }
 
 func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error) {

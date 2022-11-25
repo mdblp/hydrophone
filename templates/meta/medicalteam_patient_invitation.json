@@ -19,7 +19,7 @@
         "MedicalteamAddress",
         "MedicalteamPhone",
         "MedicalteamIentification",
-        "CreatorName",
+        "FromUser",
         "AssetURL",
         "Language",
         "Duration"

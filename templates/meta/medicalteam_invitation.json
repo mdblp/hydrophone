@@ -17,7 +17,7 @@
         "MedicalteamName",
         "MedicalteamAddress",
         "MedicalteamIentification",
-        "CreatorName",
+        "FromUser",
         "Duration"
     ]
 }

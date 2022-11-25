@@ -33,9 +33,9 @@ PatientPasswordInfoBody2: "If this email has reached you in error, please contac
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "Patient invitation"
-CareTeamInviteHeadline: "{{ .PatientName }} wants to share their diabetes data with you on YourLoops."
+CareTeamInviteHeadline: "{{ .FromUser }} wants to share their diabetes data with you on YourLoops."
 CareTeamInviteBody: "YourLoops is a visualization platform for diabetes management and reporting. You’ll find all the data captured by a DBL displayed into charts and graphs."
-CareTeamInviteBody2: "{{ .PatientName }} chose to share their data with you. To respond, click on the link below."
+CareTeamInviteBody2: "{{ .FromUser }} chose to share their data with you. To respond, click on the link below."
 #Signup
 #(email to ask patient for verification of email)
 SignupHeadline: "Verify your email address to activate your YourLoops account."
@@ -48,19 +48,6 @@ SignupClinicHeadline: "Verify your email address to activate your YourLoops acco
 SignupClinicBody: "You created a healthcare professional account on YourLoops. To confirm your identity and complete your profile, please click on the link below."
 SignupClinicDeletionWarning: "If the account is not activated during this period, your account registration will be deleted."
 SignupClinicVerify: "Activate my account"
-#Signup Custodial => SUPPRIMER
-#(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialConfirmationSubject: "Verify your YourLoops account"
-#SignupCustodialHello: "Hello,"
-SignupCustodialHeadline: "Congrats on creating your YourLoops account!"
-SignupCustodialVerify: "Verify Your Account"
-#Signup Custodial Clinic => SUPPRIMER
-#(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
-SignupCustodialClinicHello: "Hi, {{ .FullName }}!"
-SignupCustodialClinicAccount: "{{ .CreatorName }} created a YourLoops account for your diabetes device data."
-SignupCustodialClinicOwnership: "You can take ownership of your free account to view and upload data from home."
-SignupCustodialClinicClaim: "Claim Your Account"
 #Patient Information
 PatientInfoSubject: "Welcome to YourLoops!"
 PatientInfoHeadline: "Login to view your DBL data."
@@ -77,7 +64,7 @@ PatientPinResetBody2: "The code will expire in 30 minutes."
 PatientPinResetBody3: "If the code has expired, please request a new one on your DBL."
 #Medical/Care team invitation
 MedicalTeamInvitationSubject: "Invitation to join a care team"
-MedicalTeamInviteHeadline: "{{ .CreatorName }} wants you to join their care team on YourLoops."
+MedicalTeamInviteHeadline: "{{ .FromUser }} wants you to join their care team on YourLoops."
 MedicalTeamInviteBody1: "YourLoops is a diabetes management platform designed for DBL systems."
 MedicalTeamInviteBody2: "By joining {{ .MedicalteamName }}, you will have access to your patients data and will be able to create reports."
 MedicalTeamInviteWarning: "Please verify you know this person, confirm that you are part of this care team, and check the details provided below before accepting their invitation."
@@ -100,14 +87,14 @@ MedicalTeamRemoveBody2: "Think it’s a mistake? Get in touch with a team admini
 MedicalTeamRemoveAction: "Go to YourLoops"
 #Medical/Care team patient invitation
 MedicalTeamPatientInvitationSubject: "Invitation to share data"
-MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} invites you to share your data with {{ .MedicalteamName }}"
+MedicalTeamPatientInviteHeadline: "{{ .FromUser }} invites you to share your data with {{ .MedicalteamName }}"
 MedicalTeamPatientInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
 MedicalTeamPatientInviteWarning2: "If you're unsure, get in touch with your healthcare professional and do not accept this invitation."
 MedicalTeamPatientInviteInfo: "By adding this team, you consent to share your personal data (including health data) with its members, who are authorized healthcare professionals registered on YourLoops."
 
 #Medical/Care team patient monitoring invitation
 MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
-MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
+MedicalTeamMonitoringInviteHeadline: "{{ .FromUser }} invites you to be monitored by {{ .MedicalteamName }}"
 MedicalTeamMonitoringInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
 MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
 
@@ -119,6 +106,6 @@ ConfirmationSubject: "Verify your email address"
 #AppPrescription Notification
 #(email for patients)
 AppPrescriptionSubject: "Patient medical prescription"
-AppPrescriptionHeadline: "{{ .Invitor }} prescribed the use of {{ .Product }} for you."
+AppPrescriptionHeadline: "{{ .FromUser }} prescribed the use of {{ .Product }} for you."
 AppPrescriptionBody: "Your diabetologist prescribed a new product {{ .Product }} for you. Here is your secret code: {{ .PrescriptionCode }}"
 AppPrescriptionBody2: "To accept, !!!TODO: Add detailed instructions here!!!, click on the link below."

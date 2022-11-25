@@ -515,7 +515,7 @@ func TestConfirmationTeamDoAdmin(t *testing.T) {
 
 func TestConfirmationCareteamInvite(t *testing.T) {
 
-	confirmation, _ := NewConfirmation(TypeCareteamInvite, TemplateNameMedicalteamInvite, USERID)
+	confirmation, _ := NewConfirmation(TypeDataShareInvite, TemplateNameMedicalteamInvite, USERID)
 
 	if confirmation.Status != StatusPending {
 		t.Fatalf("Status should be [%s] but is [%s]", StatusPending, confirmation.Status)
@@ -529,8 +529,8 @@ func TestConfirmationCareteamInvite(t *testing.T) {
 		t.Fatal("The modified time should NOT be set")
 	}
 
-	if confirmation.Type != TypeCareteamInvite {
-		t.Fatalf("The type should be [%s] but is [%s]", TypeCareteamInvite, confirmation.Type)
+	if confirmation.Type != TypeDataShareInvite {
+		t.Fatalf("The type should be [%s] but is [%s]", TypeDataShareInvite, confirmation.Type)
 	}
 
 	if confirmation.TemplateName != TemplateNameMedicalteamInvite {

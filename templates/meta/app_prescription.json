@@ -11,7 +11,7 @@
         "FooterGetSupport"
     ],
     "escapeContentParts":[
-        "Invitor",
+        "FromUser",
         "Product",
         "PrescriptionCode",
         "Duration"

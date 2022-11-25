@@ -79,7 +79,7 @@ const (
 	TypePasswordReset               Type = "password_reset"
 	TypePatientPasswordReset        Type = "patient_password_reset"
 	TypePatientPasswordInfo         Type = "patient_password_info"
-	TypeCareteamInvite              Type = "careteam_invitation"    // invite and share data to a caregiver
+	TypeDataShareInvite             Type = "careteam_invitation"    // invite and share data to a caregiver
 	TypeMedicalTeamInvite           Type = "medicalteam_invitation" // invite an hcp to a medical team
 	TypeMedicalTeamPatientInvite    Type = "medicalteam_patient_invitation"
 	TypeMedicalTeamMonitoringInvite Type = "medicalteam_monitoring_invitation"
@@ -89,6 +89,7 @@ const (
 	TypeNoAccount                   Type = "no_account"
 	TypeInformation                 Type = "patient_information"
 	TypePatientPinReset             Type = "patient_pin_reset"
+	TypeDevicePrescription          Type = "device_prescription"
 	TypeNotification                Type = "notification"
 	shortKeyLength                       = 8
 	letterBytes                          = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -96,13 +97,14 @@ const (
 
 var (
 	Timeouts TypeDurations = TypeDurations{
-		TypeCareteamInvite:              ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeDataShareInvite:             ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypePasswordReset:               ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeSignUp:                      ConfirmationDuration{"day", 31 * 24 * time.Hour},
 		TypePatientPasswordReset:        ConfirmationDuration{"hour", 1 * time.Hour},
 		TypeMedicalTeamInvite:           ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeMedicalTeamPatientInvite:    ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeMedicalTeamMonitoringInvite: ConfirmationDuration{"day", 7 * 24 * time.Hour},
+		TypeDevicePrescription:          ConfirmationDuration{"day", 7 * 24 * time.Hour},
 		TypeNotification:                ConfirmationDuration{"day", 7 * 24 * time.Hour},
 	}
 )

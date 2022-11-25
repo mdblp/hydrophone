@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
 	"net/http"
 	"net/url"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
 
 	log "github.com/sirupsen/logrus"
 
@@ -167,18 +168,8 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	rtr.Handle("/sanity_check/{userid}", varsHandler(a.sendSanityCheckEmail)).Methods("POST")
 
 	// POST /confirm/send/forgot/:useremail
-	// POST /confirm/send/invite/:userid
 	send := rtr.PathPrefix("/send").Subrouter()
 	send.Handle("/forgot/{useremail}", varsHandler(a.passwordReset)).Methods("POST")
-	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
-	// POST /confirm/send/team/invite
-	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
-	// POST /confirm/send/team/monitoring/{teamid}/{userid}
-	send.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.SendMonitoringTeamInvite)).Methods("POST")
-	// POST /confirm/send/team/role/:userid - add or remove admin role to userid
-	send.Handle("/team/role/{userid}", varsHandler(a.UpdateTeamRole)).Methods("PUT")
-	// DELETE /confirm/send/team/leave/:teamid/:userid - delete member
-	send.Handle("/team/leave/{teamid}/{userid}", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
 
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
@@ -188,34 +179,9 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// PUT /confirm/accept/invite/:userid/:invited_by
 	accept := rtr.PathPrefix("/accept").Subrouter()
 	accept.Handle("/forgot", varsHandler(a.acceptPassword)).Methods("PUT")
-	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
-	// PUT /confirm/accept/team/invite
-	accept.Handle("/team/invite", varsHandler(a.AcceptTeamNotifs)).Methods("PUT")
-	// PUT /confirm/accept/team/monitoring/{teamid}/{userid}
-	accept.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.AcceptMonitoringInvite)).Methods("PUT")
 
-	// GET /confirm/invite/:userid
-	rtr.Handle("/invite/{userid}", varsHandler(a.GetSentInvitations)).Methods("GET")
-
-	// GET /confirm/invitations/:userid
-	rtr.Handle("/invitations/{userid}", varsHandler(a.GetReceivedInvitations)).Methods("GET")
-
-	// PUT /confirm/dismiss/invite/:userid/:invited_by
-	dismiss := rtr.PathPrefix("/dismiss").Subrouter()
-	dismiss.Handle("/invite/{userid}/{invitedby}",
-		varsHandler(a.DismissInvite)).Methods("PUT")
-	// PUT /confirm/dismiss/team/invite/{teamid}
-	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
-	// PUT /confirm/dismiss/team/monitoring/{teamid}/{userid}
-	dismiss.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.DismissMonitoringInvite)).Methods("PUT")
-
-	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
-	if a.Config.EnableTestRoutes {
-		rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
-	}
-
-	// PUT /confirm/:userid/invited/:invited_address
-	rtr.Handle("/{userid}/invited/{invited_address}", varsHandler(a.CancelInvite)).Methods("PUT")
+	// GET /confirm/notifications/:userid
+	rtr.Handle("/notifications/{userid}", varsHandler(a.GetReceivedNotifications)).Methods("GET")
 
 	// POST /confirm/notifications/:topic_label
 	rtr.Handle("/notifications/{topic}", varsHandler(a.CreateNotification)).Methods("POST")
@@ -320,23 +286,18 @@ func (a *Api) getUserLanguage(userid string, req *http.Request, res http.Respons
 func (a *Api) checkFoundConfirmations(ctx context.Context, res http.ResponseWriter, results []*models.Confirmation, err error) []*models.Confirmation {
 	if err != nil {
 		log.Println("Error finding confirmations ", err)
-		statusErr := &status.StatusError{status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_CONFIRMATION)}
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_CONFIRMATION)}
 		a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
 		return nil
-	} else if results == nil || len(results) == 0 {
-		statusErr := &status.StatusError{status.NewStatus(http.StatusNotFound, STATUS_NOT_FOUND)}
-		//log.Println("No confirmations were found ", statusErr.Error())
-		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
-		return nil
-	} else {
+	} else if len(results) > 0 {
 		for i := range results {
 			if err = a.addProfile(ctx, results[i]); err != nil {
 				//report and move on
 				log.Println("Error getting profile", err.Error())
 			}
 		}
-		return results
 	}
+	return results
 }
 
 //Generate a notification from the given confirmation,write the error if it fails
@@ -353,7 +314,7 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 			templateName = models.TemplateNamePatientPasswordReset
 		case models.TypePatientPasswordInfo:
 			templateName = models.TemplateNamePatientPasswordInfo
-		case models.TypeCareteamInvite:
+		case models.TypeDataShareInvite:
 			templateName = models.TemplateNameCareteamInvite
 		case models.TypeMedicalTeamInvite:
 			templateName = models.TemplateNameMedicalteamInvite
