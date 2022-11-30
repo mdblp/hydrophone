@@ -2,9 +2,7 @@ package hydrophone
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/mdblp/hydrophone/api"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -133,67 +131,6 @@ func TestGetSentInvitations(t *testing.T) {
 	confirms, err = hydrophoneClient.GetSentInvitations(context.Background(), "unrecognizedResponseCode", testToken)
 	if err == nil || !strings.Contains(err.Error(), "unknown response code from service") {
 		t.Errorf("Failed GetSentInvitations should have thrown an unknown response code error but did not")
-	}
-}
-
-func TestInviteHcp(t *testing.T) {
-	testToken := "a.b.c"
-	srvr := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		if req.Method != "POST" {
-			t.Errorf("Incorrect HTTP Method [%s]", req.Method)
-		}
-		if req.Header.Get("Authorization") != "Bearer "+testToken {
-			t.Errorf("auth token not correctly set")
-		}
-		switch req.URL.Path {
-		case "/send/team/invite":
-			var body *api.InviteBody
-			if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
-				t.Errorf("Error parsing request [%s]", err)
-			}
-			switch body.TeamID {
-			case "authorizedWithData":
-				if body.Email != "inviteeEmail" || body.Role != "role" {
-					t.Errorf("Body is missing some parameters")
-				}
-				res.WriteHeader(http.StatusOK)
-				fmt.Fprint(res, `{}`)
-			case "authorizedWithWrongData":
-				res.WriteHeader(http.StatusOK)
-				fmt.Fprint(res, `[{}]`)
-			case "authorizedWithoutData":
-				res.WriteHeader(http.StatusNotFound)
-			case "unrecognizedResponseCode":
-				res.WriteHeader(http.StatusNoContent)
-			case "error":
-				res.WriteHeader(http.StatusInternalServerError)
-			}
-		default:
-			t.Errorf("Unknown path[%s]", req.URL.Path)
-		}
-	}))
-	defer srvr.Close()
-
-	hydrophoneClient := NewHydrophoneClientBuilder().WithHost(srvr.URL).Build()
-
-	_, err := hydrophoneClient.InviteHcp(context.Background(), "authorizedWithData", "inviteeEmail", "role", testToken)
-	if err != nil {
-		t.Errorf("Failed InviteHcp with error[%v]", err)
-	}
-
-	_, err = hydrophoneClient.InviteHcp(context.Background(), "authorizedWithWrongData", "inviteeEmail", "role", testToken)
-	if err == nil || !strings.Contains(err.Error(), "error parsing JSON results") {
-		t.Errorf("Failed InviteHcp should have thrown a JSON parsing error but did not")
-	}
-
-	_, err = hydrophoneClient.InviteHcp(context.Background(), "unrecognizedResponseCode", "inviteeEmail", "role", testToken)
-	if err == nil || !strings.Contains(err.Error(), "unknown response code from service") {
-		t.Errorf("Failed InviteHcp should have thrown an unknown response code error but did not")
-	}
-
-	_, err = hydrophoneClient.InviteHcp(nil, "authorizedWithData", "inviteeEmail", "role", testToken)
-	if err == nil || !strings.Contains(err.Error(), "SendTeamInviteHCP: error formatting request") {
-		t.Errorf("Failed InviteHcp should have thrown formatting request error")
 	}
 }
 

@@ -13,8 +13,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/mdblp/hydrophone/api"
-
 	"github.com/mdblp/go-common/clients/status"
 	appContext "github.com/mdblp/go-common/context"
 	"github.com/mdblp/go-common/errors"
@@ -96,33 +94,6 @@ func (client *Client) getHost() (*url.URL, error) {
 
 func (client *Client) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
 	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeDataShareInvite)
-}
-
-func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error) {
-	invitationBody := api.InviteBody{
-		Email:  inviteeEmail,
-		TeamID: teamId,
-		Role:   role,
-	}
-	req, err := client.getFullRequestWithContext(ctx, "POST", authToken, invitationBody, map[string]string{}, "send", "team", "invite")
-	if err != nil {
-		return nil, errors.Wrap(err, "SendTeamInviteHCP: error formatting request")
-	}
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode == 200 {
-		var retVal models.Confirmation
-		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
-			return nil, fmt.Errorf("error parsing JSON results: %v", err)
-		}
-		return &retVal, nil
-	}
-	return nil, handleErrors(res, req)
 }
 
 func (client *Client) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error) {
