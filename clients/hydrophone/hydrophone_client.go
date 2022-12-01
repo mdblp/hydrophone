@@ -5,8 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -21,12 +19,9 @@ import (
 
 type (
 	ClientInterface interface {
-		GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error)
-		GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error)
-		GetPendingSignup(userID string, authToken string) (*models.Confirmation, error)
 		CancelSignup(confirm models.Confirmation, authToken string) error
-		SendNotification(topic string, notif interface{}, authToken string) error
-		InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error)
+		SendNotification(ctx context.Context, topic string, notif interface{}, authToken string) error
+		GetNotifications(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error)
 	}
 
 	Client struct {
@@ -92,89 +87,6 @@ func (client *Client) getHost() (*url.URL, error) {
 	return theURL, nil
 }
 
-func (client *Client) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
-	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeDataShareInvite)
-}
-
-func (client *Client) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error) {
-	logger := appContext.GetLogger(ctx)
-	req, err := client.getFullRequestWithContext(ctx, "GET", authToken, nil, map[string]string{}, "invite", userID)
-	if err != nil {
-		return nil, errors.Wrap(err, "GetSentInvitations: error formatting request")
-	}
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode == 200 {
-		var retVal []models.Confirmation
-		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
-			logger.Error(err)
-			return nil, fmt.Errorf("error parsing JSON results: %v", err)
-		}
-		return retVal, nil
-	}
-	if res.StatusCode == 404 {
-		return make([]models.Confirmation, 0), nil
-	}
-	return nil, handleErrors(res, req)
-}
-
-func (client *Client) GetPendingSignup(userID string, authToken string) (*models.Confirmation, error) {
-	res, err := client.GetPendingInviteOrSignup(userID, authToken, models.TypeSignUp)
-
-	if err != nil {
-		return nil, err
-	} else if len(res) > 1 {
-		return nil, fmt.Errorf("more than one signup found for %s", userID)
-	} else if len(res) == 1 {
-		return &res[0], err
-	} else {
-		return nil, nil
-	}
-}
-
-func (client *Client) GetPendingInviteOrSignup(userID string, authToken string, confirmType models.Type) ([]models.Confirmation, error) {
-	host, err := client.getHost()
-	if err != nil {
-		return nil, errors.New("No known hydrophone hosts")
-	}
-
-	if confirmType == models.TypeSignUp {
-		host.Path = path.Join(host.Path, "signup", userID)
-	} else {
-		host.Path = path.Join(host.Path, "invite", userID)
-	}
-	req, _ := http.NewRequest("GET", host.String(), nil)
-	req.Header.Add("x-tidepool-session-token", authToken)
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failure to get pending confirm")
-	}
-	defer res.Body.Close()
-
-	switch res.StatusCode {
-	case http.StatusOK:
-		confirmations := make([]models.Confirmation, 0)
-		if err = json.NewDecoder(res.Body).Decode(&confirmations); err != nil {
-			log.Println("Error parsing JSON results", err)
-			return nil, err
-		}
-		return confirmations, nil
-
-	case http.StatusNotFound:
-		return []models.Confirmation{}, nil
-	default:
-		return nil, &status.StatusError{
-			Status: status.NewStatusf(res.StatusCode, "Unknown response code from service[%s]", req.URL),
-		}
-	}
-}
-
 func (client *Client) getFullRequestWithContext(ctx context.Context, method string, authToken string, payload interface{}, queryParams map[string]string, pathParams ...string) (*http.Request, error) {
 	host, err := client.getHost()
 	if err != nil {
@@ -233,57 +145,16 @@ func handleErrors(res *http.Response, req *http.Request) error {
 	}
 }
 
-func (client *Client) CancelSignup(confirm models.Confirmation, authToken string) error {
-	host, err := client.getHost()
-	if err != nil {
-		return errors.New("No known hydrophone hosts")
-	}
-
-	host.Path = path.Join(host.Path, "signup", confirm.UserId)
-
-	req, _ := http.NewRequest("PUT", host.String(), nil)
-	req.Header.Add("x-tidepool-session-token", authToken)
-
-	data, err := json.Marshal(confirm)
-	if err != nil {
-		return errors.Wrap(err, "Failure to marshal confirmation")
-	}
-
-	req.Body = ioutil.NopCloser(bytes.NewReader(data))
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "Failure to cancel signup")
-	}
-	defer res.Body.Close()
-
-	switch res.StatusCode {
-	case http.StatusOK:
-		return nil
-	default:
-		return &status.StatusError{
-			Status: status.NewStatusf(res.StatusCode, "Unknown response code from service[%s]", req.URL),
-		}
-	}
-}
-
-func (h *Client) SendNotification(topic string, notif interface{}, authToken string) error {
-	host, err := h.getHost()
-	if err != nil {
-		return errors.New("No known hydrophone hosts")
-	}
-
-	host.Path = path.Join(host.Path, "notifications", topic)
-
-	req, _ := http.NewRequest("POST", host.String(), nil)
-	req.Header.Add("x-tidepool-session-token", authToken)
-
+func (h *Client) SendNotification(ctx context.Context, topic string, notif interface{}, authToken string) error {
+	//logger := appContext.GetLogger(ctx)
 	data, err := json.Marshal(notif)
 	if err != nil {
 		return errors.Wrap(err, "Failure to marshal notification")
 	}
-
-	req.Body = ioutil.NopCloser(bytes.NewReader(data))
+	req, err := h.getFullRequestWithContext(ctx, "POST", authToken, data, map[string]string{}, "notifications", topic)
+	if err != nil {
+		return errors.Wrap(err, "SendNotification: error formatting request")
+	}
 
 	res, err := h.httpClient.Do(req)
 	if err != nil {
@@ -299,4 +170,28 @@ func (h *Client) SendNotification(topic string, notif interface{}, authToken str
 			Status: status.NewStatusf(res.StatusCode, "Unknown response code from service[%s]", req.URL),
 		}
 	}
+}
+
+func (client *Client) GetNotifications(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error) {
+	logger := appContext.GetLogger(ctx)
+	req, err := client.getFullRequestWithContext(ctx, "GET", authToken, nil, map[string]string{}, "notifications", userID)
+	if err != nil {
+		return nil, errors.Wrap(err, "GetNotifications: error formatting request")
+	}
+
+	res, err := client.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode == 200 {
+		var retVal []models.Confirmation
+		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
+			logger.Error(err)
+			return nil, fmt.Errorf("error parsing JSON results: %v", err)
+		}
+		return retVal, nil
+	}
+	return nil, handleErrors(res, req)
 }
