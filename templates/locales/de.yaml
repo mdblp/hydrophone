@@ -39,7 +39,7 @@ CareTeamInviteBody2: "{{ .PatientName }} hat sich entschieden, Daten mit Ihnen z
 #Signup
 #(email to ask patient for verification of email)
 SignupHeadline: "Bestätigen Sie Ihre E-Mail-Adresse, um Ihren YourLoops-Account zu aktivieren."
-SignupBody: "Sie haben ein Konto bei YourLoops erstellt. Um Ihre Identität zu bestätigen, klicken Sie bitte auf den unten stehenden Link."
+SignupBody: "Sie haben ein Konto bei YourLoops erstellt. Um Ihre Identität zu bestätigen, klicken Sie bitte auf den untenstehenden Link."
 SignupDeletionWarning: "Wird das Konto nicht innerhalb dieses Zeitraums aktiviert, wird Ihre Kontoregistrierung gelöscht."
 SignupVerify: "Mein Konto aktivieren"
 #Signup Clinic
@@ -47,7 +47,7 @@ SignupVerify: "Mein Konto aktivieren"
 SignupClinicHeadline: "Bestätigen Sie Ihre E-Mail-Adresse, um Ihr YourLoops-Konto zu aktivieren."
 SignupClinicBody: "Sie haben ein Konto für Ärzte bei YourLoops erstellt. Um Ihre Identität zu bestätigen und Ihr Profil zu vervollständigen, klicken Sie bitte auf den unten stehenden Link."
 SignupClinicDeletionWarning: "Wird das Konto nicht innerhalb dieses Zeitraums aktiviert, wird Ihre Kontoregistrierung gelöscht."
-SignupClinicVerify: "Aktiviere mein Konto"
+SignupClinicVerify: "Konto aktivieren"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialConfirmationSubject: "Überprüfen Sie Ihr YourLoops Konto"
@@ -65,9 +65,9 @@ SignupCustodialClinicClaim: "Beantragen Sie Ihr Konto"
 PatientInfoSubject: "Willkommen bei YourLoops!"
 PatientInfoHeadline: "Melden Sie sich an, um Ihre DBL-Daten anzusehen."
 PatientInfoBody: "YourLoops ist eine Visualisierungsplattform für Diabetes-Management."
-PatientInfoBody2: "Sie finden alle von Ihrem DBL erfassten Daten (Glukosetrends, Insulinverbrauch, aufgezeichnete Kohlenhydrate...) in Diagrammen und Grafiken dargestellt."
+PatientInfoBody2: "Alle von Ihrem DBL erfassten Daten (Glukosetrends, Insulinverbrauch, erfasste Kohlenhydrate usw.) werden in Diagrammen und Grafiken angezeigt."
 PatientInfoBody3: "Verwenden Sie die E-Mail und das Passwort, das Sie bei der Einrichtung Ihres DBL eingegeben haben, wenn Sie auf den untenstehenden Link klicken, um sich anzumelden."
-PatientInfoLogin: "Anmeldung bei YourLoops"
+PatientInfoLogin: "Meine Daten ansehen"
 #Pin Reset Request
 #(email for those that requested a one-time password for PIN Reset)
 PatientPinResetSubject: "Anweisung zum Zurücksetzen der PIN"
@@ -76,11 +76,11 @@ PatientPinResetBody: "Hier ist Ihr temporärer Code:"
 PatientPinResetBody2: "Der Code läuft in 30 Minuten ab."
 PatientPinResetBody3: "Wenn der Code abgelaufen ist, fordern Sie bitte einen neuen Code auf Ihrem DBL an."
 #Medical/Care team invitation
-MedicalTeamInvitationSubject: "Einladung zur Teilnahme an einem Behandlungsteam"
-MedicalTeamInviteHeadline: "{{ .CreatorName }} möchte, dass Sie seinem Behandlungsteam auf YourLoops beitreten."
+MedicalTeamInvitationSubject: "Einladung zur Teilnahme an einem Betreuungsteam"
+MedicalTeamInviteHeadline: "{{ .CreatorName }} möchte, dass Sie ihrem Betreuungsteam auf YourLoops beitreten."
 MedicalTeamInviteBody1: "YourLoops ist eine Diabetes-Management-Plattform, die für Diabeloop DBL-Systeme entwickelt wurde."
 MedicalTeamInviteBody2: "Als Mitglied im Team {{ .MedicalteamName }} haben Sie Zugriff auf Patientendaten und können Berichte erstellen."
-MedicalTeamInviteWarning: "Bestätigen Sie, dass Sie diese Person kennen und zum Behandlungsteam gehören – und prüfen Sie die folgenden Angaben, bevor Sie die Einladung annehmen."
+MedicalTeamInviteWarning: "Bestätigen Sie, dass Sie diese Person kennen und zum Betreuungsteam gehören – und prüfen Sie die folgenden Angaben, bevor Sie die Einladung annehmen."
 MedicalTeamInviteInfo: "Sie benötigen ein Professionelles-Konto, um einem Team beitreten zu können. Wenn Sie bereits als Hilfsperson registriert sind, können Sie in Ihren Kontoeinstellungen zu einem professionellen Konto wechseln. Andernfalls können Sie sich über den folgenden Link anmelden."
 #Medical/Care team do Admin
 MedicalTeamDoAdminSubject: "Admin-Genehmigung erteilt"
