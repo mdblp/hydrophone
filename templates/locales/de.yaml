@@ -38,7 +38,7 @@ CareTeamInviteBody: "YourLoops ist eine Visualisierungsplattform für das Diabet
 CareTeamInviteBody2: "{{ .PatientName }} hat sich entschieden, Daten mit Ihnen zu teilen. Um zu antworten, klicken Sie auf den unten stehenden Link."
 #Signup
 #(email to ask patient for verification of email)
-SignupHeadline: "Bestätigen Sie Ihre E-Mail-Adresse, um Ihren YourLoops-Account zu aktivieren."
+SignupHeadline: "Bestätigen Sie Ihre E-Mail-Adresse, um Ihr YourLoops-Konto zu aktivieren."
 SignupBody: "Sie haben ein Konto bei YourLoops erstellt. Um Ihre Identität zu bestätigen, klicken Sie bitte auf den untenstehenden Link."
 SignupDeletionWarning: "Wird das Konto nicht innerhalb dieses Zeitraums aktiviert, wird Ihre Kontoregistrierung gelöscht."
 SignupVerify: "Mein Konto aktivieren"
@@ -76,11 +76,11 @@ PatientPinResetBody: "Hier ist Ihr temporärer Code:"
 PatientPinResetBody2: "Der Code läuft in 30 Minuten ab."
 PatientPinResetBody3: "Wenn der Code abgelaufen ist, fordern Sie bitte einen neuen Code auf Ihrem DBL an."
 #Medical/Care team invitation
-MedicalTeamInvitationSubject: "Einladung zur Teilnahme an einem Betreuungsteam"
-MedicalTeamInviteHeadline: "{{ .CreatorName }} möchte, dass Sie ihrem Betreuungsteam auf YourLoops beitreten."
+MedicalTeamInvitationSubject: "Einladung zur Teilnahme an einem Behandlungsteam"
+MedicalTeamInviteHeadline: "{{ .CreatorName }} möchte, dass Sie seinem Behandlungsteam auf YourLoops beitreten."
 MedicalTeamInviteBody1: "YourLoops ist eine Diabetes-Management-Plattform, die für Diabeloop DBL-Systeme entwickelt wurde."
 MedicalTeamInviteBody2: "Als Mitglied im Team {{ .MedicalteamName }} haben Sie Zugriff auf Patientendaten und können Berichte erstellen."
-MedicalTeamInviteWarning: "Bestätigen Sie, dass Sie diese Person kennen und zum Betreuungsteam gehören – und prüfen Sie die folgenden Angaben, bevor Sie die Einladung annehmen."
+MedicalTeamInviteWarning: "Bestätigen Sie, dass Sie diese Person kennen und zum Behandlungsteam gehören – und prüfen Sie die folgenden Angaben, bevor Sie die Einladung annehmen."
 MedicalTeamInviteInfo: "Sie benötigen ein Professionelles-Konto, um einem Team beitreten zu können. Wenn Sie bereits als Hilfsperson registriert sind, können Sie in Ihren Kontoeinstellungen zu einem professionellen Konto wechseln. Andernfalls können Sie sich über den folgenden Link anmelden."
 #Medical/Care team do Admin
 MedicalTeamDoAdminSubject: "Admin-Genehmigung erteilt"
@@ -97,12 +97,12 @@ MedicalTeamRemoveHeadline: "Sie sind nun nicht mehr Teil des Teams {{ .Medicalte
 MedicalTeamRemoveBody0: "Ein Teamadministrator hat Sie aus dem Team entfernt."
 MedicalTeamRemoveBody1: "Sie haben zwar keinen Zugriff mehr auf die mit dem Team {{ .MedicalteamName }} verknüpften Patientendaten, Ihr Konto ist jedoch weiterhin aktiv."
 MedicalTeamRemoveBody2: "Es handelt sich um einen Fehler? Wenden Sie sich an einen Team-Administrator."
-MedicalTeamRemoveAction: "YourLoops öffnen"
+MedicalTeamRemoveAction: "Weiter zu YourLoops"
 #Medical/Care team patient invitation
 MedicalTeamPatientInvitationSubject: "Einladung zum Teilen der Daten"
 MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} bittet Sie, Ihre Daten an das Team {{ .MedicalteamName }} zu übermitteln"
 MedicalTeamPatientInviteWarning: "Bitte prüfen Sie, ob die obigen Angaben mit den Informationen übereinstimmen, die Sie von Ihrem Arzt erhalten haben, bevor Sie auf die Einladung reagieren."
-MedicalTeamPatientInviteWarning2: "Wenn Sie sich unsicher sind, sollten Sie sich an Ihren Arzt wenden und die Einladung vorerst nicht annehmen."
+MedicalTeamPatientInviteWarning2: "Wenn Sie sich unsicher sind, sollten Sie sich an Ihr medizinisches Fachpersonal wenden und die Einladung vorerst nicht annehmen."
 MedicalTeamPatientInviteInfo: "Wenn Sie diesem Team beitreten, stimmen Sie zu, dass Ihre persönlichen und medizinischen Daten an die jeweiligen Mitglieder (autorisierte medizinische Fachkräfte, die bei YourLoops registriert sind) weitergegeben werden dürfen."
 #Medical/Care team patient monitoring invitation
 MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
