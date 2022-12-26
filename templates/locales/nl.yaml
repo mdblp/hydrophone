@@ -50,17 +50,17 @@ SignupClinicDeletionWarning: "Als het account niet binnen deze periode geactivee
 SignupClinicVerify: "Mijn account activeren"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialConfirmationSubject: "Verify your YourLoops account"
+SignupCustodialConfirmationSubject: "Controleer je YourLoops account"
 #SignupCustodialHello: "Hello,"
-SignupCustodialHeadline: "Congrats on creating your YourLoops account!"
+SignupCustodialHeadline: "Gefeliciteerd met het aanmaken van je YourLoops account!"
 SignupCustodialVerify: "Verify Your Account"
 #Signup Custodial Clinic => SUPPRIMER
 #(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
-SignupCustodialClinicHello: "Hi, {{ .FullName }}!"
-SignupCustodialClinicAccount: "{{ .CreatorName }} created a YourLoops account for your diabetes device data."
-SignupCustodialClinicOwnership: "You can take ownership of your free account to view and upload data from home."
-SignupCustodialClinicClaim: "Claim Your Account"
+SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim je account"
+SignupCustodialClinicHello: "Hey, {{ .FullName }}!"
+SignupCustodialClinicAccount: "{{ .CreatorName }} heeft een YourLoops account aangemaakt voor je diabetesapparaatgegevens."
+SignupCustodialClinicOwnership: "Je kunt je gratis account gebruiken om thuis gegevens te bekijken en te uploaden."
+SignupCustodialClinicClaim: "Claim je account"
 #Patient Information
 PatientInfoSubject: "Welkom bij YourLoops!"
 PatientInfoHeadline: "Log in om je DBL-gegevens te bekijken."
