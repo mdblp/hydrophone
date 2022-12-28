@@ -1,0 +1,121 @@
+---
+#Footer
+#(for all emails)
+FooterGetSupport: "crwdns13080:0crwdne13080:0"
+EmailExpirationHours: "crwdns17203:0{{ .Duration }}crwdne17203:0"
+EmailExpirationDays: "crwdns17205:0{{ .Duration }}crwdne17205:0"
+#FooterSincerely: "Sincerely,"
+#FooterSignature: "The Diabeloop Team"
+#No accounts
+#(email for those that requested password reset but did not create their account before)
+NoAccountSubject: "crwdns13082:0crwdne13082:0"
+NoAccountHeadline: "crwdns13084:0crwdne13084:0"
+NoAccountBody: "crwdns13086:0crwdne13086:0"
+NoAccountSignUp: "crwdns13088:0crwdne13088:0"
+#Password Reset
+#(email for those that requested password reset)
+PasswordResetSubject: "crwdns13090:0crwdne13090:0"
+PasswordResetHeadline: "crwdns13092:0crwdne13092:0"
+PasswordResetBody: "crwdns13094:0crwdne13094:0"
+PasswordResetReset: "crwdns13096:0crwdne13096:0"
+#Patient Password Reset
+#(email for patients that requested password reset)
+PatientPasswordResetSubject: "crwdns13098:0crwdne13098:0"
+PatientPasswordResetHeadline: "crwdns13100:0crwdne13100:0"
+PatientPasswordResetBody: "crwdns13102:0crwdne13102:0"
+PatientPasswordResetBody2: "crwdns13104:0crwdne13104:0"
+#Patient Password Reset request from web app
+#(email for patients that requested password reset)
+PatientPasswordInfoSubject: "crwdns13106:0crwdne13106:0"
+PatientPasswordInfoHeadline: "crwdns13108:0crwdne13108:0"
+PatientPasswordInfoBody: "crwdns13110:0crwdne13110:0"
+PatientPasswordInfoBody2: "crwdns13112:0{{ .SupportEmail }}crwdne13112:0"
+#CareTeamInvite
+#(email for those that invited someone to join medical crew)
+CareTeamInvitationSubject: "crwdns13114:0crwdne13114:0"
+CareTeamInviteHeadline: "crwdns13116:0{{ .PatientName }}crwdne13116:0"
+CareTeamInviteBody: "crwdns13118:0crwdne13118:0"
+CareTeamInviteBody2: "crwdns13120:0{{ .PatientName }}crwdne13120:0"
+#Signup
+#(email to ask patient for verification of email)
+SignupHeadline: "crwdns13126:0crwdne13126:0"
+SignupBody: "crwdns13128:0crwdne13128:0"
+SignupDeletionWarning: "crwdns17231:0crwdne17231:0"
+SignupVerify: "crwdns13130:0crwdne13130:0"
+#Signup Clinic
+#(email to ask clinician for verification of email)
+SignupClinicHeadline: "crwdns13134:0crwdne13134:0"
+SignupClinicBody: "crwdns13136:0crwdne13136:0"
+SignupClinicDeletionWarning: "crwdns17233:0crwdne17233:0"
+SignupClinicVerify: "crwdns13138:0crwdne13138:0"
+#Signup Custodial => SUPPRIMER
+#(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
+SignupCustodialConfirmationSubject: "crwdns13140:0crwdne13140:0"
+#SignupCustodialHello: "Hello,"
+SignupCustodialHeadline: "crwdns13142:0crwdne13142:0"
+SignupCustodialVerify: "crwdns13144:0crwdne13144:0"
+#Signup Custodial Clinic => SUPPRIMER
+#(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
+SignupCustodialClinicConfirmationSubject: "crwdns13146:0crwdne13146:0"
+SignupCustodialClinicHello: "crwdns13148:0{{ .FullName }}crwdne13148:0"
+SignupCustodialClinicAccount: "crwdns13150:0{{ .CreatorName }}crwdne13150:0"
+SignupCustodialClinicOwnership: "crwdns13152:0crwdne13152:0"
+SignupCustodialClinicClaim: "crwdns13154:0crwdne13154:0"
+#Patient Information
+PatientInfoSubject: "crwdns13156:0crwdne13156:0"
+PatientInfoHeadline: "crwdns13158:0crwdne13158:0"
+PatientInfoBody: "crwdns13160:0crwdne13160:0"
+PatientInfoBody2: "crwdns13162:0crwdne13162:0"
+PatientInfoBody3: "crwdns13164:0crwdne13164:0"
+PatientInfoLogin: "crwdns13166:0crwdne13166:0"
+#Pin Reset Request
+#(email for those that requested a one-time password for PIN Reset)
+PatientPinResetSubject: "crwdns13168:0crwdne13168:0"
+PatientPinResetHeadline: "crwdns13170:0crwdne13170:0"
+PatientPinResetBody: "crwdns13172:0crwdne13172:0"
+PatientPinResetBody2: "crwdns13174:0crwdne13174:0"
+PatientPinResetBody3: "crwdns13176:0crwdne13176:0"
+#Medical/Care team invitation
+MedicalTeamInvitationSubject: "crwdns13178:0crwdne13178:0"
+MedicalTeamInviteHeadline: "crwdns13180:0{{ .CreatorName }}crwdne13180:0"
+MedicalTeamInviteBody1: "crwdns13182:0crwdne13182:0"
+MedicalTeamInviteBody2: "crwdns13184:0{{ .MedicalteamName }}crwdne13184:0"
+MedicalTeamInviteWarning: "crwdns13186:0crwdne13186:0"
+MedicalTeamInviteInfo: "crwdns13188:0crwdne13188:0"
+#Medical/Care team do Admin
+MedicalTeamDoAdminSubject: "crwdns13192:0crwdne13192:0"
+MedicalTeamDoAdminHeadline: "crwdns13194:0{{ .MedicalteamName }}crwdne13194:0"
+MedicalTeamDoAdminBody1: "crwdns13196:0{{ .MedicalteamName }}crwdne13196:0"
+MedicalTeamDoAdminBody2: "crwdns13198:0crwdne13198:0"
+MedicalTeamDoAdminListItem1: "crwdns13200:0crwdne13200:0"
+MedicalTeamDoAdminListItem2: "crwdns13202:0crwdne13202:0"
+MedicalTeamDoAdminListItem3: "crwdns13204:0crwdne13204:0"
+MedicalTeamDoAdminAction: "crwdns13208:0crwdne13208:0"
+#Medical/Care team remove member
+MedicalTeamRemoveSubject: "crwdns13210:0crwdne13210:0"
+MedicalTeamRemoveHeadline: "crwdns13212:0{{ .MedicalteamName }}crwdne13212:0"
+MedicalTeamRemoveBody0: "crwdns13214:0crwdne13214:0"
+MedicalTeamRemoveBody1: "crwdns13216:0{{ .MedicalteamName }}crwdne13216:0"
+MedicalTeamRemoveBody2: "crwdns13218:0crwdne13218:0"
+MedicalTeamRemoveAction: "crwdns13222:0crwdne13222:0"
+#Medical/Care team patient invitation
+MedicalTeamPatientInvitationSubject: "crwdns13224:0crwdne13224:0"
+MedicalTeamPatientInviteHeadline: "crwdns13226:0{{ .CreatorName }}crwdnd13226:0{{ .MedicalteamName }}crwdne13226:0"
+MedicalTeamPatientInviteWarning: "crwdns13228:0crwdne13228:0"
+MedicalTeamPatientInviteWarning2: "crwdns13230:0crwdne13230:0"
+MedicalTeamPatientInviteInfo: "crwdns13232:0crwdne13232:0"
+#Medical/Care team patient monitoring invitation
+MedicalTeamMonitoringInvitationSubject: "crwdns19072:0crwdne19072:0"
+MedicalTeamMonitoringInviteHeadline: "crwdns19074:0{{ .CreatorName }}crwdnd19074:0{{ .MedicalteamName }}crwdne19074:0"
+MedicalTeamMonitoringInviteWarning: "crwdns19076:0crwdne19076:0"
+MedicalTeamMonitoringInviteInfo: "crwdns19078:0{{ .MedicalteamName }}crwdne19078:0"
+#Shared
+ReadDataPrivacy: "crwdns13463:0{{ .AssetURL }}crwdnd13463:0{{ .Language }}crwdne13463:0"
+RespondToInvite: "crwdns13465:0crwdne13465:0"
+ConfirmationSubject: "crwdns13467:0crwdne13467:0"
+#AppPrescription Notification
+#(email for patients)
+AppPrescriptionSubject: "crwdns28755:0crwdne28755:0"
+AppPrescriptionHeadline: "crwdns28757:0{{ .Invitor }}crwdnd28757:0{{ .Product }}crwdne28757:0"
+AppPrescriptionBody: "crwdns28759:0{{ .Product }}crwdnd28759:0{{ .PrescriptionCode }}crwdne28759:0"
+AppPrescriptionBody2: "crwdns28761:0crwdne28761:0"
