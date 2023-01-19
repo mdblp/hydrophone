@@ -5,7 +5,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 
 ## 1.14.1 - 2023-01-19
 ### Engineering
-- Remove expiration in mail templating for medical and care team invite  
+- YLP2052: Update mail templating to remove expiration for medical and care team invite
 
 ## 1.14.0 - 2022-11-08
 ### Engineering
