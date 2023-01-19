@@ -971,7 +971,7 @@ func (a *Api) invitePatient(invitedUsr *schema.UserData, member store.Member, to
 		TeamID:           member.TeamID,
 		InvitationStatus: member.InvitationStatus,
 	}
-	if _, err := a.perms.AddPatient(token, patient); err != nil {
+	if _, err := a.perms.AddPatient(token, patient); err != nil /*&& !strings.Contains(err.Error(), ", 409") */ {
 		return &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 	} else {
 		log.Printf("Add patient %s in Team %s", invitedUsr.UserID, sanitize(member.TeamID))
