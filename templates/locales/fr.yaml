@@ -9,7 +9,7 @@ EmailExpirationDays: "Ce message est valable {{ .Duration }} jour(s)."
 #No accounts
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "Adresse email inconnue"
-NoAccountHeadline: "Vous avez demandé la réinitialisation de votre mot de passe YourLoops or aucun compte n’est lié à cette adresse email."
+NoAccountHeadline: "Vous avez demandé la réinitialisation de votre mot de passe YourLoops mais aucun compte n’est lié à cette adresse email."
 NoAccountBody: "Si vous utilisez déjà un dispositif Diabeloop, connectez-vous avec l’adresse email (identifiant) et le mot de passe saisis lors de l’initialisation de votre DBL.\nSi vous êtes un·e professionnel·le de santé, veuillez cliquer sur le lien ci-dessous pour créer votre compte.\n"
 NoAccountSignUp: "Créer un compte"
 #Password Reset
@@ -20,7 +20,7 @@ PasswordResetBody: "Cliquez sur le bouton ci-dessous pour en choisir un nouveau.
 PasswordResetReset: "Réinitialiser mon mot de passe"
 #Patient Password Reset
 #(email for patients that requested password reset)
-PatientPasswordResetSubject: "Réinitialisation du mot de passe"
+PatientPasswordResetSubject: "Instructions de réinitialisation du mot de passe"
 PatientPasswordResetHeadline: "Vous avez demandé la réinitialisation de votre mot de passe YourLoops."
 PatientPasswordResetBody: "Veuillez suivre les instructions sur votre DBL et entrer la clé suivante :"
 PatientPasswordResetBody2: "Cette clé est valable une heure. En cas d'expiration, veuillez renouveler la demande sur votre DBL."
