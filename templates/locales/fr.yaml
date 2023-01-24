@@ -46,17 +46,17 @@ SignupVerify: "Activer mon compte"
 #(email to ask clinician for verification of email)
 SignupClinicHeadline: "Vérifiez votre adresse email pour activer votre compte YourLoops."
 SignupClinicBody: "Vous souhaitez créer un compte professionnel de santé sur YourLoops. Pour confirmer qu’il s’agit bien de votre adresse email et finaliser votre inscription, veuillez cliquer sur le bouton ci-dessous."
-SignupClinicDeletionWarning: "Si le compte n'est pas activé pendant cette période, votre compte sera supprimé."
+SignupClinicDeletionWarning: "Si votre compte n'est pas activé pendant cette période, il sera supprimé."
 SignupClinicVerify: "Activer mon compte"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialConfirmationSubject: "Valider votre compte YourLoops"
 #SignupCustodialHello: "Hello,"
 SignupCustodialHeadline: "Félicitation ! Votre compte YourLoops a bien été créé."
-SignupCustodialVerify: "Valider mon compte"
+SignupCustodialVerify: "Activer mon compte"
 #Signup Custodial Clinic => SUPPRIMER
 #(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
+SignupCustodialClinicConfirmationSubject: "Établissement de suivi du diabète - Réclamez votre compte"
 SignupCustodialClinicHello: "Bonjour, {{ .FullName }}!"
 SignupCustodialClinicAccount: "{{ .CreatorName }} a créé un compte YourLoops pour les données de votre dispositif relatif à votre diabète."
 SignupCustodialClinicOwnership: "Vous pouvez prendre possession de votre compte gratuit pour voir et télécharger des données depuis chez vous."
@@ -118,4 +118,4 @@ ConfirmationSubject: "Vérification de votre adresse email"
 AppPrescriptionSubject: "Prescription médicale du patient"
 AppPrescriptionHeadline: "{{ .Invitor }} vous a prescrit l'utilisation de {{ .Product }}."
 AppPrescriptionBody: "Votre diabétologue vous a prescrit un nouveau produit {{ .Product }}. Voici votre code secret : {{ .PrescriptionCode }}"
-AppPrescriptionBody2: "To accept, !!!TODO: Add detailed instructions here!!!, click on the link below."
+AppPrescriptionBody2: "Pour accepter, !!!TODO: Add detailed instructions here!!!, cliquez sur le lien ci-dessous."
