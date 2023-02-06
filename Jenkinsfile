@@ -86,7 +86,7 @@ pipeline {
             }
         }
         stage('Publish') {
-            when { branch "dblp" }
+            when { branch "v1.13.X" }
             steps {
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     publish()
