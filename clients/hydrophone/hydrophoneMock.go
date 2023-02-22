@@ -2,24 +2,23 @@ package hydrophone
 
 import (
 	"context"
-	"github.com/mdblp/hydrophone/models"
 	"github.com/stretchr/testify/mock"
 )
 
 type HydrophoneMockClient struct {
 	mock.Mock
 	MockedError    error
-	MockedConfirms []models.Confirmation
+	MockedConfirms []Confirmation
 }
 
 func NewMock() *HydrophoneMockClient {
 	return &HydrophoneMockClient{
 		MockedError:    nil,
-		MockedConfirms: []models.Confirmation{},
+		MockedConfirms: []Confirmation{},
 	}
 }
 
-func (client *HydrophoneMockClient) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
+func (client *HydrophoneMockClient) GetPendingInvitations(userID string, authToken string) ([]Confirmation, error) {
 	if client.MockedError != nil {
 		return nil, client.MockedError
 	}
@@ -28,12 +27,12 @@ func (client *HydrophoneMockClient) GetPendingInvitations(userID string, authTok
 
 //TODO: refactor methods above to use testify like bellow
 
-func (client *HydrophoneMockClient) GetPendingSignup(userId string, authToken string) (*models.Confirmation, error) {
+func (client *HydrophoneMockClient) GetPendingSignup(userId string, authToken string) (*Confirmation, error) {
 	args := client.Called(userId, authToken)
-	return args.Get(0).(*models.Confirmation), args.Error(1)
+	return args.Get(0).(*Confirmation), args.Error(1)
 }
 
-func (client *HydrophoneMockClient) CancelSignup(confirm models.Confirmation, authToken string) error {
+func (client *HydrophoneMockClient) CancelSignup(confirm Confirmation, authToken string) error {
 	client.Called(confirm, authToken)
 	return nil
 }
@@ -43,12 +42,12 @@ func (client *HydrophoneMockClient) SendNotification(topic string, notif interfa
 	return nil
 }
 
-func (client *HydrophoneMockClient) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error) {
+func (client *HydrophoneMockClient) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*Confirmation, error) {
 	args := client.Called(ctx, teamId, inviteeEmail, role, authToken)
-	return args.Get(0).(*models.Confirmation), args.Error(1)
+	return args.Get(0).(*Confirmation), args.Error(1)
 }
 
-func (client *HydrophoneMockClient) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error) {
+func (client *HydrophoneMockClient) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]Confirmation, error) {
 	args := client.Called(ctx, userID, authToken)
-	return args.Get(0).([]models.Confirmation), args.Error(1)
+	return args.Get(0).([]Confirmation), args.Error(1)
 }

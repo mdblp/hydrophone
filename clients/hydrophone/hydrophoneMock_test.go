@@ -3,7 +3,6 @@ package hydrophone
 import (
 	"errors"
 	"fmt"
-	"github.com/mdblp/hydrophone/models"
 	"testing"
 )
 
@@ -35,23 +34,23 @@ func TestMock(t *testing.T) {
 	}
 	// Result behavior
 	client.MockedError = nil
-	client.MockedConfirms = []models.Confirmation{
+	client.MockedConfirms = []Confirmation{
 		{
 			Key:       "confirm-key-1",
-			Type:      models.TypePasswordReset,
+			Type:      TypePasswordReset,
 			Role:      "member",
 			Email:     "test@test.fr",
 			CreatorId: "123",
-			Status:    models.StatusPending,
+			Status:    StatusPending,
 		},
 		{
 			Key:       "confirm-key-2",
-			Type:      models.TypeMedicalTeamInvite,
+			Type:      TypeMedicalTeamInvite,
 			Role:      "member",
 			Email:     "test2@test2.fr",
 			CreatorId: "123",
 			UserId:    "1000",
-			Status:    models.StatusPending,
+			Status:    StatusPending,
 		},
 	}
 	invites, err = client.GetPendingInvitations(testUserID, testToken)
