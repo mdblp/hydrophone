@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/mdblp/hydrophone/api"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,17 +16,16 @@ import (
 	"github.com/mdblp/go-common/clients/status"
 	appContext "github.com/mdblp/go-common/context"
 	"github.com/mdblp/go-common/errors"
-	"github.com/mdblp/hydrophone/models"
 )
 
 type (
 	ClientInterface interface {
-		GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error)
-		GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error)
-		GetPendingSignup(userID string, authToken string) (*models.Confirmation, error)
-		CancelSignup(confirm models.Confirmation, authToken string) error
+		GetPendingInvitations(userID string, authToken string) ([]Confirmation, error)
+		GetSentInvitations(ctx context.Context, userID string, authToken string) ([]Confirmation, error)
+		GetPendingSignup(userID string, authToken string) (*Confirmation, error)
+		CancelSignup(confirm Confirmation, authToken string) error
 		SendNotification(topic string, notif interface{}, authToken string) error
-		InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error)
+		InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*Confirmation, error)
 	}
 
 	Client struct {
@@ -93,12 +91,12 @@ func (client *Client) getHost() (*url.URL, error) {
 	return theURL, nil
 }
 
-func (client *Client) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
-	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeCareteamInvite)
+func (client *Client) GetPendingInvitations(userID string, authToken string) ([]Confirmation, error) {
+	return client.GetPendingInviteOrSignup(userID, authToken, TypeCareteamInvite)
 }
 
-func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error) {
-	invitationBody := api.InviteBody{
+func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*Confirmation, error) {
+	invitationBody := InviteBody{
 		Email:  inviteeEmail,
 		TeamID: teamId,
 		Role:   role,
@@ -115,7 +113,7 @@ func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail
 	defer res.Body.Close()
 
 	if res.StatusCode == 200 {
-		var retVal models.Confirmation
+		var retVal Confirmation
 		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
 			return nil, fmt.Errorf("error parsing JSON results: %v", err)
 		}
@@ -124,7 +122,7 @@ func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail
 	return nil, handleErrors(res, req)
 }
 
-func (client *Client) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error) {
+func (client *Client) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]Confirmation, error) {
 	logger := appContext.GetLogger(ctx)
 	req, err := client.getFullRequestWithContext(ctx, "GET", authToken, nil, map[string]string{}, "invite", userID)
 	if err != nil {
@@ -138,7 +136,7 @@ func (client *Client) GetSentInvitations(ctx context.Context, userID string, aut
 	defer res.Body.Close()
 
 	if res.StatusCode == 200 {
-		var retVal []models.Confirmation
+		var retVal []Confirmation
 		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
 			logger.Error(err)
 			return nil, fmt.Errorf("error parsing JSON results: %v", err)
@@ -146,13 +144,13 @@ func (client *Client) GetSentInvitations(ctx context.Context, userID string, aut
 		return retVal, nil
 	}
 	if res.StatusCode == 404 {
-		return make([]models.Confirmation, 0), nil
+		return make([]Confirmation, 0), nil
 	}
 	return nil, handleErrors(res, req)
 }
 
-func (client *Client) GetPendingSignup(userID string, authToken string) (*models.Confirmation, error) {
-	res, err := client.GetPendingInviteOrSignup(userID, authToken, models.TypeSignUp)
+func (client *Client) GetPendingSignup(userID string, authToken string) (*Confirmation, error) {
+	res, err := client.GetPendingInviteOrSignup(userID, authToken, TypeSignUp)
 
 	if err != nil {
 		return nil, err
@@ -165,13 +163,13 @@ func (client *Client) GetPendingSignup(userID string, authToken string) (*models
 	}
 }
 
-func (client *Client) GetPendingInviteOrSignup(userID string, authToken string, confirmType models.Type) ([]models.Confirmation, error) {
+func (client *Client) GetPendingInviteOrSignup(userID string, authToken string, confirmType Type) ([]Confirmation, error) {
 	host, err := client.getHost()
 	if err != nil {
 		return nil, errors.New("No known hydrophone hosts")
 	}
 
-	if confirmType == models.TypeSignUp {
+	if confirmType == TypeSignUp {
 		host.Path = path.Join(host.Path, "signup", userID)
 	} else {
 		host.Path = path.Join(host.Path, "invite", userID)
@@ -187,7 +185,7 @@ func (client *Client) GetPendingInviteOrSignup(userID string, authToken string, 
 
 	switch res.StatusCode {
 	case http.StatusOK:
-		confirmations := make([]models.Confirmation, 0)
+		confirmations := make([]Confirmation, 0)
 		if err = json.NewDecoder(res.Body).Decode(&confirmations); err != nil {
 			log.Println("Error parsing JSON results", err)
 			return nil, err
@@ -195,7 +193,7 @@ func (client *Client) GetPendingInviteOrSignup(userID string, authToken string, 
 		return confirmations, nil
 
 	case http.StatusNotFound:
-		return []models.Confirmation{}, nil
+		return []Confirmation{}, nil
 	default:
 		return nil, &status.StatusError{
 			Status: status.NewStatusf(res.StatusCode, "Unknown response code from service[%s]", req.URL),
@@ -261,7 +259,7 @@ func handleErrors(res *http.Response, req *http.Request) error {
 	}
 }
 
-func (client *Client) CancelSignup(confirm models.Confirmation, authToken string) error {
+func (client *Client) CancelSignup(confirm Confirmation, authToken string) error {
 	host, err := client.getHost()
 	if err != nil {
 		return errors.New("No known hydrophone hosts")

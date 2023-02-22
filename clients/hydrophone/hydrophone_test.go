@@ -4,14 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/mdblp/hydrophone/api"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/mdblp/hydrophone/models"
 )
 
 func buildServer(t *testing.T, userID string, testToken string, confirmType string) *httptest.Server {
@@ -147,7 +144,7 @@ func TestInviteHcp(t *testing.T) {
 		}
 		switch req.URL.Path {
 		case "/send/team/invite":
-			var body *api.InviteBody
+			var body *InviteBody
 			if err := json.NewDecoder(req.Body).Decode(&body); err != nil {
 				t.Errorf("Error parsing request [%s]", err)
 			}
@@ -230,17 +227,17 @@ func TestCancelSignup(t *testing.T) {
 		WithHost(srvr.URL).
 		Build()
 
-	err := hydrophoneClient.CancelSignup(models.Confirmation{UserId: "randomUserId"}, testToken)
+	err := hydrophoneClient.CancelSignup(Confirmation{UserId: "randomUserId"}, testToken)
 	if err != nil {
 		t.Errorf("Failed CancelSignup with error[%v]", err)
 	}
 
-	err = hydrophoneClient.CancelSignup(models.Confirmation{UserId: "randomUserId"}, "wrongToken")
+	err = hydrophoneClient.CancelSignup(Confirmation{UserId: "randomUserId"}, "wrongToken")
 	if err == nil {
 		t.Error("Unauthorized request should return an error")
 	}
 
-	err = hydrophoneClient.CancelSignup(models.Confirmation{UserId: "error"}, testToken)
+	err = hydrophoneClient.CancelSignup(Confirmation{UserId: "error"}, testToken)
 	if err == nil {
 		t.Error("Error from service should be forwarded")
 	}
@@ -266,11 +263,11 @@ func testEmptyData(t *testing.T, hydrophoneClient *Client, testToken string, con
 	}
 
 	switch v := confirms.(type) {
-	case *models.Confirmation:
+	case *Confirmation:
 		if v != nil {
 			t.Error("empty test returned non nil confirmation")
 		}
-	case []models.Confirmation:
+	case []Confirmation:
 		length := len(v)
 		if length != 0 {
 			t.Errorf("empty test returned %v elements expected %v", length, 0)
