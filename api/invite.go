@@ -3,13 +3,10 @@ package api
 import (
 	"context"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
-	"time"
 
-	log "github.com/sirupsen/logrus"
-
-	"github.com/mdblp/crew/store"
 	"github.com/mdblp/go-common/v2/clients/status"
 	"github.com/mdblp/hydrophone/models"
 	"github.com/mdblp/shoreline/schema"
@@ -32,11 +29,6 @@ type (
 		Email  string `json:"email"`
 		TeamID string `json:"teamId"`
 		Role   string `json:"role"`
-	}
-	//Invite details for generating a new patient monitoring invite
-	inviteMonitoringBody struct {
-		MonitoringEnd   time.Time `json:"monitoringEnd"`
-		ReferringDoctor *string   `json:"referringDoctor,omitempty"`
 	}
 )
 
@@ -135,10 +127,7 @@ func (a *Api) GetReceivedInvitations(res http.ResponseWriter, req *http.Request,
 		types := []models.Type{}
 		// Show invites relevant for the type of user
 		if invitedUsr.HasRole("patient") {
-			types = append(types,
-				models.TypeMedicalTeamPatientInvite,
-				models.TypeMedicalTeamMonitoringInvite,
-			)
+			types = append(types, models.TypeMedicalTeamPatientInvite)
 		}
 		if invitedUsr.HasRole("caregiver") {
 			types = append(types, models.TypeCareteamInvite, models.TypeMedicalTeamInvite)
@@ -225,7 +214,6 @@ func (a *Api) GetSentInvitations(res http.ResponseWriter, req *http.Request, var
 			models.TypeCareteamInvite,
 			models.TypeMedicalTeamInvite,
 			models.TypeMedicalTeamPatientInvite,
-			models.TypeMedicalTeamMonitoringInvite,
 		},
 	)
 	if invitations := a.checkFoundConfirmations(req.Context(), res, found, err); invitations != nil {
@@ -546,33 +534,6 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 			//verify the request comes from the creator
 			if !a.isAuthorizedUser(token, conf.CreatorId) {
 				a.sendError(res, http.StatusUnauthorized, STATUS_UNAUTHORIZED)
-				return
-			}
-		case models.TypeMedicalTeamMonitoringInvite:
-			if requestorIsAdmin, _, err := a.getTeamForUser(nil, tokenValue, conf.Team.ID, token.UserId, res); err != nil {
-				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_CANCELING_MONITORING)}
-				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-				return
-			} else if !requestorIsAdmin {
-				res.WriteHeader(http.StatusUnauthorized)
-				return
-			}
-			var patient = store.Patient{
-				UserID: conf.UserId,
-				TeamID: conf.Team.ID,
-				Monitoring: &store.PatientMonitoring{
-					MonitoringEnd: nil,
-					Status:        "deleted",
-				},
-			}
-			_, err = a.perms.UpdatePatientMonitoringWithContext(req.Context(), a.sl.TokenProvide(), patient)
-			if err != nil {
-				log.Printf("Error updating patient monitoring [%v]\n", err)
-				a.sendModelAsResWithStatus(
-					res,
-					&status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, err.Error())},
-					http.StatusInternalServerError,
-				)
 				return
 			}
 		default:

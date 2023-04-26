@@ -205,6 +205,8 @@ github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0j
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/mdblp/crew v1.4.4 h1:WrSBJMqLRf0LeyGjkf8q8xBGPzYubnmdkSnM+dccTk4=
 github.com/mdblp/crew v1.4.4/go.mod h1:17oKlcKIWX6zx007LqHmF7BdhQ8PASgesX0zjW3WfX8=
+github.com/mdblp/crew v1.5.0-rc1 h1:dPjHigQTdPUwes5xfFGImVVrfveMvLhg39IH+rXj7j0=
+github.com/mdblp/crew v1.5.0-rc1/go.mod h1:GMMAwuQEfggFAI0YHZwqlrpBqF1/8y4PShdl2adhhOM=
 github.com/mdblp/go-common v1.7.0 h1:3S3VnEtkPcUBeie+jouynrAprce+2Q8M3S6q8Zd5jkc=
 github.com/mdblp/go-common v1.7.0/go.mod h1:L/wh2qPytBNJLMQINZ4iVmyHo74aTA8q3A1h9LZ2Tz0=
 github.com/mdblp/go-common/v2 v2.0.0 h1:SzOOyTPHJM3aljZGNSEwKU/pQC3wYBVFxuwSiKbZwEg=

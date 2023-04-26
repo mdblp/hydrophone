@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.132
 	github.com/gorilla/mux v1.8.0
 	github.com/k3a/html2text v1.1.0
-	github.com/mdblp/crew v1.4.4
+	github.com/mdblp/crew v1.5.0-rc1
 	github.com/mdblp/go-common v1.7.0
 	github.com/mdblp/go-common/v2 v2.0.0
 	github.com/mdblp/go-db v1.0.0

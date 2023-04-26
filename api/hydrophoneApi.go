@@ -99,24 +99,22 @@ const (
 	STATUS_ROLE_ALRDY_ASSIGNED = "Role already assigned to user"
 	STATUS_NOT_MEMBER          = "User is not a member"
 	STATUS_NOT_ADMIN           = STATUS_UNAUTHORIZED
-	STATUS_NOT_TEAM_MONITORING = "Not a monitoring team"
 	STATUS_OK                  = "OK"
 
-	STATUS_SIGNUP_NO_ID             = "Required userid is missing"
-	STATUS_ERR_FINDING_USR          = "Error finding user"
-	STATUS_ERR_UPDATING_USR         = "Error updating user"
-	STATUS_ERR_UPDATING_TEAM        = "Error updating team"
-	STATUS_ERR_COUNTING_CONF        = "Error counting existing confirmations"
-	STATUS_NO_PASSWORD              = "User does not have a password"
-	STATUS_MISSING_PASSWORD         = "Password is missing"
-	STATUS_INVALID_PASSWORD         = "Password specified is invalid"
-	STATUS_MISSING_BIRTHDAY         = "Birthday is missing"
-	STATUS_INVALID_BIRTHDAY         = "Birthday specified is invalid"
-	STATUS_MISMATCH_BIRTHDAY        = "Birthday specified does not match patient birthday"
-	STATUS_PATIENT_NOT_AUTH         = "Patient cannot be member of care team"
-	STATUS_MEMBER_NOT_AUTH          = "Non patient users cannot be a patient of care team"
-	STATUS_PATIENT_NOT_CAREGIVER    = "Patient cannot be added as caregiver"
-	STATUS_ERR_CANCELING_MONITORING = "Error cancelling monitoring"
+	STATUS_SIGNUP_NO_ID          = "Required userid is missing"
+	STATUS_ERR_FINDING_USR       = "Error finding user"
+	STATUS_ERR_UPDATING_USR      = "Error updating user"
+	STATUS_ERR_UPDATING_TEAM     = "Error updating team"
+	STATUS_ERR_COUNTING_CONF     = "Error counting existing confirmations"
+	STATUS_NO_PASSWORD           = "User does not have a password"
+	STATUS_MISSING_PASSWORD      = "Password is missing"
+	STATUS_INVALID_PASSWORD      = "Password specified is invalid"
+	STATUS_MISSING_BIRTHDAY      = "Birthday is missing"
+	STATUS_INVALID_BIRTHDAY      = "Birthday specified is invalid"
+	STATUS_MISMATCH_BIRTHDAY     = "Birthday specified does not match patient birthday"
+	STATUS_PATIENT_NOT_AUTH      = "Patient cannot be member of care team"
+	STATUS_MEMBER_NOT_AUTH       = "Non patient users cannot be a patient of care team"
+	STATUS_PATIENT_NOT_CAREGIVER = "Patient cannot be added as caregiver"
 )
 
 var bmPolicy = bluemonday.StrictPolicy()
@@ -173,8 +171,6 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
 	// POST /confirm/send/team/invite
 	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
-	// POST /confirm/send/team/monitoring/{teamid}/{userid}
-	send.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.SendMonitoringTeamInvite)).Methods("POST")
 	// POST /confirm/send/team/role/:userid - add or remove admin role to userid
 	send.Handle("/team/role/{userid}", varsHandler(a.UpdateTeamRole)).Methods("PUT")
 	// DELETE /confirm/send/team/leave/:teamid/:userid - delete member
@@ -191,8 +187,6 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
 	// PUT /confirm/accept/team/invite
 	accept.Handle("/team/invite", varsHandler(a.AcceptTeamNotifs)).Methods("PUT")
-	// PUT /confirm/accept/team/monitoring/{teamid}/{userid}
-	accept.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.AcceptMonitoringInvite)).Methods("PUT")
 
 	// GET /confirm/invite/:userid
 	rtr.Handle("/invite/{userid}", varsHandler(a.GetSentInvitations)).Methods("GET")
@@ -206,8 +200,6 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 		varsHandler(a.DismissInvite)).Methods("PUT")
 	// PUT /confirm/dismiss/team/invite/{teamid}
 	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
-	// PUT /confirm/dismiss/team/monitoring/{teamid}/{userid}
-	dismiss.Handle("/team/monitoring/{teamid}/{userid}", varsHandler(a.DismissMonitoringInvite)).Methods("PUT")
 
 	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
 	if a.Config.EnableTestRoutes {
@@ -359,8 +351,6 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 			templateName = models.TemplateNameMedicalteamInvite
 		case models.TypeMedicalTeamPatientInvite:
 			templateName = models.TemplateNameMedicalteamPatientInvite
-		case models.TypeMedicalTeamMonitoringInvite:
-			templateName = models.TemplateNameMedicalteamMonitoringInvite
 		case models.TypeMedicalTeamDoAdmin:
 			templateName = models.TemplateNameMedicalteamDoAdmin
 		case models.TypeMedicalTeamRemove:
