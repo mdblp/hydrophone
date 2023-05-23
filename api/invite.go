@@ -208,8 +208,6 @@ func (a *Api) GetPatientTeamPendingInvite(res http.ResponseWriter, req *http.Req
 	_, _, err := a.getTeamForUser(nil, tokenValue, teamID, token.UserId, res)
 
 	if err != nil {
-		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
-		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
 
