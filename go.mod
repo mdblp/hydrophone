@@ -8,19 +8,19 @@ require (
 	github.com/k3a/html2text v1.1.0
 	github.com/mdblp/crew v1.4.4
 	github.com/mdblp/go-common v1.7.0
-	github.com/mdblp/go-common/v2 v2.0.0
+	github.com/mdblp/go-common/v2 v2.0.0-RC4
 	github.com/mdblp/go-db v1.0.0
 	github.com/mdblp/go-routers v1.0.1
 	github.com/mdblp/orca v0.6.0
 	github.com/mdblp/seagull v1.6.0
-	github.com/mdblp/shoreline v1.9.7
+	github.com/mdblp/shoreline v1.11.0
 	github.com/mdblp/tide-whisperer-v2/v2 v2.9.0
 	github.com/microcosm-cc/bluemonday v1.0.21
 	github.com/nicksnyder/go-i18n/v2 v2.2.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
 	go.mongodb.org/mongo-driver v1.11.0
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.8.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -47,10 +47,10 @@ require (
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
-	golang.org/x/crypto v0.1.0 // indirect
-	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.2.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
