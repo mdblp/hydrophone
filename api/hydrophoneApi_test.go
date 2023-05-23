@@ -3,13 +3,14 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/mdblp/tide-whisperer-v2/v3/client/tidewhisperer"
 
 	"github.com/gorilla/mux"
 

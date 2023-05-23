@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	orcaSchema "github.com/mdblp/orca/model"
-	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
-	tide "github.com/mdblp/tide-whisperer-v2/v2/schema"
+	"github.com/mdblp/tide-whisperer-v2/v3/client/tidewhisperer"
+	tide "github.com/mdblp/tide-whisperer-v2/v3/schema"
 
 	"github.com/gorilla/mux"
 	"github.com/mdblp/hydrophone/templates"

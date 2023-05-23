@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
+	"github.com/mdblp/tide-whisperer-v2/v3/client/tidewhisperer"
 
 	log "github.com/sirupsen/logrus"
 
