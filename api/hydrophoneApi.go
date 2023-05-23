@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
 	"net/http"
 	"net/url"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/mdblp/tide-whisperer-v2/v2/client/tidewhisperer"
 
 	log "github.com/sirupsen/logrus"
 
@@ -199,6 +200,9 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 
 	// GET /confirm/invitations/:userid
 	rtr.Handle("/invitations/{userid}", varsHandler(a.GetReceivedInvitations)).Methods("GET")
+
+	// GET /confirm/teams/:teamId/patients/:patientId/invite
+	rtr.Handle("/teams/{teamId}/patients/{patientId}/invite", varsHandler(a.GetPatientTeamPendingInvite)).Methods("GET")
 
 	// PUT /confirm/dismiss/invite/:userid/:invited_by
 	dismiss := rtr.PathPrefix("/dismiss").Subrouter()
