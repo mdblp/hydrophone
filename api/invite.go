@@ -205,7 +205,7 @@ func (a *Api) GetPatientTeamPendingInvite(res http.ResponseWriter, req *http.Req
 	teamID := vars["teamId"]
 	patientID := vars["patientId"]
 
-	_, _, err := a.getTeamForUser(nil, tokenValue, teamID, token.UserId, res)
+	_, _, err := a.getTeamForUser(req.Context(), tokenValue, teamID, token.UserId, res)
 
 	if err != nil {
 		return
@@ -222,6 +222,11 @@ func (a *Api) GetPatientTeamPendingInvite(res http.ResponseWriter, req *http.Req
 
 	var pendingInvite *models.Confirmation
 	pendingInvite, err = a.Store.FindConfirmation(req.Context(), &inviteToFind)
+	if err != nil {
+		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_INVITE)}
+		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
+		return
+	}
 
 	if pendingInvite == nil {
 		res.WriteHeader(http.StatusNotFound)

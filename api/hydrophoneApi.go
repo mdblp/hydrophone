@@ -91,6 +91,7 @@ const (
 	STATUS_ERR_INVALID_DATA          = "Error invalid data in the invitation"
 	STATUS_ERR_DECODING_BODY         = "Error decoding the message body"
 	STATUS_ERR_MONITORED_PATIENT     = "Error on monitored patient"
+	STATUS_ERR_FINDING_INVITE        = "Error finding the invite"
 
 	//returned status messages
 	STATUS_NOT_FOUND           = "Nothing found"

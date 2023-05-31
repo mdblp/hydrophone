@@ -157,7 +157,7 @@ func (client *Client) GetPatientTeamPendingInvite(ctx context.Context, teamId st
 	logger := appContext.GetLogger(ctx)
 	req, err := client.getFullRequestWithContext(ctx, "GET", authToken, nil, map[string]string{}, "teams", teamId, "patients", patientId, "invite")
 	if err != nil {
-		return nil, errors.Wrap(err, "GetSentInvitations: error formatting request")
+		return nil, errors.Wrap(err, "GetPatientTeamPendingInvite: error formatting request")
 	}
 
 	res, err := client.httpClient.Do(req)
