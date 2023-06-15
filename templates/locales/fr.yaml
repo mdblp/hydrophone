@@ -108,7 +108,7 @@ MedicalTeamPatientInviteInfo: "En ajoutant cette équipe, vous acceptez de parta
 MedicalTeamMonitoringInvitationSubject: "Invitation à rejoindre un programme de télésuivi"
 MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} vous a invité à être télésuivi par {{ .MedicalteamName }}"
 MedicalTeamMonitoringInviteWarning: "Veuillez vérifier que les informations ci-dessus correspondent à celles fournies par votre professionnel de santé avant d'accepter l'invitation."
-MedicalTeamMonitoringInviteInfo: "En vous acceptant de rejoindre ce programme de télésuivi, vous consentez à être contacté par les membres de {{ .MedicalteamName }} qui sont des professionnels de la santé autorisés et inscrits sur YourLoops."
+MedicalTeamMonitoringInviteInfo: "En vous acceptant de rejoindre ce programme de télésuivi, vous consentez à être contacté par les membres de {{ .MedicalteamName }} qui sont des professionnels de santé autorisés et inscrits sur YourLoops."
 #Shared
 ReadDataPrivacy: "Veuillez consulter notre <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>politique de confidentialité</a> pour plus d'informations."
 RespondToInvite: "Répondre à l'invitation"
