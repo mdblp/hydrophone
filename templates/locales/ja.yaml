@@ -1,8 +1,8 @@
 ---
 #Footer
 #(for all emails)
-FooterGetSupport: "SUPPORT"
-EmailExpirationHours: "This message is valid {{ .Duration }} hour(s)."
+FooterGetSupport: "サポート"
+EmailExpirationHours: "このメッセージは {{ .Duration }} 時間有効です。"
 EmailExpirationDays: "This message is valid {{ .Duration }} day(s)."
 #FooterSincerely: "Sincerely,"
 #FooterSignature: "The Diabeloop Team"
