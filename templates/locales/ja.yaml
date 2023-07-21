@@ -77,7 +77,7 @@ PatientPinResetBody2: "コードは30分後に失効します。"
 PatientPinResetBody3: "失効した場合は、DBLG1に新しいコードをリクエストしてください。"
 #Medical/Care team invitation
 MedicalTeamInvitationSubject: "ケアチームへの招待"
-MedicalTeamInviteHeadline: "{{ .CreatorName }} wants you to join their care team on YourLoops."
+MedicalTeamInviteHeadline: "{{ .CreatorName }}さんからYourLoopsのケアチームへの参加リクエストが届いています。"
 MedicalTeamInviteBody1: "YourLoops is a diabetes management platform designed for DBL systems."
 MedicalTeamInviteBody2: "By joining {{ .MedicalteamName }}, you will have access to your patients data and will be able to create reports."
 MedicalTeamInviteWarning: "Please verify you know this person, confirm that you are part of this care team, and check the details provided below before accepting their invitation."
