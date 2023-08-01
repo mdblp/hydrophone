@@ -33,7 +33,7 @@ PatientPasswordInfoBody2: "If this email has reached you in error, please contac
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "患者の招待"
-CareTeamInviteHeadline: "{{ .PatientName }} さんからYourLoopsでの糖尿病データの共有案内が届いています。"
+CareTeamInviteHeadline: "{{ .PatientName }} さんからYourLoopsでの糖尿病データの共有リクエストが届いています。"
 CareTeamInviteBody: "YourLoopsは糖尿病管理、共有を目的とした可視化プラットフォームです。DBLG1によって取得されたデータをチャートやグラフに表示します。"
 CareTeamInviteBody2: "{{ .PatientName }}さんがあなたとデータを共有しようとしています。回答するには下記のリンクをクリックしてください。"
 #Signup
@@ -97,13 +97,13 @@ MedicalTeamRemoveHeadline: "{{ .MedicalteamName }} のメンバーではあり�
 MedicalTeamRemoveBody0: "チームの管理者がチームからあなたを削除しました。"
 MedicalTeamRemoveBody1: "{{ .MedicalteamName }}の患者データにアクセスできなくなりますが、アカウントは削除されません。"
 MedicalTeamRemoveBody2: "Think it’s a mistake? Get in touch with a team administrator."
-MedicalTeamRemoveAction: "Go to YourLoops"
+MedicalTeamRemoveAction: "YourLoopsに移動"
 #Medical/Care team patient invitation
-MedicalTeamPatientInvitationSubject: "Invitation to share data"
-MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} invites you to share your data with {{ .MedicalteamName }}"
-MedicalTeamPatientInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
-MedicalTeamPatientInviteWarning2: "If you're unsure, get in touch with your healthcare professional and do not accept this invitation."
-MedicalTeamPatientInviteInfo: "By adding this team, you consent to share your personal data (including health data) with its members, who are authorized healthcare professionals registered on YourLoops."
+MedicalTeamPatientInvitationSubject: "データ共有への招待"
+MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} からデータを {{ .MedicalteamName }}と共有リクエストがきています。"
+MedicalTeamPatientInviteWarning: "上記の詳細が医療従事者から提供された情報と一致していることを確認してください。"
+MedicalTeamPatientInviteWarning2: "不明点がある場合は、同意をせず、医療従事者に連絡してください。"
+MedicalTeamPatientInviteInfo: "このチームを追加することにより、YourLoopsに登録されている認定医療従事者であるメンバーと（健康データを含む）個人データを共有することに同意するものとします。"
 #Medical/Care team patient monitoring invitation
 MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
 MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
@@ -111,8 +111,8 @@ MedicalTeamMonitoringInviteWarning: "Please verify that the above details match 
 MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
 #Shared
 ReadDataPrivacy: "Read our <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
-RespondToInvite: "Respond to invitation"
-ConfirmationSubject: "Verify your email address"
+RespondToInvite: "招待に回答する"
+ConfirmationSubject: "メールアドレスの確認"
 #AppPrescription Notification
 #(email for patients)
 AppPrescriptionSubject: "Patient medical prescription"
