@@ -86,7 +86,7 @@ MedicalTeamInviteInfo: "ケアチームに参加する場合は、医療従事�
 MedicalTeamDoAdminSubject: "管理者権限が付与されました。"
 MedicalTeamDoAdminHeadline: "{{ .MedicalteamName }} の管理者になりました。"
 MedicalTeamDoAdminBody1: "チーム管理者があなたを {{ .MedicalteamName }}の管理者にしました。"
-MedicalTeamDoAdminBody2: "次のことができるようになりました。"
+MedicalTeamDoAdminBody2: "次のことができるようになりました："
 MedicalTeamDoAdminListItem1: "チームメンバーの招待/削除"
 MedicalTeamDoAdminListItem2: "チーム情報の編集"
 MedicalTeamDoAdminListItem3: "管理者権限の付与または削除"
