@@ -96,7 +96,7 @@ MedicalTeamRemoveSubject: "ケアチームからの削除"
 MedicalTeamRemoveHeadline: "{{ .MedicalteamName }} のメンバーではありません。"
 MedicalTeamRemoveBody0: "チームの管理者がチームからあなたを削除しました。"
 MedicalTeamRemoveBody1: "{{ .MedicalteamName }}の患者データにアクセスできなくなりますが、アカウントは削除されません。"
-MedicalTeamRemoveBody2: "Think it’s a mistake? Get in touch with a team administrator."
+MedicalTeamRemoveBody2: "手違いの可能性がありますか？チーム管理者に連絡してください。"
 MedicalTeamRemoveAction: "YourLoopsに移動"
 #Medical/Care team patient invitation
 MedicalTeamPatientInvitationSubject: "データ共有への招待"
