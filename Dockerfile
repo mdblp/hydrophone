@@ -11,7 +11,7 @@ COPY . .
 
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
-    apk add git rsync
+    apk add --no-cache gcc musl-dev git rsync
 
 RUN git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
