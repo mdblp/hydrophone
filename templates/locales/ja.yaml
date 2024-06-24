@@ -10,7 +10,7 @@ EmailExpirationDays: "このメッセージは{{ .Duration }}日間有効です�
 #(email for those that requested password reset but did not create their account before)
 NoAccountSubject: "不明なメールアドレス"
 NoAccountHeadline: "YourLoopsパスワードの再設定がリクエストされましたが、このメールアドレスでのアカウントが作成されていません。"
-NoAccountBody: "すでにDBLG1を使用している場合は、初期設定時に入力したメールアドレスとパスワードでログインします。\n医療従事者アカウントを作成したい場合は、下記のリンクをクリックしてください。\n"
+NoAccountBody: "既にDBLG1を使用している場合は、初期設定時に入力したメールアドレスとパスワードでログインします。\n医療従事者アカウントを作成したい場合は、下記のリンクをクリックしてください。\n"
 NoAccountSignUp: "アカウントの作成"
 #Password Reset
 #(email for those that requested password reset)
@@ -29,38 +29,38 @@ PatientPasswordResetBody2: "キーは1時間有効です。有効期限が切れ
 PatientPasswordInfoSubject: "パスワードの再設定"
 PatientPasswordInfoHeadline: "YourLoopsからパスワードの再設定がリクエストされましたが、安全上の理由から、DBLG1から変更をリクエストする必要があります。"
 PatientPasswordInfoBody: "設定 > YourLoopsに移動し、DBLG1の指示に従ってください。"
-PatientPasswordInfoBody2: "If this email has reached you in error, please contact our <a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>customer support</a>."
+PatientPasswordInfoBody2: "このメールが誤って届いた場合は、<a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>テルモ株式会社 担当者へご連絡ください。</a>"
 #CareTeamInvite
 #(email for those that invited someone to join medical crew)
 CareTeamInvitationSubject: "患者の招待"
-CareTeamInviteHeadline: "{{ .PatientName }} さんからYourLoopsでの糖尿病データの共有リクエストが届いています。"
+CareTeamInviteHeadline: "{{ .PatientName }} さんからYourLoopsでのデータの共有リクエストが届いています。"
 CareTeamInviteBody: "YourLoopsは糖尿病管理、共有を目的とした可視化プラットフォームです。DBLG1によって取得されたデータをチャートやグラフに表示します。"
 CareTeamInviteBody2: "{{ .PatientName }}さんがあなたとデータを共有しようとしています。回答するには下記のリンクをクリックしてください。"
 #Signup
 #(email to ask patient for verification of email)
 SignupHeadline: "メールアドレスを確認し、YourLoopsアカウントを有効にします。"
 SignupBody: "YourLoopsのアカウントを作成しました。本人確認を行うには、以下のリンクをクリックしてください。"
-SignupDeletionWarning: "If the account is not activated during this period, your account registration will be deleted."
+SignupDeletionWarning: "この期間に有効にしないと、アカウント登録が削除されます。"
 SignupVerify: "アカウントを有効にする"
 #Signup Clinic
 #(email to ask clinician for verification of email)
 SignupClinicHeadline: "メールアドレスを確認し、YourLoopsアカウントを有効にします。"
-SignupClinicBody: "YourLoopsの医療従事者アカウントを作成しました。本人確認を行い、プロファイルを完成させるには、以下のリンクをクリックしてください。"
-SignupClinicDeletionWarning: "If the account is not activated during this period, your account registration will be deleted."
+SignupClinicBody: "YourLoopsの医療従事者アカウントを作成しました。本人確認を行い、プロフィールを完成させるには、以下のリンクをクリックしてください。"
+SignupClinicDeletionWarning: "この期間に有効にしないと、アカウント登録が削除されます。"
 SignupClinicVerify: "アカウントを有効にする"
 #Signup Custodial => SUPPRIMER
 #(email to ask patient spawn by an existing clinician for verification of email and take ownership of his account)
 SignupCustodialConfirmationSubject: "YourLoopsアカウントを確認する"
 #SignupCustodialHello: "Hello,"
 SignupCustodialHeadline: "YourLoopsアカウントが作成されました！"
-SignupCustodialVerify: "Verify Your Account"
+SignupCustodialVerify: "アカウントの確認"
 #Signup Custodial Clinic => SUPPRIMER
 #(email to ask clinician spawn by an existing clinician for verification of email and take ownership of his account)
-SignupCustodialClinicConfirmationSubject: "Diabetes Clinic Follow Up - Claim Your Account"
+SignupCustodialClinicConfirmationSubject: "糖尿病クリニックのフォローアップ - アカウントの取得"
 SignupCustodialClinicHello: "{{ .FullName }}さん、こんにちは！"
 SignupCustodialClinicAccount: "{{ .CreatorName }} が糖尿病デバイスデータ用のYourLoopsアカウントを作成しました。"
-SignupCustodialClinicOwnership: "You can take ownership of your free account to view and upload data from home."
-SignupCustodialClinicClaim: "Claim Your Account"
+SignupCustodialClinicOwnership: "無料アカウントの所有権を取得して、自宅からデータの閲覧およびアップロードすることができます。"
+SignupCustodialClinicClaim: "アカウントの取得"
 #Patient Information
 PatientInfoSubject: "YourLoopsへようこそ！"
 PatientInfoHeadline: "ログインしてDBLG1データを表示します。"
@@ -81,7 +81,7 @@ MedicalTeamInviteHeadline: "{{ .CreatorName }}さんからYourLoopsのケアチ�
 MedicalTeamInviteBody1: "YourLoopsはDBLG1システムにおける糖尿病管理プラットフォームです。"
 MedicalTeamInviteBody2: "{{ .MedicalteamName }}に参加すると、患者のデータにアクセスできるようになり、レポートを作成することができます。"
 MedicalTeamInviteWarning: "招待者、所属ケアチーム及び以下の詳細を確認した上で同意してください。"
-MedicalTeamInviteInfo: "ケアチームに参加する場合は、医療従事者アカウントが必要です。介護者として登録している場合はアカウント設定から医療従事者アカウントへ切り替えるか、以下のリンクより新しくアカウントを作成することも可能です。"
+MedicalTeamInviteInfo: "ケアチームに参加する場合は、医療従事者アカウントが必要です。サポーターとして登録している場合はアカウント設定から医療従事者アカウントへ切り替えるか、以下のリンクより新しくアカウントを作成することも可能です。"
 #Medical/Care team do Admin
 MedicalTeamDoAdminSubject: "管理者権限が付与されました。"
 MedicalTeamDoAdminHeadline: "{{ .MedicalteamName }} の管理者になりました。"
@@ -100,22 +100,22 @@ MedicalTeamRemoveBody2: "手違いの可能性がありますか？チーム管�
 MedicalTeamRemoveAction: "YourLoopsに移動"
 #Medical/Care team patient invitation
 MedicalTeamPatientInvitationSubject: "データ共有への招待"
-MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} からデータを {{ .MedicalteamName }}と共有リクエストがきています。"
+MedicalTeamPatientInviteHeadline: "{{ .CreatorName }} からデータを {{ .MedicalteamName }}と共有リクエストが届いています。"
 MedicalTeamPatientInviteWarning: "上記の詳細が医療従事者から提供された情報と一致していることを確認してください。"
 MedicalTeamPatientInviteWarning2: "不明点がある場合は、同意をせず、医療従事者に連絡してください。"
-MedicalTeamPatientInviteInfo: "このチームを追加することにより、YourLoopsに登録されている認定医療従事者であるメンバーと（健康データを含む）個人データを共有することに同意するものとします。"
+MedicalTeamPatientInviteInfo: "このチームを追加することにより、YourLoopsに登録されている医療従事者であるメンバーと（健康データを含む）個人データを共有することに同意するものとします。"
 #Medical/Care team patient monitoring invitation
-MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
-MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
-MedicalTeamMonitoringInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
-MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
+MedicalTeamMonitoringInvitationSubject: "モニタリングプログラムへの招待"
+MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }}から{{ .MedicalteamName }}によるモニタリングの招待が届いています。"
+MedicalTeamMonitoringInviteWarning: "上記の詳細が医療従事者から提供された情報と一致していることを確認してください。"
+MedicalTeamMonitoringInviteInfo: "このモニタリングプログラムに参加することにより、YourLoopsに登録されている認定医療従事者である{{ .MedicalteamName }}のメンバーから連絡がくることに同意するものとします。"
 #Shared
-ReadDataPrivacy: "Read our <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
+ReadDataPrivacy: "詳細については、<a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>プライバシーポリシー</a>をご覧ください。"
 RespondToInvite: "招待に回答する"
 ConfirmationSubject: "メールアドレスの確認"
 #AppPrescription Notification
 #(email for patients)
-AppPrescriptionSubject: "Patient medical prescription"
-AppPrescriptionHeadline: "{{ .Invitor }} prescribed the use of {{ .Product }} for you."
-AppPrescriptionBody: "Your diabetologist prescribed a new product {{ .Product }} for you. Here is your secret code: {{ .PrescriptionCode }}"
-AppPrescriptionBody2: "To accept, !!!TODO: Add detailed instructions here!!!, click on the link below."
+AppPrescriptionSubject: "患者医療処方箋"
+AppPrescriptionHeadline: "{{ .Invitor }}が{{ .Product }}を処方しました。"
+AppPrescriptionBody: "糖尿病専門医が{{ .Product }}を処方しました。暗証番号は{{ .PrescriptionCode }}です。"
+AppPrescriptionBody2: "承認するには以下のリンクをクリックしてください。"
