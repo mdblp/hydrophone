@@ -15,7 +15,7 @@ NoAccountSignUp: "Crear cuenta"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "Restablecimiento de la contraseña"
-PasswordResetHeadline: "Ha solicitado restablecer su contraseña de YourLoops."
+PasswordResetHeadline: "Ha solicitado restablecer su contraseña Diabeloop."
 PasswordResetBody: "Haga clic en el siguiente enlace para seleccionar una nueva."
 PasswordResetReset: "Restablecer mi contraseña"
 #Patient Password Reset
@@ -38,8 +38,8 @@ CareTeamInviteBody: "YourLoops es una plataforma de visualización y reporte par
 CareTeamInviteBody2: "{{ .PatientName }} eligió compartir sus datos con usted. Para responder, haga clic en el enlace de abajo."
 #Signup
 #(email to ask patient for verification of email)
-SignupHeadline: "Verifique su dirección de correo electrónico para activar su cuenta de YourLoops."
-SignupBody: "Ha creado una cuenta en YourLoops. Para confirmar su identidad, haga clic en el siguiente enlace."
+SignupHeadline: "Verifique su dirección de correo electrónico para activar su cuenta de Diabeloop."
+SignupBody: "Ha creado una cuenta Diabeloop. Para confirmar su identidad, haga clic en el siguiente enlace."
 SignupDeletionWarning: "Si la cuenta no es activada durante este período, el registro de su cuentra será eliminado."
 SignupVerify: "Activar mi cuenta"
 #Signup Clinic
