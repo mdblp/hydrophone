@@ -21,7 +21,7 @@ PasswordResetReset: "パスワードを再設定"
 #Patient Password Reset
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "パスワード再設定の手順"
-PatientPasswordResetHeadline: "YourLoopsアカウントのパスワードの再設定がリクエストされました。"
+PatientPasswordResetHeadline: "Diabeloopアカウントのパスワードの再設定がリクエストされました。"
 PatientPasswordResetBody: "DBLG1の指示に従い、次のキーを入力してください："
 PatientPasswordResetBody2: "キーは1時間有効です。有効期限が切れた場合は、DBLG1に新しいキーをリクエストしてください。"
 #Patient Password Reset request from web app
