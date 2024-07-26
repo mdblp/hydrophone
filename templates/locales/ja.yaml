@@ -113,6 +113,7 @@ MedicalTeamMonitoringInviteInfo: "このモニタリングプログラムに参�
 ReadDataPrivacy: "詳細については、<a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>プライバシーポリシー</a>をご覧ください。"
 RespondToInvite: "招待に回答する"
 ConfirmationSubject: "メールアドレスの確認"
+PhishingWarning: "Be alert to phishing attacks that mimic the Diabeloop name and logo. Diabeloop will never request your password. Your password should never be communicated to a third party."
 #AppPrescription Notification
 #(email for patients)
 AppPrescriptionSubject: "患者医療処方箋"
