@@ -27,7 +27,7 @@ PatientPasswordResetBody2: "Der Schlüssel ist 1h gültig. Wenn er abgelaufen is
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Passwort zurücksetzen"
-PatientPasswordInfoHeadline: "Sie haben beantragt, Ihr YourLoops-Passwort von YourLoops aus zurückzusetzen. Aus Sicherheitsgründen müssen Sie die Änderung jedoch über Ihr DBL beantragen."
+PatientPasswordInfoHeadline: "Sie haben beantragt, Ihr Diabeloop-Passwort von YourLoops aus zurückzusetzen. Aus Sicherheitsgründen müssen Sie die Änderung jedoch über Ihr DBL beantragen."
 PatientPasswordInfoBody: "Gehen Sie zu Einstellungen > YourLoops und folgen Sie den Anweisungen auf Ihrem DBL."
 PatientPasswordInfoBody2: "Wenn Sie diese E-Mail irrtümlich erhalten, wenden Sie sich bitte an unseren <a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>Kundenservice</a>."
 #CareTeamInvite
@@ -107,7 +107,7 @@ MedicalTeamPatientInviteInfo: "Wenn Sie diesem Team beitreten, stimmen Sie zu, d
 #Medical/Care team patient monitoring invitation
 MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
 MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
-MedicalTeamMonitoringInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
+MedicalTeamMonitoringInviteWarning: "Bitte prüfen Sie, ob die obigen Angaben mit den Informationen übereinstimmen, die Sie von Ihrem Arzt erhalten haben, bevor Sie auf die Einladung reagieren."
 MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
 #Shared
 ReadDataPrivacy: "Weitere Informationen finden Sie in unserer <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>Datenschutzerklärung</a>."
