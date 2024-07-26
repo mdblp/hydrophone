@@ -27,7 +27,7 @@ PatientPasswordResetBody2: "La chiave è valida per 1 ora. Se è scaduta, richie
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Reimpostazione password"
-PatientPasswordInfoHeadline: "Hai richiesto di reimpostare la password di YourLoops da YourLoops. Tuttavia, per motivi di sicurezza, devi richiedere la modifica dal DBL."
+PatientPasswordInfoHeadline: "Hai richiesto di reimpostare la password di Diabeloop da YourLoops. Tuttavia, per motivi di sicurezza, devi richiedere la modifica dal DBL."
 PatientPasswordInfoBody: "Vai a Impostazioni > YourLoops e segui le istruzioni visualizzate sul DBL."
 PatientPasswordInfoBody2: "Se questa e-mail ti è arrivata per errore, contatta il nostro <a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>servizio di assistenza</a>."
 #CareTeamInvite
