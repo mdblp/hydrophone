@@ -15,7 +15,7 @@ NoAccountSignUp: "アカウントの作成"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "パスワードの再設定"
-PasswordResetHeadline: "YourLoopsパスワードの再設定がリクエストされました。"
+PasswordResetHeadline: "Diabeloopパスワードの再設定がリクエストされました。"
 PasswordResetBody: "下記のリンクをクリックして新しいパスワードを選択してください。"
 PasswordResetReset: "パスワードを再設定"
 #Patient Password Reset
@@ -38,8 +38,8 @@ CareTeamInviteBody: "YourLoopsは糖尿病管理、共有を目的とした可�
 CareTeamInviteBody2: "{{ .PatientName }}さんがあなたとデータを共有しようとしています。回答するには下記のリンクをクリックしてください。"
 #Signup
 #(email to ask patient for verification of email)
-SignupHeadline: "メールアドレスを確認し、YourLoopsアカウントを有効にします。"
-SignupBody: "YourLoopsのアカウントを作成しました。本人確認を行うには、以下のリンクをクリックしてください。"
+SignupHeadline: "メールアドレスを確認し、Diabeloopアカウントを有効にします。"
+SignupBody: "Diabeloopのアカウントを作成しました。本人確認を行うには、以下のリンクをクリックしてください。"
 SignupDeletionWarning: "この期間に有効にしないと、アカウント登録が削除されます。"
 SignupVerify: "アカウントを有効にする"
 #Signup Clinic
