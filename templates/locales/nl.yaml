@@ -27,7 +27,7 @@ PatientPasswordResetBody2: "De code is 1 uur geldig. Als deze is verlopen, vraag
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Wachtwoord resetten"
-PatientPasswordInfoHeadline: "Je hebt gevraagd om je YourLoops-wachtwoord opnieuw in te stellen bij YourLoops. Om veiligheidsredenen moet je de wijziging echter aanvragen bij je DBL."
+PatientPasswordInfoHeadline: "Je hebt gevraagd om je Diabeloop-wachtwoord opnieuw in te stellen bij YourLoops. Om veiligheidsredenen moet je de wijziging echter aanvragen bij je DBL."
 PatientPasswordInfoBody: "Ga naar Instellingen > YourLoops en volg de instructies op je DBL."
 PatientPasswordInfoBody2: "Als je deze e-mail ten onrechte ontvangt, neem dan contact op met onze <a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>klantenservice</a>."
 #CareTeamInvite
@@ -38,7 +38,7 @@ CareTeamInviteBody: "YourLoops is een visualisatieplatform voor diabetesmanageme
 CareTeamInviteBody2: "{{ .PatientName }} koos om hun gegevens met u te delen. Om te reageren, klik op de link hieronder."
 #Signup
 #(email to ask patient for verification of email)
-SignupHeadline: "Verifieer je e-mailadres om je YourLoops-account te activeren."
+SignupHeadline: "Verifieer je e-mailadres om je Diabeloop-account te activeren."
 SignupBody: "Je hebt een account aangemaakt op YourLoops. Klik op de onderstaande link om je identiteit te bevestigen."
 SignupDeletionWarning: "Als het account niet binnen deze periode geactiveerd wordt, wordt je accountregistratie verwijderd."
 SignupVerify: "Mijn account activeren"
@@ -107,7 +107,7 @@ MedicalTeamPatientInviteInfo: "Door dit team toe te voegen, stem je ermee in om 
 #Medical/Care team patient monitoring invitation
 MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
 MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
-MedicalTeamMonitoringInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
+MedicalTeamMonitoringInviteWarning: "Controleer of de bovenstaande gegevens overeenkomen met de informatie die door je zorgverlener is verstrekt voordat je op de uitnodiging reageert."
 MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
 #Shared
 ReadDataPrivacy: "Lees ons <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacybeleid</a> voor meer informatie."
