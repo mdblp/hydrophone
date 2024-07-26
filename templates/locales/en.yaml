@@ -21,7 +21,7 @@ PasswordResetReset: "Reset my password"
 #Patient Password Reset
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Password reset instructions"
-PatientPasswordResetHeadline: "You requested to reset your YourLoops account password."
+PatientPasswordResetHeadline: "You requested to reset your Diabeloop account password."
 PatientPasswordResetBody: "Please follow the instructions on your DBL and enter this key:"
 PatientPasswordResetBody2: "The key is valid for 1h. If it has expired, please request a new one on your DBL."
 #Patient Password Reset request from web app
