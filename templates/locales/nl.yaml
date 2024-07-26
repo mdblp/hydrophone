@@ -21,7 +21,7 @@ PasswordResetReset: "Mijn wachtwoord resetten"
 #Patient Password Reset
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Instructies voor het resetten van het wachtwoord"
-PatientPasswordResetHeadline: "Je hebt gevraagd om je YourLoops-accountwachtwoord opnieuw in te stellen."
+PatientPasswordResetHeadline: "Je hebt gevraagd om je Diabeloop-accountwachtwoord opnieuw in te stellen."
 PatientPasswordResetBody: "Volg de instructies op je DBL en voer deze code in:"
 PatientPasswordResetBody2: "De code is 1 uur geldig. Als deze is verlopen, vraag dan een nieuwe aan op je DBL."
 #Patient Password Reset request from web app
