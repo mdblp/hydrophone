@@ -113,6 +113,7 @@ MedicalTeamMonitoringInviteInfo: "En vous acceptant de rejoindre ce programme de
 ReadDataPrivacy: "Veuillez consulter notre <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>politique de confidentialité</a> pour plus d'informations."
 RespondToInvite: "Répondre à l'invitation"
 ConfirmationSubject: "Vérification de votre adresse email"
+PhishingWarning: "Be alert to phishing attacks that mimic the Diabeloop name and logo. Diabeloop will never request your password. Your password should never be communicated to a third party."
 #AppPrescription Notification
 #(email for patients)
 AppPrescriptionSubject: "Prescription médicale du patient"
