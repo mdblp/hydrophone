@@ -15,7 +15,7 @@ NoAccountSignUp: "Account aanmaken"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "Wachtwoord resetten"
-PasswordResetHeadline: "Je hebt gevraagd om je YourLoops-wachtwoord opnieuw in te stellen."
+PasswordResetHeadline: "Je hebt gevraagd om je Diabeloop-wachtwoord opnieuw in te stellen."
 PasswordResetBody: "Klik op onderstaande link om een ​​nieuw wachtwoord te kiezen."
 PasswordResetReset: "Mijn wachtwoord resetten"
 #Patient Password Reset
@@ -39,7 +39,7 @@ CareTeamInviteBody2: "{{ .PatientName }} koos om hun gegevens met u te delen. Om
 #Signup
 #(email to ask patient for verification of email)
 SignupHeadline: "Verifieer je e-mailadres om je Diabeloop-account te activeren."
-SignupBody: "Je hebt een account aangemaakt op YourLoops. Klik op de onderstaande link om je identiteit te bevestigen."
+SignupBody: "Je hebt een account aangemaakt Diabeloop. Klik op de onderstaande link om je identiteit te bevestigen."
 SignupDeletionWarning: "Als het account niet binnen deze periode geactiveerd wordt, wordt je accountregistratie verwijderd."
 SignupVerify: "Mijn account activeren"
 #Signup Clinic
