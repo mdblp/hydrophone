@@ -27,7 +27,7 @@ PatientPasswordResetBody2: "La clave es válida durante 1 hora. Si ha caducado,
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Restablecimiento de la contraseña"
-PatientPasswordInfoHeadline: "Ha solicitado restablecer su contraseña de YourLoops desde YourLoops. Sin embargo, por motivos de seguridad, el cambio debe solicitarse desde su DBL."
+PatientPasswordInfoHeadline: "Ha solicitado restablecer su contraseña de Diabeloop desde YourLoops. Sin embargo, por motivos de seguridad, el cambio debe solicitarse desde su DBL."
 PatientPasswordInfoBody: "Vaya a Ajustes > YourLoops y siga las instrucciones en su DBL."
 PatientPasswordInfoBody2: "Si ha recibido este mensaje de correo electrónico por error, póngase en contacto con el <a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>servicio de atención al cliente</a>."
 #CareTeamInvite
@@ -107,7 +107,7 @@ MedicalTeamPatientInviteInfo: "Al añadir este equipo, acepta compartir sus dato
 #Medical/Care team patient monitoring invitation
 MedicalTeamMonitoringInvitationSubject: "Invitation to join monitoring program"
 MedicalTeamMonitoringInviteHeadline: "{{ .CreatorName }} invites you to be monitored by {{ .MedicalteamName }}"
-MedicalTeamMonitoringInviteWarning: "Please verify that the above details match the information provided by your healthcare professional before responding to the invitation."
+MedicalTeamMonitoringInviteWarning: "Compruebe que los detalles anteriores coinciden con la información suministrada por el personal sanitario antes de responder a la invitación."
 MedicalTeamMonitoringInviteInfo: "By join this monitoring program, you consent to be contacted by the members of {{ .MedicalteamName }} who are authorized healthcare professionals registered on YourLoops."
 #Shared
 ReadDataPrivacy: "Lea nuestra <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>política de confidencialidad</a> para obtener más información."
