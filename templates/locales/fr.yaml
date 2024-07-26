@@ -21,7 +21,7 @@ PasswordResetReset: "Réinitialiser mon mot de passe"
 #Patient Password Reset
 #(email for patients that requested password reset)
 PatientPasswordResetSubject: "Instructions de réinitialisation du mot de passe"
-PatientPasswordResetHeadline: "Vous avez demandé la réinitialisation de votre mot de passe YourLoops."
+PatientPasswordResetHeadline: "Vous avez demandé la réinitialisation de votre mot de passe Diabeloop."
 PatientPasswordResetBody: "Veuillez suivre les instructions sur votre DBL et entrer la clé suivante :"
 PatientPasswordResetBody2: "Cette clé est valable une heure. En cas d'expiration, veuillez renouveler la demande sur votre DBL."
 #Patient Password Reset request from web app
