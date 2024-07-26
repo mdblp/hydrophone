@@ -27,7 +27,7 @@ PatientPasswordResetBody2: "The key is valid for 1h. If it has expired, please r
 #Patient Password Reset request from web app
 #(email for patients that requested password reset)
 PatientPasswordInfoSubject: "Password reset"
-PatientPasswordInfoHeadline: "You requested to reset your YourLoops password from YourLoops. However, for safety reasons, you have to request the change from your DBL."
+PatientPasswordInfoHeadline: "You requested to reset your Diabeloop password from YourLoops. However, for safety reasons, you have to request the change from your DBL."
 PatientPasswordInfoBody: "Go to Settings > YourLoops and follow the instructions on your DBL."
 PatientPasswordInfoBody2: "If this email has reached you in error, please contact our <a style='text-decoration:none;color:#00a3e2;' href='{{ .SupportEmail }}'>customer support</a>."
 #CareTeamInvite
@@ -38,7 +38,7 @@ CareTeamInviteBody: "YourLoops is a visualization platform for diabetes manageme
 CareTeamInviteBody2: "{{ .PatientName }} chose to share their data with you. To respond, click on the link below."
 #Signup
 #(email to ask patient for verification of email)
-SignupHeadline: "Verify your email address to activate your YourLoops account."
+SignupHeadline: "Verify your email address to activate your Diabeloop account."
 SignupBody: "You created a Diabeloop account. To confirm your identity, please click on the link below."
 SignupDeletionWarning: "If the account is not activated during this period, your account registration will be deleted."
 SignupVerify: "Activate my account"
