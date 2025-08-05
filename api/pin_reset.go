@@ -99,7 +99,7 @@ func (a *Api) SendPinReset(res http.ResponseWriter, req *http.Request, vars map[
 		return
 	}
 
-	if patientConfig.Device.Imei == "" {
+	if patientConfig.Device == nil || patientConfig.Device.Imei == "" {
 		a.sendError(res, http.StatusInternalServerError, statusPinResetErr, "error getting patient config")
 		return
 	}

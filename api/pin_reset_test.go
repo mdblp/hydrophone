@@ -86,6 +86,21 @@ func TestPinResetResponds(t *testing.T) {
 			portalErr: true,
 		},
 		{
+			// if the patient's IMEI is nil it goes 500 (cannot generate TOTP)
+			test: toTest{
+				returnNone: true,
+				method:     "POST",
+				url:        "/send/pin-reset/" + testing_uid1,
+				token:      testing_token_uid1,
+				respCode:   500,
+			},
+			patientSettings: &tide.PumpSettings{
+				Settings: tide.Settings{
+					Device: nil,
+				},
+			},
+		},
+		{
 			// if the patient's IMEI is blank it goes 500 (cannot generate TOTP)
 			test: toTest{
 				returnNone: true,
