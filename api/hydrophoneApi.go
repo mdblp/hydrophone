@@ -23,7 +23,7 @@ import (
 	"github.com/mdblp/go-common/v2/clients/auth"
 	"github.com/mdblp/go-common/v2/clients/status"
 	muxMiddleware "github.com/mdblp/go-routers/mux"
-	seagullClient "github.com/mdblp/seagull/client"
+	schema "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/clients/shoreline"
 	"github.com/mdblp/shoreline/token"
 
@@ -32,6 +32,19 @@ import (
 )
 
 type (
+	// SeagullClientAPI API seagull client interface
+	SeagullClientAPI interface {
+		GetProfile(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
+
+		GetPreferences(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
+
+		//GetInfos Retrieve all account information for a userId
+		GetInfos(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
+
+		// SetInfos perform an update of all account information based on the parameter called doc for a dedicated userId
+		SetInfos(ctx context.Context, userID string, doc *schema.SeagullDocument, token string) []error
+	}
+
 	Api struct {
 		Store          clients.StoreClient
 		notifier       clients.Notifier
@@ -39,7 +52,7 @@ type (
 		sl             shoreline.ClientInterface
 		perms          crewClient.Crew
 		auth           auth.ClientInterface
-		seagull        seagullClient.API
+		seagull        SeagullClientAPI
 		userRepo       UserRepo
 		medicalData    tidewhisperer.ClientInterface
 		Config         Config
@@ -118,7 +131,7 @@ func InitApi(
 	sl shoreline.ClientInterface,
 	perms crewClient.Crew,
 	auth auth.ClientInterface,
-	seagull seagullClient.API,
+	seagull SeagullClientAPI,
 	medicalData tidewhisperer.ClientInterface,
 	templates models.Templates,
 	logger *log.Logger,
@@ -274,7 +287,7 @@ func (a *Api) findExistingConfirmation(ctx context.Context, conf *models.Confirm
 // write error if it fails
 func (a *Api) addProfile(ctx context.Context, conf *models.Confirmation) error {
 	if conf.CreatorId != "" {
-		doc, err := a.seagull.GetCollections(ctx, conf.CreatorId, []string{"profile"}, a.sl.TokenProvide())
+		doc, err := a.seagull.GetProfile(ctx, conf.CreatorId, a.sl.TokenProvide())
 		if err != nil {
 			log.Printf("error getting the creators profile [%v] ", err)
 			return err
@@ -292,7 +305,7 @@ func (a *Api) addProfile(ctx context.Context, conf *models.Confirmation) error {
 
 func (a *Api) getUserLanguage(userid string, req *http.Request, res http.ResponseWriter) string {
 	// let's get the invitee user preferences
-	if seagulDoc, err := a.seagull.GetCollections(req.Context(), userid, []string{"preferences"}, a.sl.TokenProvide()); err != nil {
+	if seagulDoc, err := a.seagull.GetPreferences(req.Context(), userid, a.sl.TokenProvide()); err != nil {
 		a.logger.Errorf("Preferences not availlable for user %s. Email will be sent using default language. Error: [%s]", userid, err)
 	} else if seagulDoc.Preferences != nil && seagulDoc.Preferences.DisplayLanguageCode != "" {
 		return seagulDoc.Preferences.DisplayLanguageCode

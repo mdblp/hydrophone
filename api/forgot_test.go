@@ -11,7 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mdblp/go-common/v2/clients/auth"
-	"github.com/mdblp/seagull/schema"
+	schema "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 
@@ -255,12 +255,12 @@ func TestForgotResponds(t *testing.T) {
 		mockUserRepo.On("GetUser", "patient@myemail.com", mock.Anything).Return(&models.UserData{UserID: "me@myemail.com", Username: "me@myemail.com", Emails: []string{"me@myemail.com"}, PasswordExists: true, Roles: []string{"patient"}, IdVerified: true}, nil)
 		mockUserRepo.On("GetUser", "caregiver@myemail.com", mock.Anything).Return(&models.UserData{UserID: "me@myemail.com", Username: "me@myemail.com", Emails: []string{"me@myemail.com"}, PasswordExists: true, Roles: []string{"caregiver"}, IdVerified: true}, nil)
 		mockUserRepo.On("UpdateUser", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-		mockSeagull.On("GetCollections", "me@myemail.com", []string{"preferences"}).Return(&schema.SeagullDocument{}, nil)
-		mockSeagull.On("GetCollections", "patient@myemail.com", []string{"preferences"}).Return(&schema.SeagullDocument{}, nil)
-		mockSeagull.On("GetCollections", "patientfr@myemail.com", []string{"preferences"}).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{DisplayLanguageCode: "fr"}}, nil)
-		mockSeagull.On("GetCollections", "patientNoPrefs@myemail.com", []string{"preferences"}).Return(nil, errors.New("No data"))
-		mockSeagull.On("GetCollections", "clinic@myemail.com", []string{"preferences"}).Return(&schema.SeagullDocument{}, nil)
-		mockSeagull.On("GetCollections", "expires@myemail.com", []string{"preferences"}).Return(&schema.SeagullDocument{}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, "me@myemail.com", mock.Anything).Return(&schema.SeagullDocument{}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, "patient@myemail.com", mock.Anything).Return(&schema.SeagullDocument{}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, "patientfr@myemail.com", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{DisplayLanguageCode: "fr"}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, "patientNoPrefs@myemail.com", mock.Anything).Return(nil, errors.New("No data"))
+		mockSeagull.On("GetPreferences", mock.Anything, "clinic@myemail.com", mock.Anything).Return(&schema.SeagullDocument{}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, "expires@myemail.com", mock.Anything).Return(&schema.SeagullDocument{}, nil)
 		mockShoreline.On("TokenProvide").Return(testing_token)
 
 		if test.returnNone {
