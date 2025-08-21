@@ -112,7 +112,7 @@ func (a *Api) createAppPrescription(res http.ResponseWriter, req *http.Request) 
 // Send a notification email based on the given email content and confirmation model
 func (a *Api) processNotification(res http.ResponseWriter, req *http.Request, content map[string]string, invite *models.Confirmation) {
 	var inviteeLanguage = "en"
-	creatorMetaData, err := a.seagull.GetCollections(req.Context(), invite.CreatorId, []string{"preferences", "profile"}, a.sl.TokenProvide())
+	creatorMetaData, err := a.seagull.GetInfos(req.Context(), invite.CreatorId, a.sl.TokenProvide())
 	if err != nil {
 		a.sendError(res, http.StatusInternalServerError, STATUS_ERR_FINDING_USR, "send invitation: error getting invitor user preferences: ", err.Error())
 		return

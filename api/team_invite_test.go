@@ -12,7 +12,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mdblp/crew/store"
-	. "github.com/mdblp/seagull/schema"
+	schema "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 
@@ -241,12 +241,12 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 
 	mockShoreline.On("TokenProvide").Return("ok")
 
-	mockSeagull.On("GetCollections", testing_uid1, []string{"profile"}).Return(&SeagullDocument{Profile: &Profile{}}, nil)
-	mockSeagull.On("GetCollections", "patient.team@myemail.com", []string{"profile"}).Return(&SeagullDocument{Profile: &Profile{}}, nil)
-	mockSeagull.On("GetCollections", testing_uid1, []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
-	mockSeagull.On("GetCollections", testing_uid3, []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
-	mockSeagull.On("GetCollections", testing_uid4, []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
-	mockSeagull.On("GetCollections", testing_uid_patient1, []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
+	mockSeagull.On("GetProfile", mock.Anything, testing_uid1, mock.Anything).Return(&schema.SeagullDocument{Profile: &schema.Profile{}}, nil)
+	mockSeagull.On("GetProfile", mock.Anything, "patient.team@myemail.com", mock.Anything).Return(&schema.SeagullDocument{Profile: &schema.Profile{}}, nil)
+	mockSeagull.On("GetPreferences", mock.Anything, testing_uid1, mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+	mockSeagull.On("GetPreferences", mock.Anything, testing_uid3, mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+	mockSeagull.On("GetPreferences", mock.Anything, testing_uid4, mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+	mockSeagull.On("GetPreferences", mock.Anything, testing_uid_patient1, mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
 	mockUserRepo := &mocks.UserRepo{}
 	mockUserRepo.On("GetUser", testing_uid1, mock.Anything).Return(&models.UserData{UserID: testing_uid1, Username: testing_uid1, Emails: []string{testing_uid1}, PasswordExists: true, Roles: []string{"caregiver"}, IdVerified: true}, nil)
 	mockUserRepo.On("GetUser", testing_uid3, mock.Anything).Return(&models.UserData{UserID: testing_uid3, Username: testing_uid3, Emails: []string{testing_uid3}, PasswordExists: true, Roles: []string{"caregiver"}, IdVerified: true}, nil)
@@ -894,8 +894,8 @@ func TestAcceptTeamInvite(t *testing.T) {
 		}
 		var testRtr = mux.NewRouter()
 
-		mockSeagull.On("GetCollections", testing_uid1+"@email.org", []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
-		mockSeagull.On("GetCollections", testing_uid2+"@email.org", []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid1+"@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid2+"@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
 
 		teams1 := []store.Team{}
 		membersAccepted := store.Member{

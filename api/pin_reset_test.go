@@ -13,7 +13,7 @@ import (
 	tide "github.com/mdblp/tide-whisperer-v2/v3/model"
 
 	"github.com/gorilla/mux"
-	. "github.com/mdblp/seagull/schema"
+	. "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 
@@ -185,7 +185,7 @@ func TestPinResetResponds(t *testing.T) {
 		if pinResetTest.patientSettings != nil {
 			medicalDataMock.On("GetSettings", mock.Anything, mock.Anything, mock.Anything).Return(pinResetTest.patientSettings, nil)
 		}
-		mockSeagull.On("GetCollections", testing_uid1, []string{"preferences"}).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid1, mock.Anything).Return(&SeagullDocument{Preferences: &Preferences{}}, nil)
 		mockUserRepo := &mocks.UserRepo{}
 		mockUserRepo.On("GetUser", testing_uid1, mock.Anything).Return(&models.UserData{UserID: testing_uid1, Username: "From Mock", Emails: []string{testing_uid1}, PasswordExists: true, Roles: []string{"patient"}, IdVerified: true}, nil)
 		mockUserRepo.On("GetUser", "NotFound", mock.Anything).Return(nil, nil)

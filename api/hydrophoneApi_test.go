@@ -17,12 +17,12 @@ import (
 	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/go-common/v2/clients/auth"
 	"github.com/mdblp/go-common/v2/clients/version"
-	seagull "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/clients/shoreline"
 	"github.com/mdblp/shoreline/schema"
 	"github.com/mdblp/shoreline/token"
 	"github.com/sirupsen/logrus/hooks/test"
 
+	"github.com/mdblp/hydrophone/api/mocks"
 	"github.com/mdblp/hydrophone/clients"
 	"github.com/mdblp/hydrophone/localize"
 	"github.com/mdblp/hydrophone/models"
@@ -70,7 +70,7 @@ var (
 	mockPerms     = crewClient.NewMock()
 	mockAuth      = auth.NewMock()
 
-	mockSeagull = &seagull.SeagullMock{}
+	mockSeagull = &mocks.SeagullClientAPI{}
 
 	medicalDataMock = tidewhisperer.NewMock()
 

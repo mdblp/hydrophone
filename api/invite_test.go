@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mdblp/crew/store"
 	"github.com/mdblp/go-common/v2/clients/auth"
-	"github.com/mdblp/seagull/schema"
+	schema "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 
@@ -122,17 +122,17 @@ func TestInvitesLocales(t *testing.T) {
 	for idx, test := range tests {
 		var testRtr = initTestingTeamRouter(test.returnNone)
 		mockSeagull.ExpectedCalls = nil
-		mockSeagull.On("GetCollections", testing_uid1, []string{"preferences"}).Return(
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid1, mock.Anything).Return(
 			&schema.SeagullDocument{
 				Preferences: &schema.Preferences{DisplayLanguageCode: "fr"},
 			}, nil,
 		)
-		mockSeagull.On("GetCollections", testing_uid2, []string{"preferences"}).Return(
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid2, mock.Anything).Return(
 			&schema.SeagullDocument{
 				Preferences: &schema.Preferences{DisplayLanguageCode: "es"},
 			}, nil,
 		)
-		mockSeagull.On("GetCollections", testing_uid1, []string{"profile"}).Return(&schema.SeagullDocument{Profile: &schema.Profile{}}, nil)
+		mockSeagull.On("GetProfile", mock.Anything, testing_uid1, mock.Anything).Return(&schema.SeagullDocument{Profile: &schema.Profile{}}, nil)
 		// mock user preference:
 		// mockSeagull.SetMockNextCollectionCall(testing_uid2+"@email.org"+"preferences", `{"DisplayLanguage": "de"}`, nil)
 		teams1 := []store.Team{}
@@ -423,11 +423,11 @@ func TestCaregiverInvite(t *testing.T) {
 		}
 		mockSeagull.ExpectedCalls = nil
 		var testRtr = mux.NewRouter()
-		mockSeagull.On("GetCollections", testing_uid2, []string{"profile"}).Return(&schema.SeagullDocument{Profile: &schema.Profile{FullName: "test toto"}}, nil)
-		mockSeagull.On("GetCollections", "personToInvite@email.com", []string{"preferences"}).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
-		mockSeagull.On("GetCollections", testing_uid1+"@email.org", []string{"preferences"}).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
-		mockSeagull.On("GetCollections", testing_uid2+"@email.org", []string{"preferences"}).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
-		mockSeagull.On("GetCollections", testing_uid2+"hcp@email.org", []string{"preferences"}).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+		mockSeagull.On("GetProfile", mock.Anything, testing_uid2, mock.Anything).Return(&schema.SeagullDocument{Profile: &schema.Profile{FullName: "test toto"}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, "personToInvite@email.com", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid1+"@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid2+"@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
+		mockSeagull.On("GetPreferences", mock.Anything, testing_uid2+"hcp@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
 		mockShoreline.On("TokenProvide").Return(testing_token)
 		mockAuth = auth.NewMock()
 
