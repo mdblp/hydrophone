@@ -4,7 +4,8 @@ export TEMPLATE_PATH="$(dirname $(readlink -f $0))/templates"
 
 go install github.com/jstemmer/go-junit-report@latest
 go install github.com/t-yuki/gocover-cobertura@latest
-go test -v -race -coverprofile=coverage.out ./... 2>&1 > test-report.txt
+go test -v -race -coverprofile=coverage.out.tmp ./... 2>&1 > testresults.txt
+cat coverage.out.tmp | grep -v "_test" | grep -v "mocks" | grep -v "docs" > coverage.out
 testPass=$?
 cat test-report.txt
 cat test-report.txt | go-junit-report  > test-report.xml
