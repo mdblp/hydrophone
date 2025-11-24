@@ -90,9 +90,6 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     publish()
-                    withCredentials([usernamePassword(credentialsId: 'nexus-jenkins', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PWD')]) {
-                        pushDocker("${utils.diabeloopRegistry}", "${NEXUS_USER}", "${NEXUS_PWD}", "hydromail:${GIT_COMMIT}", "${version}", false, [:])
-                    }
                 }
             }
         }
