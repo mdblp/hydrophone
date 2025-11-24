@@ -445,6 +445,10 @@ func (a *Api) logAudit(req *http.Request, format string, args ...interface{}) {
 		prefix += fmt.Sprintf("trace{%s}, ", traceSession)
 	}
 
+	if td != nil && td.UserId != "" {
+		prefix += fmt.Sprintf("userId{%s}, ", td.UserId)
+	}
+
 	prefix += fmt.Sprintf("isServer{%t}, ", isServer)
 
 	s := fmt.Sprintf(format, args...)
