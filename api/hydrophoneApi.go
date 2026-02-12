@@ -19,7 +19,6 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 
-	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/go-common/v2/clients/auth"
 	"github.com/mdblp/go-common/v2/clients/status"
 	muxMiddleware "github.com/mdblp/go-routers/mux"
@@ -50,7 +49,7 @@ type (
 		notifier       clients.Notifier
 		templates      models.Templates
 		sl             shoreline.ClientInterface
-		perms          crewClient.Crew
+		perms          clients.CrewRepo
 		auth           auth.ClientInterface
 		seagull        SeagullClientAPI
 		userRepo       UserRepo
@@ -129,7 +128,7 @@ func InitApi(
 	store clients.StoreClient,
 	ntf clients.Notifier,
 	sl shoreline.ClientInterface,
-	perms crewClient.Crew,
+	perms clients.CrewRepo,
 	auth auth.ClientInterface,
 	seagull SeagullClientAPI,
 	medicalData tidewhisperer.ClientInterface,

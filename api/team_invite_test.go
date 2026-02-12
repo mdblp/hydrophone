@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/mdblp/crew/store"
+	"github.com/mdblp/crew/client/dto"
 	schema "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
@@ -26,10 +26,9 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	var testRtr = mux.NewRouter()
 
 	// Init mock data
-	remoteMonitored := true
 	token1 := "00000"
-	teams1 := []store.Team{}
-	members := []store.Member{
+	teams1 := []dto.Team{}
+	members := []dto.Member{
 		{
 			UserID:           testing_uid1,
 			TeamID:           "1",
@@ -37,7 +36,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "accepted",
 		},
 	}
-	membersSetMemberRole := []store.Member{
+	membersSetMemberRole := []dto.Member{
 		{
 			UserID:           testing_uid1,
 			TeamID:           "teamSetMemberRole",
@@ -57,7 +56,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "accepted",
 		},
 	}
-	membersSetAdminRole := []store.Member{
+	membersSetAdminRole := []dto.Member{
 		{
 			UserID:           testing_uid1,
 			TeamID:           "teamSetAdminRole",
@@ -71,7 +70,7 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "accepted",
 		},
 	}
-	membersAlready := []store.Member{
+	membersAlready := []dto.Member{
 		{
 			UserID:           testing_uid1,
 			TeamID:           "teamAlreadyMember",
@@ -85,46 +84,43 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "accepted",
 		},
 	}
-	team123456 := store.Team{
+	team123456 := dto.Team{
 		Name:        "Led Zep",
 		Description: "Fake Team",
 		Members:     members,
 		ID:          "123456",
 	}
-	teamSetMemberRole := store.Team{
+	teamSetMemberRole := dto.Team{
 		Name:        "Led Zep",
 		Description: "Fake Team",
 		Members:     membersSetMemberRole,
 		ID:          "123456",
 	}
-	teamSetAdminRole := store.Team{
+	teamSetAdminRole := dto.Team{
 		Name:        "Led Zep",
 		Description: "Fake Team",
 		Members:     membersSetAdminRole,
 		ID:          "123456",
 	}
-	teamAlreadyMember := store.Team{
+	teamAlreadyMember := dto.Team{
 		Name:        "team already member",
 		Description: "Fake Team",
 		Members:     membersAlready,
 		ID:          "teamAlreadyMember",
-		RemotePatientMonitoring: &store.TeamMonitoring{
-			Enabled: &remoteMonitored,
-		},
 	}
-	teamDeleteMember := store.Team{
+	teamDeleteMember := dto.Team{
 		Name:        "team already member",
 		Description: "Fake Team",
 		Members:     membersAlready,
 		ID:          "teamDeleteMember",
 	}
-	teamAddPatientAsMember := store.Team{
+	teamAddPatientAsMember := dto.Team{
 		Name:        "team add a patient as a member",
 		Description: "Fake Team",
 		Members:     members,
 		ID:          "teamInvitePatient",
 	}
-	membersDismissInvite := []store.Member{
+	membersDismissInvite := []dto.Member{
 		{
 			UserID:           testing_uid3,
 			TeamID:           "teamDismissInvite",
@@ -137,18 +133,18 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "pending",
 		},
 	}
-	membersDismissInvite_uid1 := store.Member{
+	membersDismissInvite_uid1 := dto.Member{
 		UserID:           testing_uid1,
 		TeamID:           "teamDismissInvite",
 		InvitationStatus: "pending",
 	}
-	teamDismissInvite := store.Team{
+	teamDismissInvite := dto.Team{
 		Name:        "team dismiss invite",
 		Description: "Fake Team",
 		Members:     membersDismissInvite,
 		ID:          "teamDismissInvite",
 	}
-	membersDismissInviteAsAdmin := []store.Member{
+	membersDismissInviteAsAdmin := []dto.Member{
 		{
 			UserID:           testing_uid1,
 			TeamID:           "teamDismissInvite",
@@ -161,43 +157,43 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 			InvitationStatus: "pending",
 		},
 	}
-	teamDismissInviteAsAdmin := store.Team{
+	teamDismissInviteAsAdmin := dto.Team{
 		Name:        "team dismiss invite",
 		Description: "Fake Team",
 		Members:     membersDismissInviteAsAdmin,
 		ID:          "teamDismissInviteAsAdmin",
 	}
-	teamDismissInvitePatient := store.Team{
+	teamDismissInvitePatient := dto.Team{
 		Name:        "team dismiss invite",
 		Description: "Fake Team",
 		Members:     membersDismissInviteAsAdmin,
 		ID:          "teamDismissInvitePatient",
 	}
 
-	member_uid3 := store.Member{
+	member_uid3 := dto.Member{
 		TeamID:           "1",
 		InvitationStatus: "pending",
 	}
 
-	patient_uid4 := store.Patient{
+	patient_uid4 := dto.Patient{
 		UserID:           testing_uid4,
 		TeamID:           "123456",
 		InvitationStatus: "pending",
 	}
 
-	patient_dup := store.Patient{
+	patient_dup := dto.Patient{
 		UserID:           testing_uid4,
 		TeamID:           "teamAlreadyMember",
 		InvitationStatus: "pending",
 	}
 
-	member_dismissed := store.Member{
+	member_dismissed := dto.Member{
 		UserID:           testing_uid4,
 		TeamID:           "123456",
 		Role:             "member",
 		InvitationStatus: "pending",
 	}
-	patient_dismissed := store.Patient{
+	patient_dismissed := dto.Patient{
 		UserID:           testing_uid4,
 		TeamID:           "123456",
 		InvitationStatus: "pending",
@@ -214,9 +210,9 @@ func initTestingTeamRouter(returnNone bool) *mux.Router {
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamSetAdminRole", &teamSetAdminRole, nil)
 
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamAlreadyMember", &teamAlreadyMember, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamAlreadyMember", []store.Patient{patient_dup}, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamInvitePatient", []store.Patient{}, nil)
-	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"123456", []store.Patient{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamAlreadyMember", []dto.Patient{patient_dup}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"teamInvitePatient", []dto.Patient{}, nil)
+	mockPerms.SetMockNextCall("GetTeamPatients"+testing_token_uid1+"123456", []dto.Patient{}, nil)
 
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamInvitePatient", &teamAddPatientAsMember, nil)
 	mockPerms.SetMockNextCall(testing_token_uid1+"teamDeleteMember", &teamDeleteMember, nil)
@@ -897,13 +893,13 @@ func TestAcceptTeamInvite(t *testing.T) {
 		mockSeagull.On("GetPreferences", mock.Anything, testing_uid1+"@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
 		mockSeagull.On("GetPreferences", mock.Anything, testing_uid2+"@email.org", mock.Anything).Return(&schema.SeagullDocument{Preferences: &schema.Preferences{}}, nil)
 
-		teams1 := []store.Team{}
-		membersAccepted := store.Member{
+		teams1 := []dto.Team{}
+		membersAccepted := dto.Member{
 			UserID:           testing_uid1,
 			TeamID:           "123456",
 			InvitationStatus: "accepted",
 		}
-		patientsAccepted := store.Patient{
+		patientsAccepted := dto.Patient{
 			UserID:           testing_uid1,
 			TeamID:           "123456",
 			InvitationStatus: "accepted",
@@ -928,7 +924,7 @@ func TestAcceptTeamInvite(t *testing.T) {
 			nil,
 		)
 
-		//testing when there is nothing to return from the store
+		//testing when there is nothing to return from the dto
 		if inviteTest.returnNone {
 			hydrophone = InitApi(
 				FAKE_CONFIG,

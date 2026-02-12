@@ -9,13 +9,13 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mdblp/crew/store"
+	"github.com/mdblp/crew/client/dto"
 	"github.com/mdblp/go-common/v2/clients/status"
 
 	"github.com/mdblp/hydrophone/models"
 )
 
-func formatAddress(addr store.Address) string {
+func formatAddress(addr dto.Address) string {
 	if addr.Line2 != "" {
 		return fmt.Sprintf("%s %s, %s %s, %s", addr.Line1, addr.Line2, addr.Zip, addr.City, addr.Country)
 	} else {
@@ -25,7 +25,7 @@ func formatAddress(addr store.Address) string {
 
 // Checks do they have an existing invite or are they already a team member
 // Or are they an existing user and already in the group?
-func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token string, team store.Team, invite models.Type, res http.ResponseWriter) (bool, *models.UserData) {
+func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, invitorID, token string, team dto.Team, invite models.Type, res http.ResponseWriter) (bool, *models.UserData) {
 
 	confirmation := &models.Confirmation{
 		Email: inviteeEmail,
@@ -69,7 +69,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 		return false, invitedUsr
 	}
 	if invitedUsr != nil && invite == models.TypeMedicalTeamPatientInvite {
-		members, err := a.perms.GetTeamPatients(token, team.ID)
+		members, err := a.perms.GetTeamPatients(ctx, token, team.ID)
 		if err != nil {
 			statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_TEAM)}
 			a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
@@ -87,7 +87,7 @@ func (a *Api) checkForDuplicateTeamInvite(ctx context.Context, inviteeEmail, inv
 	return false, nil
 }
 
-func (a *Api) isTeamAdmin(userid string, team store.Team) bool {
+func (a *Api) isTeamAdmin(userid string, team dto.Team) bool {
 	for j := 0; j < len(team.Members); j++ {
 		if team.Members[j].UserID == userid {
 			if team.Members[j].Role == "admin" {
@@ -217,7 +217,7 @@ func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf 
 	// are we updating a team member or a patient
 	var err error
 	if conf.Role != "patient" {
-		member := store.Member{
+		member := dto.Member{
 			UserID:           conf.UserId,
 			TeamID:           conf.Team.ID,
 			InvitationStatus: "accepted",
@@ -225,7 +225,7 @@ func (a *Api) acceptTeamInvite(res http.ResponseWriter, req *http.Request, conf 
 		}
 		_, err = a.perms.AddTeamMember(a.sl.TokenProvide(), member)
 	} else {
-		patient := store.Patient{
+		patient := dto.Patient{
 			UserID:           conf.UserId,
 			TeamID:           conf.Team.ID,
 			InvitationStatus: "accepted",
@@ -306,7 +306,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 	dismiss.UserId = userID
 	dismiss.Team = &models.Team{ID: teamID}
 
-	if isAdmin, _, err := a.getTeamForUser(nil, tokenValue, teamID, token.UserId, res); isAdmin && err == nil {
+	if isAdmin, _, err := a.getTeamForUser(req.Context(), tokenValue, teamID, token.UserId, res); isAdmin && err == nil {
 		// as team admin you can act on behalf of members
 		// for any invitation for the given team
 		dismiss.UserId = ""
@@ -320,7 +320,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 
 		if conf.Status != models.StatusDeclined && conf.Status != models.StatusCanceled {
 
-			var member = store.Member{
+			var member = dto.Member{
 				UserID:           conf.UserId,
 				TeamID:           teamID,
 				InvitationStatus: "rejected",
@@ -329,7 +329,7 @@ func (a *Api) DismissTeamInvite(res http.ResponseWriter, req *http.Request, vars
 			var err error
 			switch conf.Type {
 			case models.TypeMedicalTeamPatientInvite:
-				patient := store.Patient{
+				patient := dto.Patient{
 					UserID:           conf.UserId,
 					TeamID:           teamID,
 					InvitationStatus: "rejected",
@@ -422,7 +422,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 		ib.Role = "member"
 	}
 
-	auth, team, _ := a.getTeamForUser(nil, tokenValue, ib.TeamID, token.UserId, res)
+	auth, team, _ := a.getTeamForUser(req.Context(), tokenValue, ib.TeamID, token.UserId, res)
 
 	// only for team management
 	if !auth && !managePatients {
@@ -437,7 +437,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 	} else {
 		// lets create the invite depending o type of invited member
 		var invite *models.Confirmation
-		var member = store.Member{
+		var member = dto.Member{
 			TeamID:           ib.TeamID,
 			Role:             ib.Role,
 			InvitationStatus: "pending",
@@ -508,7 +508,7 @@ func (a *Api) SendTeamInvite(res http.ResponseWriter, req *http.Request, vars ma
 
 }
 
-func (a *Api) invitePatient(invitedUsr *models.UserData, member store.Member, token string) *status.StatusError {
+func (a *Api) invitePatient(invitedUsr *models.UserData, member dto.Member, token string) *status.StatusError {
 	if invitedUsr == nil {
 		// we return an error as the invitedUser does not exist yet
 		return &status.StatusError{Status: status.NewStatus(http.StatusForbidden, STATUS_ERR_FINDING_USER)}
@@ -517,7 +517,7 @@ func (a *Api) invitePatient(invitedUsr *models.UserData, member store.Member, to
 	if !invitedUsr.HasRole("patient") {
 		return &status.StatusError{Status: status.NewStatus(http.StatusMethodNotAllowed, STATUS_MEMBER_NOT_AUTH)}
 	}
-	patient := store.Patient{
+	patient := dto.Patient{
 		UserID:           invitedUsr.UserID,
 		TeamID:           member.TeamID,
 		InvitationStatus: member.InvitationStatus,
@@ -531,7 +531,7 @@ func (a *Api) invitePatient(invitedUsr *models.UserData, member store.Member, to
 	}
 }
 
-func (a *Api) inviteHcp(invitedUsr *models.UserData, member store.Member, token string) *status.StatusError {
+func (a *Api) inviteHcp(invitedUsr *models.UserData, member dto.Member, token string) *status.StatusError {
 	if invitedUsr == nil {
 		return nil
 	}
@@ -610,7 +610,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		return
 	}
 
-	_, team, err := a.getTeamForUser(nil, tokenValue, ib.TeamID, invitorID, res)
+	_, team, err := a.getTeamForUser(req.Context(), tokenValue, ib.TeamID, invitorID, res)
 	if err != nil {
 		return
 	}
@@ -628,7 +628,7 @@ func (a *Api) UpdateTeamRole(res http.ResponseWriter, req *http.Request, vars ma
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 		return
 	}
-	var member = store.Member{
+	var member = dto.Member{
 		UserID: inviteeID,
 		TeamID: ib.TeamID,
 		Role:   ib.Role,
@@ -735,7 +735,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 		email = user.Username
 	}
 
-	_, team, err := a.getTeamForUser(nil, tokenValue, teamID, token.UserId, res)
+	_, team, err := a.getTeamForUser(req.Context(), tokenValue, teamID, token.UserId, res)
 	if err != nil {
 		return
 	}
@@ -807,7 +807,7 @@ func (a *Api) DeleteTeamMember(res http.ResponseWriter, req *http.Request, vars 
 
 // userId is member of a Team
 // Settings the all parameter to true will return all the members while it will only return the accepted members if the parameter is set false
-func (a *Api) isTeamMember(userID string, team store.Team, all bool) (bool, *store.Member) {
+func (a *Api) isTeamMember(userID string, team dto.Team, all bool) (bool, *dto.Member) {
 	for i := 0; i < len(team.Members); i++ {
 		if team.Members[i].UserID == userID && (team.Members[i].InvitationStatus == "accepted" || all) {
 			return true, &team.Members[i]
@@ -820,20 +820,16 @@ func (a *Api) isTeamMember(userID string, team store.Team, all bool) (bool, *sto
 // it returns the Team object corresponding to the team
 // if any error occurs during the search, it returns an error with the
 // related code
-func (a *Api) getTeamForUser(ctx context.Context, token, teamID, userID string, res http.ResponseWriter) (bool, store.Team, error) {
+func (a *Api) getTeamForUser(ctx context.Context, token, teamID, userID string, res http.ResponseWriter) (bool, dto.Team, error) {
 	var auth = false
-	var team *store.Team
+	var team *dto.Team
 	var err error
-	if ctx == nil {
-		team, err = a.perms.GetTeam(token, teamID)
-	} else {
-		team, err = a.perms.GetTeamWithContext(ctx, token, teamID)
-	}
+	team, err = a.perms.GetTeam(ctx, token, teamID)
 
 	if err != nil {
 		statusErr := &status.StatusError{Status: status.NewStatus(http.StatusBadRequest, STATUS_ERR_FINDING_TEAM)}
 		a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
-		return auth, store.Team{}, err
+		return auth, dto.Team{}, err
 	}
 	auth = a.isTeamAdmin(userID, *team)
 	return auth, *team, nil

@@ -75,7 +75,7 @@ func (a *Api) checkForDuplicateInvite(ctx context.Context, inviteeEmail, invitor
 	invitedUsr := a.findExistingUser(inviteeEmail, a.sl.TokenProvide())
 
 	if invitedUsr != nil && invitedUsr.UserID != "" {
-		if shares, err := a.perms.GetDirectShares(token); err != nil {
+		if shares, err := a.perms.GetDirectShares(ctx, token); err != nil {
 			log.Printf("error checking if user is in group [%v]", err)
 		} else if len(shares) > 0 {
 			for _, share := range shares {
@@ -579,7 +579,7 @@ func (a *Api) CancelAnyInvite(res http.ResponseWriter, req *http.Request, vars m
 		case models.TypeMedicalTeamPatientInvite:
 			err = a.perms.RemovePatient(tokenValue, conf.Team.ID, conf.UserId)
 		case models.TypeMedicalTeamInvite:
-			if requestorIsAdmin, _, err := a.getTeamForUser(nil, tokenValue, cancel.Team.ID, token.UserId, res); err != nil {
+			if requestorIsAdmin, _, err := a.getTeamForUser(req.Context(), tokenValue, cancel.Team.ID, token.UserId, res); err != nil {
 				statusErr := &status.StatusError{Status: status.NewStatus(http.StatusInternalServerError, STATUS_ERR_UPDATING_TEAM)}
 				a.sendModelAsResWithStatus(res, statusErr, statusErr.Code)
 				return
