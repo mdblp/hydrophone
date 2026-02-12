@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/mdblp/crew/store"
+	"github.com/mdblp/crew/client/dto"
 	"github.com/mdblp/go-common/v2/clients/auth"
 	schema "github.com/mdblp/seagull/client"
 	"github.com/mdblp/shoreline/token"
@@ -135,8 +135,8 @@ func TestInvitesLocales(t *testing.T) {
 		mockSeagull.On("GetProfile", mock.Anything, testing_uid1, mock.Anything).Return(&schema.SeagullDocument{Profile: &schema.Profile{}}, nil)
 		// mock user preference:
 		// mockSeagull.SetMockNextCollectionCall(testing_uid2+"@email.org"+"preferences", `{"DisplayLanguage": "de"}`, nil)
-		teams1 := []store.Team{}
-		membersAccepted := store.Member{
+		teams1 := []dto.Team{}
+		membersAccepted := dto.Member{
 			UserID:           testing_token_uid2,
 			TeamID:           "123456",
 			InvitationStatus: "accepted",
@@ -145,7 +145,7 @@ func TestInvitesLocales(t *testing.T) {
 		mockPerms.SetMockNextCall(testing_token_uid1, teams1, nil)
 		mockPerms.SetMockNextCall(testing_token_uid2, teams1, nil)
 		mockPerms.SetMockNextCall(testing_token_uid1+testing_uid2, &membersAccepted, nil)
-		mockPerms.SetMockNextCall(testing_token_uid1, []store.DataShare{}, nil)
+		mockPerms.SetMockNextCall(testing_token_uid1, []dto.DataShare{}, nil)
 		var body = &bytes.Buffer{}
 		if len(test.body) != 0 {
 			json.NewEncoder(body).Encode(test.body)
@@ -431,8 +431,8 @@ func TestCaregiverInvite(t *testing.T) {
 		mockShoreline.On("TokenProvide").Return(testing_token)
 		mockAuth = auth.NewMock()
 
-		teams1 := []store.Team{}
-		membersAccepted := store.Member{
+		teams1 := []dto.Team{}
+		membersAccepted := dto.Member{
 			UserID:           testing_uid1,
 			TeamID:           "123.456.789",
 			InvitationStatus: "accepted",
@@ -462,7 +462,7 @@ func TestCaregiverInvite(t *testing.T) {
 			mockUserRepo,
 		)
 
-		//testing when there is nothing to return from the store
+		//testing when there is nothing to return from the dto
 		if inviteTest.returnNone {
 			hydrophone = InitApi(
 				FAKE_CONFIG,

@@ -152,7 +152,7 @@ func main() {
 
 	logger.Print("Shoreline client started")
 
-	permsClient := crewClient.NewCrewApiClientFromEnv(httpClient)
+	permsClient, err := crewClient.NewClientFromEnv(httpClient)
 	seagull, err := seagullClient.NewClientFromEnv(httpClient)
 	if err != nil {
 		logger.Fatal(err)
