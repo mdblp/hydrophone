@@ -26,7 +26,7 @@ import (
 	"syscall"
 	"time"
 
-	tideV2Client "github.com/mdblp/tide-whisperer-v2/v3/client/tidewhisperer"
+	tideV2Client "github.com/mdblp/tide-whisperer-v2/client/v3/tidewhisperer"
 
 	log "github.com/sirupsen/logrus"
 
