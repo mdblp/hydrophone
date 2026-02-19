@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mdblp/tide-whisperer-v2/v3/client/tidewhisperer"
+	"github.com/mdblp/tide-whisperer-v2/client/v3/tidewhisperer"
 	tide "github.com/mdblp/tide-whisperer-v2/v3/model"
 
 	"github.com/gorilla/mux"

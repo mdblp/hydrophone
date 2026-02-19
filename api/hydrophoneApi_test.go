@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mdblp/tide-whisperer-v2/v3/client/tidewhisperer"
+	"github.com/mdblp/tide-whisperer-v2/client/v3/tidewhisperer"
 
 	"github.com/gorilla/mux"
 
