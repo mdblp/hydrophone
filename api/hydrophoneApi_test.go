@@ -14,7 +14,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/go-common/v2/clients/auth"
 	"github.com/mdblp/go-common/v2/clients/version"
 	"github.com/mdblp/shoreline/clients/shoreline"
@@ -67,7 +66,7 @@ var (
 	rtr           = mux.NewRouter()
 	mockNotifier  = clients.NewMockNotifier()
 	mockShoreline = shoreline.NewMock(testing_token)
-	mockPerms     = crewClient.NewMock()
+	mockPerms     = mocks.NewCrewMock()
 	mockAuth      = auth.NewMock()
 
 	mockSeagull = &mocks.SeagullClientAPI{}
