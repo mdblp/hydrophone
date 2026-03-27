@@ -7,10 +7,8 @@ TARGETPLATFORM=$1
 if ["$TARGETPLATFORM"="linux/arm64"]; then
     export GOOS=darwin
     export GOARCH=arm64
-    export CGO_ENABLED=0
-else
-    export CGO_ENABLED=1
 fi
+export CGO_ENABLED=0
 
 # generate version number
 if [ -n "${APP_VERSION:-}" ]; then

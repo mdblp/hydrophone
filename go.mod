@@ -1,8 +1,6 @@
 module github.com/mdblp/hydrophone
 
-go 1.24.0
-
-toolchain go1.24.6
+go 1.26
 
 require (
 	github.com/aws/aws-sdk-go v1.55.8

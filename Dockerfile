@@ -22,17 +22,13 @@ RUN  ./build.sh $TARGETPLATFORM
 CMD ["./dist/hydrophone"]
 
 # Production
-FROM --platform=$BUILDPLATFORM alpine:latest AS production
-WORKDIR /home/tidepool
-RUN apk --no-cache update && \
-    apk --no-cache upgrade && \
-    apk add --no-cache ca-certificates && \
-    adduser -D tidepool
-USER tidepool
+FROM gcr.io/distroless/static:nonroot AS production
+WORKDIR /home/nonroot
+USER nonroot
 ENV GO111MODULE=on
-COPY --from=development --chown=tidepool /go/src/github.com/tidepool-org/hydrophone/dist/hydrophone .
-COPY --chown=tidepool templates/html ./templates/html/
-COPY --chown=tidepool templates/locales ./templates/locales/
-COPY --chown=tidepool templates/meta ./templates/meta/
+COPY --from=development --chown=nonroot /go/src/github.com/tidepool-org/hydrophone/dist/hydrophone .
+COPY --chown=nonroot templates/html ./templates/html/
+COPY --chown=nonroot templates/locales ./templates/locales/
+COPY --chown=nonroot templates/meta ./templates/meta/
 
 CMD ["./hydrophone"]
