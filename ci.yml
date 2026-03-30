@@ -1,6 +1,5 @@
 module: hydrophone
 type: golang
-goVersion: "latest"
 runTests: false
 testCommand: go test -race -v
 docker: true
