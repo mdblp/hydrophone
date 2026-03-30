@@ -13,8 +13,8 @@ require (
 	github.com/mdblp/go-routers v1.2.0
 	github.com/mdblp/seagull/client v1.16.0
 	github.com/mdblp/shoreline v1.11.0
-	github.com/mdblp/tide-whisperer-v2/client/v3 v3.37.0
-	github.com/mdblp/tide-whisperer-v2/v3 v3.37.0
+	github.com/mdblp/tide-whisperer-v2/client/v3 v3.33.0
+	github.com/mdblp/tide-whisperer-v2/v3 v3.33.0
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/sirupsen/logrus v1.9.4

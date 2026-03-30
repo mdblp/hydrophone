@@ -14,3 +14,5 @@ coverage.html
 coverage.xml
 
 .idea/
+coverage.out.tmp
+testresults.txt
