@@ -5,22 +5,22 @@ go 1.26
 require (
 	github.com/aws/aws-sdk-go v1.55.8
 	github.com/gorilla/mux v1.8.1
-	github.com/k3a/html2text v1.3.0
+	github.com/k3a/html2text v1.4.0
 	github.com/mdblp/crew/client v1.0.0
 	github.com/mdblp/go-common v1.9.0
 	github.com/mdblp/go-common/v2 v2.2.0
 	github.com/mdblp/go-db v1.3.0
 	github.com/mdblp/go-routers v1.2.0
-	github.com/mdblp/seagull/client v1.15.1
+	github.com/mdblp/seagull/client v1.16.0
 	github.com/mdblp/shoreline v1.11.0
-	github.com/mdblp/tide-whisperer-v2/client/v3 v3.33.0
-	github.com/mdblp/tide-whisperer-v2/v3 v3.33.0
+	github.com/mdblp/tide-whisperer-v2/client/v3 v3.37.0
+	github.com/mdblp/tide-whisperer-v2/v3 v3.37.0
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
 	go.mongodb.org/mongo-driver v1.17.9
-	golang.org/x/text v0.34.0
+	golang.org/x/text v0.35.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -36,8 +36,8 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/klauspost/compress v1.18.4 // indirect
-	github.com/montanaflynn/stats v0.7.1 // indirect
+	github.com/klauspost/compress v1.18.5 // indirect
+	github.com/montanaflynn/stats v0.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
 	github.com/t-tomalak/logrus-easy-formatter v0.0.0-20190827215021-c074f06c5816 // indirect
@@ -46,13 +46,13 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.40.0 // indirect
-	go.opentelemetry.io/otel/metric v1.40.0 // indirect
-	go.opentelemetry.io/otel/trace v1.40.0 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
-	golang.org/x/net v0.50.0 // indirect
-	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	go.opentelemetry.io/otel v1.42.0 // indirect
+	go.opentelemetry.io/otel/metric v1.42.0 // indirect
+	go.opentelemetry.io/otel/trace v1.42.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
+	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
