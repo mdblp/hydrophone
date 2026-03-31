@@ -22,7 +22,7 @@ pipeline {
                         ).trim().toUpperCase()
                     }
                     env.APP_VERSION = env.version
-                    env.buildImage = "docker.ci.diabeloop.eu/go-build:1.24"
+                    env.buildImage = "docker.ci.diabeloop.eu/go-build:latest"
                     ciConfig = utils.getConfig()
                 }
             }
@@ -76,17 +76,6 @@ pipeline {
                 }
             }
         }
-        stage('Package') {
-            steps {
-                script {
-                    withCredentials ([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                        pack()
-                        buildCommand = utils.getDockerBuildCommand(ciConfig, 'hydromail:${GIT_COMMIT}', false)
-                        sh "docker buildx build -f Dockerfile.hydromail --load --build-arg APP_VERSION=$version --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t hydromail:${GIT_COMMIT} ."
-                    }
-                }
-            }
-        }
         stage('Documentation') {
             steps {
                 withCredentials ([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
@@ -94,11 +83,16 @@ pipeline {
                 }
             }
         }
-        stage('Publish') {
+        stage('Package and publish') {
             when { branch "dblp" }
             steps {
-                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    publish()
+                script{
+                    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                        pack()
+                        buildCommand = utils.getDockerBuildCommand(ciConfig, 'hydromail:${GIT_COMMIT}', false)
+                        sh "docker buildx build -f Dockerfile.hydromail --load --build-arg APP_VERSION=$version --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t hydromail:${GIT_COMMIT} ."
+                        publish()
+                    }
                 }
             }
         }

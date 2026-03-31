@@ -3,6 +3,13 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords, initial signup, and invitations.
 
+## 1.22.0 - 2026-03-27
+### Changed
+- Update Go version to 1.26
+- Disable CGO in build process
+- Replace Alpine base image with distroless for production
+- Remove gcc and musl-dev dependencies
+
 ## 1.21.0 - 2026-02-19
 ### Changed
 - Use the new version of crew client (new version and new function signatures)

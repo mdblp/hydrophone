@@ -1,5 +1,5 @@
 # Development
-FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS development
+FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS development
 ARG APP_VERSION
 ENV APP_VERSION=${APP_VERSION}
 ENV GO111MODULE=on
@@ -11,7 +11,7 @@ COPY . .
 
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
-    apk add --no-cache gcc musl-dev git rsync
+    apk add --no-cache git rsync
 
 RUN git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
@@ -22,17 +22,13 @@ RUN  ./build.sh $TARGETPLATFORM
 CMD ["./dist/hydrophone"]
 
 # Production
-FROM --platform=$BUILDPLATFORM alpine:latest AS production
-WORKDIR /home/tidepool
-RUN apk --no-cache update && \
-    apk --no-cache upgrade && \
-    apk add --no-cache ca-certificates && \
-    adduser -D tidepool
-USER tidepool
+FROM gcr.io/distroless/static:nonroot AS production
+WORKDIR /home/mdblp
+USER nonroot
 ENV GO111MODULE=on
-COPY --from=development --chown=tidepool /go/src/github.com/tidepool-org/hydrophone/dist/hydrophone .
-COPY --chown=tidepool templates/html ./templates/html/
-COPY --chown=tidepool templates/locales ./templates/locales/
-COPY --chown=tidepool templates/meta ./templates/meta/
+COPY --from=development --chown=nonroot /go/src/github.com/tidepool-org/hydrophone/dist/hydrophone .
+COPY --chown=nonroot templates/html ./templates/html/
+COPY --chown=nonroot templates/locales ./templates/locales/
+COPY --chown=nonroot templates/meta ./templates/meta/
 
 CMD ["./hydrophone"]
