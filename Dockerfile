@@ -23,7 +23,7 @@ CMD ["./dist/hydrophone"]
 
 # Production
 FROM gcr.io/distroless/static:nonroot AS production
-WORKDIR /home/nonroot
+WORKDIR /home/mdblp
 USER nonroot
 ENV GO111MODULE=on
 COPY --from=development --chown=nonroot /go/src/github.com/tidepool-org/hydrophone/dist/hydrophone .
