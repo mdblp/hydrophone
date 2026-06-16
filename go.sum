@@ -69,10 +69,14 @@ github.com/mdblp/tide-whisperer-v2/client/v3 v3.33.0 h1:su9h6LTxXoGajtoFGHhM9M3E
 github.com/mdblp/tide-whisperer-v2/client/v3 v3.33.0/go.mod h1:dStDpP+cEhtvT9vhIO+WsUW0yx6uH8ya5tnahZ4nlvI=
 github.com/mdblp/tide-whisperer-v2/client/v3 v3.40.0 h1:ip1gV6ull9i0LRZD6pmTNER15hmAhYLi/jN/2jHYuNQ=
 github.com/mdblp/tide-whisperer-v2/client/v3 v3.40.0/go.mod h1:qLCgjN4PwI+3QCIrVIXNIwt3/Qx2ecf1bbk7mfpXIU4=
+github.com/mdblp/tide-whisperer-v2/client/v3 v3.40.1 h1:BTiRtPBByra6zlqIt4HzE8CsxgiQdXAJpNpnDEzjO6Q=
+github.com/mdblp/tide-whisperer-v2/client/v3 v3.40.1/go.mod h1:IkdWdD09jX2GuF/9W7CbCKRKrTgpDbQLgd+fvxpAz64=
 github.com/mdblp/tide-whisperer-v2/v3 v3.33.0 h1:Y6HxzdBcoFX2YqLw6m7KzCBqvrGVEzV4G5RrJxHO8TU=
 github.com/mdblp/tide-whisperer-v2/v3 v3.33.0/go.mod h1:bLqRni+LJwtZeDIhMV+NP1G56GdUgY/E/yOHQVJ+FeM=
 github.com/mdblp/tide-whisperer-v2/v3 v3.40.0 h1:FlnexfMnr18w+AEW2t56cP+RUqOW1VImFX9Fj54CgQM=
 github.com/mdblp/tide-whisperer-v2/v3 v3.40.0/go.mod h1:VcWQojdkN9noeiB4Av15cuykcG9axN94zxsnSOTV9Gg=
+github.com/mdblp/tide-whisperer-v2/v3 v3.40.1 h1:l8HgX82QtEiztcStfkf/CGPL/+TUpvGBUSH/pIN+WwY=
+github.com/mdblp/tide-whisperer-v2/v3 v3.40.1/go.mod h1:tVJgt5Y7XN5nmRNxdsH0QHq4Qn/XsWf+1hgCN1TCPyw=
 github.com/microcosm-cc/bluemonday v1.0.27 h1:MpEUotklkwCSLeH+Qdx1VJgNqLlpY2KXwXFM08ygZfk=
 github.com/microcosm-cc/bluemonday v1.0.27/go.mod h1:jFi9vgW+H7c3V0lb6nR74Ib/DIB5OBs92Dimizgw2cA=
 github.com/montanaflynn/stats v0.9.0 h1:tsBJ0RXwph9BmAuFoCmqGv6e8xa0MENQ8m0ptKq29mQ=
