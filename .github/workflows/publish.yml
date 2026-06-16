@@ -1,0 +1,12 @@
+name: Publish
+
+on:
+  push:
+    branches: [ dblp ]
+
+jobs:
+  sbom:
+    uses: mdblp/.github/.github/workflows/sbom.yml@main
+    with:
+      app-name: hydrophone
+    secrets: inherit
