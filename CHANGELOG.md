@@ -5,7 +5,7 @@ This API sends notifications to users for things like forgotten passwords, initi
 
 ## 1.23.2 - 2026-06-18
 ### fix
-- YLP-39880 Bump go-router to fix token validation
+- YLP-3988 Bump go-router to fix token validation
 
 ## 1.23.1 - 2026-06-16
 ### fix
