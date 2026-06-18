@@ -10,7 +10,7 @@ require (
 	github.com/mdblp/go-common v1.9.0
 	github.com/mdblp/go-common/v2 v2.2.0
 	github.com/mdblp/go-db v1.3.0
-	github.com/mdblp/go-routers v1.3.0
+	github.com/mdblp/go-routers v1.3.1
 	github.com/mdblp/seagull/client v1.18.0
 	github.com/mdblp/shoreline v1.11.0
 	github.com/mdblp/tide-whisperer-v2/client/v3 v3.40.1
