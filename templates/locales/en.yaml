@@ -15,7 +15,7 @@ NoAccountSignUp: "Create account"
 #Password Reset
 #(email for those that requested password reset)
 PasswordResetSubject: "Password reset"
-PasswordResetHeadline: "You requested to reset your Diabeloop password."
+PasswordResetHeadline: "You requested to reset your YourLoops password."
 PasswordResetBody: "Click on the link below to choose a new one."
 PasswordResetReset: "Reset my password"
 #Patient Password Reset
