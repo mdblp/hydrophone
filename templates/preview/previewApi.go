@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/mdblp/go-common/v2/clients/status"
+
 	"github.com/mdblp/hydrophone/localize"
 	"github.com/mdblp/hydrophone/models"
 	"github.com/mdblp/hydrophone/templates"
@@ -116,16 +117,6 @@ func (a *Api) buildPreview(res http.ResponseWriter, req *http.Request, vars map[
 	var templateName models.TemplateName
 	lang := "en"
 	switch vars["template"] {
-	case "careteam_invitation":
-		templateName = models.TemplateNameCareteamInvite
-	case "medicalteam_patient_invitation":
-		templateName = models.TemplateNameMedicalteamPatientInvite
-	case "medicalteam_invitation":
-		templateName = models.TemplateNameMedicalteamInvite
-	case "medicalteam_do_admin":
-		templateName = models.TemplateNameMedicalteamDoAdmin
-	case "medicalteam_remove":
-		templateName = models.TemplateNameMedicalteamRemove
 	case "no_account":
 		templateName = models.TemplateNameNoAccount
 	case "password_reset":
@@ -140,8 +131,6 @@ func (a *Api) buildPreview(res http.ResponseWriter, req *http.Request, vars map[
 		templateName = models.TemplateNamePatientPinReset
 	case "signup_confirmation":
 		templateName = models.TemplateNameSignup
-	case "app_prescription":
-		templateName = models.TemplateNameAppPrescription
 	default:
 		log.Printf("Unknown template %s", vars["template"])
 		s := status.NewApiStatus(400, "Incorrect template name")

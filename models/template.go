@@ -18,21 +18,15 @@ func (t TemplateName) String() string {
 }
 
 const (
-	TemplateNameAppPrescription          TemplateName = "app_prescription"
-	TemplateNameCareteamInvite           TemplateName = "careteam_invitation"
-	TemplateNameMedicalteamInvite        TemplateName = "medicalteam_invitation"
-	TemplateNameMedicalteamPatientInvite TemplateName = "medicalteam_patient_invitation"
-	TemplateNameMedicalteamDoAdmin       TemplateName = "medicalteam_do_admin"
-	TemplateNameMedicalteamRemove        TemplateName = "medicalteam_remove"
-	TemplateNameNoAccount                TemplateName = "no_account"
-	TemplateNamePasswordReset            TemplateName = "password_reset"
-	TemplateNamePatientPasswordReset     TemplateName = "patient_password_reset"
-	TemplateNamePatientPasswordInfo      TemplateName = "patient_password_info"
-	TemplateNamePatientInformation       TemplateName = "patient_information"
-	TemplateNamePatientPinReset          TemplateName = "patient_pin_reset"
-	TemplateNameSignup                   TemplateName = "signup_confirmation"
-	TemplateNameTest                     TemplateName = "test_template"
-	TemplateNameUndefined                TemplateName = ""
+	TemplateNameNoAccount            TemplateName = "no_account"
+	TemplateNamePasswordReset        TemplateName = "password_reset"
+	TemplateNamePatientPasswordReset TemplateName = "patient_password_reset"
+	TemplateNamePatientPasswordInfo  TemplateName = "patient_password_info"
+	TemplateNamePatientInformation   TemplateName = "patient_information"
+	TemplateNamePatientPinReset      TemplateName = "patient_pin_reset"
+	TemplateNameSignup               TemplateName = "signup_confirmation"
+	TemplateNameTest                 TemplateName = "test_template"
+	TemplateNameUndefined            TemplateName = ""
 )
 
 type Template interface {

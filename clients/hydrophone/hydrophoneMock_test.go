@@ -3,8 +3,9 @@ package hydrophone
 import (
 	"errors"
 	"fmt"
-	"github.com/mdblp/hydrophone/models"
 	"testing"
+
+	"github.com/mdblp/hydrophone/models"
 )
 
 func TestMock(t *testing.T) {
@@ -44,15 +45,6 @@ func TestMock(t *testing.T) {
 			CreatorId: "123",
 			Status:    models.StatusPending,
 		},
-		{
-			Key:       "confirm-key-2",
-			Type:      models.TypeMedicalTeamInvite,
-			Role:      "member",
-			Email:     "test2@test2.fr",
-			CreatorId: "123",
-			UserId:    "1000",
-			Status:    models.StatusPending,
-		},
 	}
 	invites, err = client.GetPendingInvitations(testUserID, testToken)
 	if err != nil {
@@ -61,7 +53,7 @@ func TestMock(t *testing.T) {
 	if invites == nil {
 		t.Errorf("Failed when mocked with an results, GetPendingInvitations should return results.\nExpected %v got nil\n", invites)
 	}
-	if len(invites) != len(client.MockedConfirms) || invites[0].Key != client.MockedConfirms[0].Key || invites[1].Key != client.MockedConfirms[1].Key {
+	if len(invites) != len(client.MockedConfirms) || invites[0].Key != client.MockedConfirms[0].Key {
 		t.Errorf("Failed when mocked with an results, GetPendingInvitations should return mocked results.\nExpected %v got %v\n", client.MockedConfirms, invites)
 	}
 }
