@@ -34,7 +34,6 @@ type (
 	// SeagullClientAPI API seagull client interface
 	SeagullClientAPI interface {
 		GetProfile(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
-
 		GetPreferences(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
 
 		//GetInfos Retrieve all account information for a userId
@@ -170,13 +169,6 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// POST /confirm/send/invite/:userid
 	send := rtr.PathPrefix("/send").Subrouter()
 	send.Handle("/forgot/{useremail}", varsHandler(a.passwordReset)).Methods("POST")
-	send.Handle("/invite/{userid}", varsHandler(a.SendInvite)).Methods("POST")
-	// POST /confirm/send/team/invite
-	send.Handle("/team/invite", varsHandler(a.SendTeamInvite)).Methods("POST")
-	// POST /confirm/send/team/role/:userid - add or remove admin role to userid
-	send.Handle("/team/role/{userid}", varsHandler(a.UpdateTeamRole)).Methods("PUT")
-	// DELETE /confirm/send/team/leave/:teamid/:userid - delete member
-	send.Handle("/team/leave/{teamid}/{userid}", varsHandler(a.DeleteTeamMember)).Methods("DELETE")
 
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
@@ -186,36 +178,7 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 	// PUT /confirm/accept/invite/:userid/:invited_by
 	accept := rtr.PathPrefix("/accept").Subrouter()
 	accept.Handle("/forgot", varsHandler(a.acceptPassword)).Methods("PUT")
-	accept.Handle("/invite/{userid}/{invitedby}", varsHandler(a.AcceptInvite)).Methods("PUT")
-	// PUT /confirm/accept/team/invite
-	accept.Handle("/team/invite", varsHandler(a.AcceptTeamNotifs)).Methods("PUT")
 
-	// GET /confirm/invite/:userid
-	rtr.Handle("/invite/{userid}", varsHandler(a.GetSentInvitations)).Methods("GET")
-
-	// GET /confirm/invitations/:userid
-	rtr.Handle("/invitations/{userid}", varsHandler(a.GetReceivedInvitations)).Methods("GET")
-
-	// GET /confirm/teams/:teamId/patients/:patientId/invite
-	rtr.Handle("/teams/{teamId}/patients/{patientId}/invite", varsHandler(a.GetPatientTeamPendingInvite)).Methods("GET")
-
-	// PUT /confirm/dismiss/invite/:userid/:invited_by
-	dismiss := rtr.PathPrefix("/dismiss").Subrouter()
-	dismiss.Handle("/invite/{userid}/{invitedby}",
-		varsHandler(a.DismissInvite)).Methods("PUT")
-	// PUT /confirm/dismiss/team/invite/{teamid}
-	dismiss.Handle("/team/invite/{teamid}", varsHandler(a.DismissTeamInvite)).Methods("PUT")
-
-	rtr.Handle("/cancel/invite", varsHandler(a.CancelAnyInvite)).Methods("POST")
-	if a.Config.EnableTestRoutes {
-		rtr.Handle("/cancel/all/{email}", varsHandler(a.CancelAllInvites)).Methods("POST")
-	}
-
-	// PUT /confirm/:userid/invited/:invited_address
-	rtr.Handle("/{userid}/invited/{invited_address}", varsHandler(a.CancelInvite)).Methods("PUT")
-
-	// POST /confirm/notifications/:topic_label
-	rtr.Handle("/notifications/{topic}", varsHandler(a.CreateNotification)).Methods("POST")
 	rtr.Use(muxMiddleware.NativeTraceSessionMiddleware)
 }
 
@@ -350,16 +313,6 @@ func (a *Api) createAndSendNotification(req *http.Request, conf *models.Confirma
 			templateName = models.TemplateNamePatientPasswordReset
 		case models.TypePatientPasswordInfo:
 			templateName = models.TemplateNamePatientPasswordInfo
-		case models.TypeCareteamInvite:
-			templateName = models.TemplateNameCareteamInvite
-		case models.TypeMedicalTeamInvite:
-			templateName = models.TemplateNameMedicalteamInvite
-		case models.TypeMedicalTeamPatientInvite:
-			templateName = models.TemplateNameMedicalteamPatientInvite
-		case models.TypeMedicalTeamDoAdmin:
-			templateName = models.TemplateNameMedicalteamDoAdmin
-		case models.TypeMedicalTeamRemove:
-			templateName = models.TemplateNameMedicalteamRemove
 		case models.TypeSignUp:
 			templateName = models.TemplateNameSignup
 		case models.TypeNoAccount:
