@@ -3,6 +3,10 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords, initial signup, and invitations.
 
+## 1.23.4 - 2026-10-15
+### fix
+- YLP-0000 Update Go to 1.27.2 and golang.org/x/net to 0.60.0
+
 ## 1.23.3 - 2026-10-05
 ### fix
 - YLP-0000 Fix CVEs: Go 1.26.8, golang.org/x/crypto 0.56.0, golang.org/x/text 0.41.0
