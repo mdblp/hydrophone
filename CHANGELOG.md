@@ -6,7 +6,6 @@ This API sends notifications to users for things like forgotten passwords, initi
 ## 1.23.5 - 2026-10-23
 ### Changed
 - YLP-4163 Migrate mongo client v1 to v2 (mongo-driver v2.9.2, go-db v3)
-- YLP-4163 BREAKING: store env vars are renamed from `TIDEPOOL_STORE_*` to `BLP_STORE_*` (go-db v3), update the deployment configuration
 
 ## 1.23.4 - 2026-10-15
 ### fix
