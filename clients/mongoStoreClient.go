@@ -9,12 +9,11 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	goComMgo "github.com/mdblp/go-db/mongo"
+	goComMgo "github.com/mdblp/go-db/v3/mongo"
 	"github.com/mdblp/hydrophone/models"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -74,7 +73,7 @@ func mgoConfirmationsCollection(c *Client) *mongo.Collection {
 
 // UpsertConfirmation creates or updates a confirmation
 func (c *Client) UpsertConfirmation(ctx context.Context, confirmation *models.Confirmation) error {
-	options := options.Update().SetUpsert(true)
+	options := options.UpdateOne().SetUpsert(true)
 	update := bson.D{{"$set", confirmation}}
 	_, err := mgoConfirmationsCollection(c).UpdateOne(ctx, bson.M{"_id": confirmation.Key}, update, options)
 	return err
@@ -86,7 +85,7 @@ func (c *Client) FindConfirmation(ctx context.Context, confirmation *models.Conf
 	var query bson.M = bson.M{}
 
 	if confirmation.Email != "" {
-		regexFilter := primitive.Regex{Pattern: fmt.Sprintf("^%s$", regexp.QuoteMeta(confirmation.Email)), Options: "i"}
+		regexFilter := bson.Regex{Pattern: fmt.Sprintf("^%s$", regexp.QuoteMeta(confirmation.Email)), Options: "i"}
 		query["email"] = bson.M{"$regex": regexFilter}
 	}
 	if confirmation.Key != "" {
@@ -111,7 +110,7 @@ func (c *Client) FindConfirmation(ctx context.Context, confirmation *models.Conf
 		query["teamId"] = confirmation.Team.ID
 	}
 	opts := options.FindOne()
-	opts.SetSort(bson.D{primitive.E{Key: "created", Value: -1}})
+	opts.SetSort(bson.D{bson.E{Key: "created", Value: -1}})
 	if err = mgoConfirmationsCollection(c).FindOne(ctx, query, opts).Decode(&result); err != nil && err != mongo.ErrNoDocuments {
 		log.Printf("FindConfirmation: something bad happened [%v]", err)
 		return result, err
@@ -126,7 +125,7 @@ func (c *Client) FindConfirmations(ctx context.Context, confirmation *models.Con
 	var query bson.M = bson.M{}
 
 	if confirmation.Email != "" {
-		regexFilter := primitive.Regex{Pattern: fmt.Sprintf("^%s$", regexp.QuoteMeta(confirmation.Email)), Options: "i"}
+		regexFilter := bson.Regex{Pattern: fmt.Sprintf("^%s$", regexp.QuoteMeta(confirmation.Email)), Options: "i"}
 		query["email"] = bson.M{"$regex": regexFilter}
 	}
 	if confirmation.Key != "" {
@@ -156,7 +155,7 @@ func (c *Client) FindConfirmations(ctx context.Context, confirmation *models.Con
 	}
 
 	opts := options.Find()
-	opts.SetSort(bson.D{primitive.E{Key: "created", Value: -1}})
+	opts.SetSort(bson.D{bson.E{Key: "created", Value: -1}})
 	cursor, err := mgoConfirmationsCollection(c).Find(ctx, query, opts)
 	defer cursor.Close(ctx)
 	if err != nil {
