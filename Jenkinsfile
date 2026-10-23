@@ -5,6 +5,9 @@ pipeline {
     agent {
         label 'blp'
     }
+    options {
+        timeout(time: 60, unit: 'MINUTES')
+    }
     stages {
         stage('Initialization') {
             steps {
@@ -31,8 +34,10 @@ pipeline {
             agent {
                 docker {
                     image env.buildImage
-                    label 'blp'
                     args '-v /var/jenkins/go-cache:/go-cache'
+                    // Runs on the pipeline's executor: a second blp executor
+                    // deadlocks once every executor is held by a waiting build.
+                    reuseNode true
                 }
             }
             environment {
