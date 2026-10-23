@@ -22,14 +22,14 @@
       <env name="SHORELINE_TOKEN_REFRESH_INTERVAL" value="1h" />
       <env name="TIDEPOOL_HYDROPHONE_ENV" value="{ \&quot;portal\&quot;: { \&quot;serviceSpec\&quot;: { \&quot;type\&quot;: \&quot;static\&quot;, \&quot;hosts\&quot;: [\&quot;http://api-private:3000\&quot;] } }, \&quot;hakken\&quot;: { \&quot;host\&quot;: \&quot;fake-hakken\&quot;, \&quot;skipHakken\&quot;:true } }" />
       <env name="TIDEPOOL_HYDROPHONE_SERVICE" value="{ &quot;service&quot;: { &quot;service&quot;: &quot;hydrophone&quot;, &quot;protocol&quot;: &quot;http&quot;, &quot;host&quot;: &quot;localhost:9157&quot;, &quot;keyFile&quot;: &quot;config/key.pem&quot;, &quot;certFile&quot;: &quot;config/cert.pem&quot; }, &quot;hydrophone&quot; : { &quot;webUrl&quot;: &quot;http://localhost:3000&quot;, &quot;supportUrl&quot;: &quot;mailto:&lt;&lt;email_to_support&gt;&gt;&quot;, &quot;assetUrl&quot;: &quot;&lt;&lt;url_to_s3_for_images&gt;&gt;&quot;, &quot;i18nTemplatesPath&quot;: &quot;./templates&quot;, &quot;allowPatientResetPassword&quot;: false, &quot;patientPasswordResetUrl&quot;: &quot;https://xxxx&quot; }, &quot;sesEmail&quot;: { &quot;fromAddress&quot;: &quot;test@diabeloop.fr&quot;,&quot;serverEndpoint&quot;: &quot;http://api-private:3000/mockserver&quot;, &quot;configurationSet&quot;: &quot;&quot;,&quot;defaultTags&quot;: {&quot;environment&quot;: &quot;local&quot;, &quot;service&quot;: &quot;hydrophone&quot;}} }" />
-      <env name="TIDEPOOL_STORE_ADDRESSES" value="localhost:27017" />
-      <env name="TIDEPOOL_STORE_DATABASE" value="confirm" />
-      <env name="TIDEPOOL_STORE_DEFAULT_TIMEOUT" value="2" />
-      <env name="TIDEPOOL_STORE_MAX_CONNECTION_ATTEMPTS" value="0" />
-      <env name="TIDEPOOL_STORE_OPT_PARAMS" value="authSource=admin" />
-      <env name="TIDEPOOL_STORE_PASSWORD" value="password" />
-      <env name="TIDEPOOL_STORE_USERNAME" value="personal" />
-      <env name="TIDEPOOL_STORE_WAIT_CONNECTION_INTERVAL" value="5" />
+      <env name="BLP_STORE_ADDRESSES" value="localhost:27017" />
+      <env name="BLP_STORE_DATABASE" value="confirm" />
+      <env name="BLP_STORE_DEFAULT_TIMEOUT" value="2" />
+      <env name="BLP_STORE_MAX_CONNECTION_ATTEMPTS" value="0" />
+      <env name="BLP_STORE_OPT_PARAMS" value="authSource=admin" />
+      <env name="BLP_STORE_PASSWORD" value="password" />
+      <env name="BLP_STORE_USERNAME" value="personal" />
+      <env name="BLP_STORE_WAIT_CONNECTION_INTERVAL" value="5" />
       <env name="TIDEWHISPERERV2_HOST" value="http://api-private:3000/data" />
     </envs>
     <kind value="PACKAGE" />

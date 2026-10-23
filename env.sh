@@ -17,11 +17,11 @@ export PORTAL_HOST="http://localhost:9507"
 # export "AWS_ACCESS_KEY_ID" = "${AWS_ACCESS_KEY_ID}"
 # export "AWS_SECRET_ACCESS_KEY" = "${AWS_SECRET_ACCESS_KEY}"
 
-export TIDEPOOL_STORE_ADDRESSES="localhost:27018"
-export TIDEPOOL_STORE_DATABASE="confirm"
-# export TIDEPOOL_STORE_USERNAME="personal"
-# export TIDEPOOL_STORE_PASSWORD="password"
-# export TIDEPOOL_STORE_OPT_PARAMS="authSource=admin&ssl=false"
+export BLP_STORE_ADDRESSES="localhost:27018"
+export BLP_STORE_DATABASE="confirm"
+# export BLP_STORE_USERNAME="personal"
+# export BLP_STORE_PASSWORD="password"
+# export BLP_STORE_OPT_PARAMS="authSource=admin&ssl=false"
 
 export TIDEPOOL_HYDROPHONE_SERVICE='{
     "hydrophone" : {

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	goComMgo "github.com/mdblp/go-db/mongo"
+	goComMgo "github.com/mdblp/go-db/v3/mongo"
 	"github.com/mdblp/hydrophone/models"
 	"github.com/sirupsen/logrus/hooks/test"
 )
@@ -20,7 +20,7 @@ var testingConfig = &goComMgo.Config{
 }
 
 func TestMongoStoreConfirmationOperations(t *testing.T) {
-	if _, exist := os.LookupEnv("TIDEPOOL_STORE_ADDRESSES"); exist {
+	if _, exist := os.LookupEnv("BLP_STORE_ADDRESSES"); exist {
 		// if mongo connexion information is provided via env var
 		testingConfig.FromEnv()
 	}
@@ -166,7 +166,7 @@ func TestMongoStoreConfirmationOperations(t *testing.T) {
 }
 
 func TestMongoStoreCountConfirmations(t *testing.T) {
-	if _, exist := os.LookupEnv("TIDEPOOL_STORE_ADDRESSES"); exist {
+	if _, exist := os.LookupEnv("BLP_STORE_ADDRESSES"); exist {
 		// if mongo connexion information is provided via env var
 		testingConfig.FromEnv()
 	}
