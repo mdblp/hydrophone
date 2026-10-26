@@ -61,12 +61,12 @@ pipeline {
             }
             steps {
                 echo 'start mongo to serve as a testing db'
-                sh 'docker network create hydrotest${RUN_ID} && docker run --rm -d --net=hydrotest${RUN_ID} --name=mongo4hydrotest${RUN_ID} mongo:4.2'
+                sh 'docker network create hydrotest${RUN_ID} && docker run --rm -d --net=hydrotest${RUN_ID} --name=mongo4hydrotest${RUN_ID} mongo:8.0'
                 script {
                     docker.image(env.buildImage).inside("-v /var/jenkins/go-cache:/go-cache --net=hydrotest${RUN_ID}") {
                         withCredentials ([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                             sh 'git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"'
-                            sh "TIDEPOOL_STORE_ADDRESSES=mongo4hydrotest${RUN_ID}:27017 TIDEPOOL_STORE_DATABASE=confirm_test $WORKSPACE/test.sh"
+                            sh "BLP_STORE_ADDRESSES=mongo4hydrotest${RUN_ID}:27017 BLP_STORE_DATABASE=confirm_test $WORKSPACE/test.sh"
                             sh 'git config --global --unset url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf'
                         }
                     }

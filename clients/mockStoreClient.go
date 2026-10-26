@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/mdblp/hydrophone/models"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type MockStoreClient struct {
