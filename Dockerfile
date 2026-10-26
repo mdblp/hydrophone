@@ -13,7 +13,7 @@ RUN apk --no-cache update && \
     apk --no-cache upgrade && \
     apk add --no-cache git rsync
 
-RUN git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+RUN git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
