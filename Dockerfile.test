@@ -21,7 +21,7 @@ WORKDIR /root/go/src/github.com/mdblp/hydrophone
 
 COPY go.* ./
 RUN \
-  /usr/bin/git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
+  /usr/bin/git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
   /go/bin/go mod download && \
   /go/bin/go env GOPATH && \
   /go/bin/go install github.com/jstemmer/go-junit-report@latest && \

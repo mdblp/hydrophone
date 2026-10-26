@@ -3,9 +3,13 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords, initial signup, and invitations.
 
-## 1.23.5 - 2026-10-23
+## 1.24.0 - 2026-10-26
 ### Changed
 - YLP-4163 Migrate mongo client v1 to v2 (mongo-driver v2.9.2, go-db v3)
+
+## 1.23.5 - 2026-10-23
+### fix
+- YLP-0000 Update Go to 1.27.3
 
 ## 1.23.4 - 2026-10-15
 ### fix
