@@ -7,7 +7,6 @@ import (
 	"time"
 
 	goComMgo "github.com/mdblp/go-db/v3/mongo"
-	"github.com/mdblp/hydrophone/models"
 	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/mdblp/hydrophone/models"
