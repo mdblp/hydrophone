@@ -27,36 +27,6 @@ type TemplateMeta struct {
 func New(templatesPath string, localizer localize.Localizer) (models.Templates, error) {
 	templates := models.Templates{}
 
-	if template, err := newTemplate(templatesPath, models.TemplateNameCareteamInvite, localizer); err != nil {
-		return nil, fmt.Errorf("templates: failure to create careteam invite template: %s", err)
-	} else {
-		templates[template.Name()] = template
-	}
-
-	if template, err := newTemplate(templatesPath, models.TemplateNameMedicalteamPatientInvite, localizer); err != nil {
-		return nil, fmt.Errorf("templates: failure to create patient invite into medical team template: %s", err)
-	} else {
-		templates[template.Name()] = template
-	}
-
-	if template, err := newTemplate(templatesPath, models.TemplateNameMedicalteamInvite, localizer); err != nil {
-		return nil, fmt.Errorf("templates: failure to create medical invite template: %s", err)
-	} else {
-		templates[template.Name()] = template
-	}
-
-	if template, err := newTemplate(templatesPath, models.TemplateNameMedicalteamDoAdmin, localizer); err != nil {
-		return nil, fmt.Errorf("templates: failure to create medical team admin template: %s", err)
-	} else {
-		templates[template.Name()] = template
-	}
-
-	if template, err := newTemplate(templatesPath, models.TemplateNameMedicalteamRemove, localizer); err != nil {
-		return nil, fmt.Errorf("templates: failure to create medical team remove member: %s", err)
-	} else {
-		templates[template.Name()] = template
-	}
-
 	if template, err := newTemplate(templatesPath, models.TemplateNameNoAccount, localizer); err != nil {
 		return nil, fmt.Errorf("templates: failure to create no account template: %s", err)
 	} else {
@@ -95,12 +65,6 @@ func New(templatesPath string, localizer localize.Localizer) (models.Templates, 
 
 	if template, err := newTemplate(templatesPath, models.TemplateNamePatientPinReset, localizer); err != nil {
 		return nil, fmt.Errorf("templates: failure to create patient Pin Reset template: %s", err)
-	} else {
-		templates[template.Name()] = template
-	}
-
-	if template, err := newTemplate(templatesPath, models.TemplateNameAppPrescription, localizer); err != nil {
-		return nil, fmt.Errorf("templates: failure to create App prescription template: %s", err)
 	} else {
 		templates[template.Name()] = template
 	}

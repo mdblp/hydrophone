@@ -13,23 +13,18 @@ import (
 	"path"
 	"strings"
 
-	"github.com/mdblp/hydrophone/api"
-
 	"github.com/mdblp/go-common/clients/status"
 	appContext "github.com/mdblp/go-common/context"
 	"github.com/mdblp/go-common/errors"
+
 	"github.com/mdblp/hydrophone/models"
 )
 
 type (
 	ClientInterface interface {
-		GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error)
-		GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error)
-		GetPatientTeamPendingInvite(ctx context.Context, teamId string, patientId string, authToken string) (*models.Confirmation, error)
 		GetPendingSignup(userID string, authToken string) (*models.Confirmation, error)
 		CancelSignup(confirm models.Confirmation, authToken string) error
 		SendNotification(topic string, notif interface{}, authToken string) error
-		InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error)
 	}
 
 	Client struct {
@@ -93,91 +88,6 @@ func (client *Client) getHost() (*url.URL, error) {
 		return nil, fmt.Errorf("unable to parse urlString[%s]", client.host)
 	}
 	return theURL, nil
-}
-
-func (client *Client) GetPendingInvitations(userID string, authToken string) ([]models.Confirmation, error) {
-	return client.GetPendingInviteOrSignup(userID, authToken, models.TypeCareteamInvite)
-}
-
-func (client *Client) InviteHcp(ctx context.Context, teamId string, inviteeEmail string, role string, authToken string) (*models.Confirmation, error) {
-	invitationBody := api.InviteBody{
-		Email:  inviteeEmail,
-		TeamID: teamId,
-		Role:   role,
-	}
-	req, err := client.getFullRequestWithContext(ctx, "POST", authToken, invitationBody, map[string]string{}, "send", "team", "invite")
-	if err != nil {
-		return nil, errors.Wrap(err, "SendTeamInviteHCP: error formatting request")
-	}
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode == 200 {
-		var retVal models.Confirmation
-		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
-			return nil, fmt.Errorf("error parsing JSON results: %v", err)
-		}
-		return &retVal, nil
-	}
-	return nil, handleErrors(res, req)
-}
-
-func (client *Client) GetSentInvitations(ctx context.Context, userID string, authToken string) ([]models.Confirmation, error) {
-	logger := appContext.GetLogger(ctx)
-	req, err := client.getFullRequestWithContext(ctx, "GET", authToken, nil, map[string]string{}, "invite", userID)
-	if err != nil {
-		return nil, errors.Wrap(err, "GetSentInvitations: error formatting request")
-	}
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode == 200 {
-		var retVal []models.Confirmation
-		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
-			logger.Error(err)
-			return nil, fmt.Errorf("error parsing JSON results: %v", err)
-		}
-		return retVal, nil
-	}
-	if res.StatusCode == 404 {
-		return make([]models.Confirmation, 0), nil
-	}
-	return nil, handleErrors(res, req)
-}
-
-func (client *Client) GetPatientTeamPendingInvite(ctx context.Context, teamId string, patientId string, authToken string) (*models.Confirmation, error) {
-	logger := appContext.GetLogger(ctx)
-	req, err := client.getFullRequestWithContext(ctx, "GET", authToken, nil, map[string]string{}, "teams", teamId, "patients", patientId, "invite")
-	if err != nil {
-		return nil, errors.Wrap(err, "GetPatientTeamPendingInvite: error formatting request")
-	}
-
-	res, err := client.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode == 200 {
-		var retVal *models.Confirmation
-		if err := json.NewDecoder(res.Body).Decode(&retVal); err != nil {
-			logger.Error(err)
-			return nil, fmt.Errorf("error parsing JSON results: %v", err)
-		}
-		return retVal, nil
-	}
-	if res.StatusCode == 404 {
-		return nil, err
-	}
-	return nil, handleErrors(res, req)
 }
 
 func (client *Client) GetPendingSignup(userID string, authToken string) (*models.Confirmation, error) {
