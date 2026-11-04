@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -174,7 +175,7 @@ func Test_NewPatientPinResetConfirmation(t *testing.T) {
 
 	decOTP := &otp.TOTP{}
 
-	confirmation.DecodeContext(&decOTP)
+	json.Unmarshal(confirmation.Context, &decOTP)
 
 	if decOTP.TimeStamp != totp.TimeStamp {
 		t.Fatalf("context not decoded [%v]", decOTP)
@@ -291,7 +292,7 @@ func Test_NewConfirmationWithContext(t *testing.T) {
 
 	myExtras := &Extras{}
 
-	confirmation.DecodeContext(&myExtras)
+	json.Unmarshal(confirmation.Context, &myExtras)
 
 	if myExtras.Blah == "" {
 		t.Fatalf("context not decoded [%v]", myExtras)
@@ -313,7 +314,7 @@ func Test_Confirmation_AddContext(t *testing.T) {
 
 	myExtras := &Extras{}
 
-	confirmation.DecodeContext(&myExtras)
+	json.Unmarshal(confirmation.Context, &myExtras)
 
 	if myExtras.Blah == "" {
 		t.Fatalf("context not decoded [%v]", myExtras)

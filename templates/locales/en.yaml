@@ -51,7 +51,5 @@ PatientPinResetBody: "Here is your temporary code:"
 PatientPinResetBody2: "The code will expire in 30 minutes."
 PatientPinResetBody3: "If the code has expired, please request a new one on your DBL."
 #Shared
-ReadDataPrivacy: "Read our <a style='text-decoration:none;color:#00a3e2;' href='{{ .AssetURL }}/data-privacy.{{ .Language }}.pdf '>privacy policy</a> for more information."
-RespondToInvite: "Respond to invitation"
 ConfirmationSubject: "Verify your email address"
 PhishingWarning: "Be alert to phishing attacks that mimic the Diabeloop name and logo. Diabeloop will never request your password. Your password should never be communicated to a third party."

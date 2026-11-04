@@ -162,25 +162,13 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 	log.Printf("trying preview with template '%s' with language '%s'", templateName, lang)
 
 	content := map[string]string{
-		"Key":                      "123456789123456789123456789123456789",
-		"Email":                    "john@diabeloop.com",
-		"EncodedEmail":             url.QueryEscape("john@diabeloop.com"),
-		"FullName":                 "John Doe",
-		"PatientName":              "John Doe",
-		"WebPath":                  "login",
-		"ShortKey":                 "12345678",
-		"Duration":                 "1",
-		"OTP":                      "165236984",
-		"SupportEmail":             a.Config.SupportURL,
-		"MedicalteamName":          "Team CHU",
-		"MedicalteamAddress":       "Bd de la chantourne, 38000 Grenoble",
-		"MedicalteamPhone":         "33 4 760 101",
-		"MedicalteamIentification": "123-456-789",
-		"CreatorName":              "John Doe",
-		"Language":                 "en",
-		"Product":                  "DBLG2",
-		"PrescriptionCode":         "123456789",
-		"Invitor":                  "John Doe",
+		"Key":          "123456789123456789123456789123456789",
+		"EncodedEmail": url.QueryEscape("john@diabeloop.com"),
+		"FullName":     "John Doe",
+		"ShortKey":     "12345678",
+		"Duration":     "1",
+		"OTP":          "165236984",
+		"SupportEmail": a.Config.SupportURL,
 	}
 	// Content collection is here to replace placeholders in template body/content
 	content["WebURL"] = a.Config.WebURL

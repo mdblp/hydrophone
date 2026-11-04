@@ -25,11 +25,7 @@ func buildServer(t *testing.T, userID string, testToken string, confirmType stri
 					switch userID {
 					case "authorizedWithData":
 						res.WriteHeader(http.StatusOK)
-						if confirmType == "invite" {
-							fmt.Fprint(res, `[{"key":"key1","type":"medicalteam_invitation"}, {"key":"key2","type":"medicalteam_do_admin"}]`)
-						} else {
-							fmt.Fprint(res, `[{"key":"key3","type":"signup_confirmation"}]`)
-						}
+						fmt.Fprint(res, `[{"key":"key3","type":"signup_confirmation"}]`)
 					case "authorizedWithWrongData":
 						res.WriteHeader(http.StatusOK)
 						fmt.Fprint(res, `{"key":"key1"}`)

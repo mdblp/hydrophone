@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -17,7 +16,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 
 	"github.com/mdblp/go-common/v2/clients/auth"
 	"github.com/mdblp/go-common/v2/clients/status"
@@ -33,29 +31,20 @@ import (
 type (
 	// SeagullClientAPI API seagull client interface
 	SeagullClientAPI interface {
-		GetProfile(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
 		GetPreferences(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
-
-		//GetInfos Retrieve all account information for a userId
-		GetInfos(ctx context.Context, userID string, token string) (doc *schema.SeagullDocument, err error)
-
-		// SetInfos perform an update of all account information based on the parameter called doc for a dedicated userId
-		SetInfos(ctx context.Context, userID string, doc *schema.SeagullDocument, token string) []error
 	}
 
 	Api struct {
-		Store          clients.StoreClient
-		notifier       clients.Notifier
-		templates      models.Templates
-		sl             shoreline.ClientInterface
-		perms          clients.CrewRepo
-		auth           auth.ClientInterface
-		seagull        SeagullClientAPI
-		userRepo       UserRepo
-		medicalData    tidewhisperer.ClientInterface
-		Config         Config
-		LanguageBundle *i18n.Bundle
-		logger         *log.Logger
+		Store       clients.StoreClient
+		notifier    clients.Notifier
+		templates   models.Templates
+		sl          shoreline.ClientInterface
+		auth        auth.ClientInterface
+		seagull     SeagullClientAPI
+		userRepo    UserRepo
+		medicalData tidewhisperer.ClientInterface
+		Config      Config
+		logger      *log.Logger
 	}
 	Config struct {
 		ServerSecret                   string `json:"serverSecret"`              //used for services
@@ -66,7 +55,6 @@ type (
 		AllowPatientResetPassword      bool   `json:"allowPatientResetPassword"` // true means that patients can reset their password, false means that only clinicianc can reset their password
 		PatientPasswordResetURL        string `json:"patientPasswordResetUrl"`   // URL of the help web site that is used to give instructions to reset password for patients
 		Protocol                       string `json:"protocol"`
-		EnableTestRoutes               bool   `json:"test"`
 		ConfirmationAttempts           int64
 		ConfirmationAttemptsTimeWindow time.Duration
 	}
@@ -76,9 +64,6 @@ type (
 )
 
 const (
-	//api logging prefix
-	CONFIRM_API_PREFIX = "api/confirm "
-
 	TP_SESSION_TOKEN = "x-tidepool-session-token"
 	// TP_TRACE_SESSION Session trace: uuid v4
 	TP_TRACE_SESSION = "x-tidepool-trace-session"
@@ -90,30 +75,15 @@ const (
 	STATUS_ERR_RESET_PWD_FORBIDEN    = "Cannot send reset password to non patients users"
 	STATUS_ERR_FINDING_CONFIRMATION  = "Error finding the confirmation"
 	STATUS_ERR_FINDING_USER          = "Error finding the user"
-	STATUS_ERR_FINDING_TEAM          = "Error finding the team"
 	STATUS_ERR_DECODING_CONFIRMATION = "Error decoding the confirmation"
-	STATUS_ERR_DECODING_NOTIFICATION = "Error decoding the notification payload"
 	STATUS_ERR_FINDING_VALIDATION    = "Error finding the account validation"
-	STATUS_ERR_DECODING_INVITE       = "Error decoding the invitation"
-	STATUS_ERR_MISSING_DATA_INVITE   = "Error missing data in the invitation"
-	STATUS_ERR_INVALID_DATA          = "Error invalid data in the invitation"
-	STATUS_ERR_FINDING_INVITE        = "Error finding the invite"
 
 	//returned status messages
-	STATUS_NOT_FOUND             = "Nothing found"
-	STATUS_NO_TOKEN              = "No x-tidepool-session-token was found"
-	STATUS_UNAUTHORIZED          = "Not authorized for requested operation"
-	STATUS_ROLE_ALRDY_ASSIGNED   = "Role already assigned to user"
-	STATUS_NOT_MEMBER            = "User is not a member"
-	STATUS_NOT_ADMIN             = STATUS_UNAUTHORIZED
-	STATUS_OK                    = "OK"
-	STATUS_SIGNUP_NO_ID          = "Required userid is missing"
-	STATUS_ERR_FINDING_USR       = "Error finding user"
-	STATUS_ERR_UPDATING_TEAM     = "Error updating team"
-	STATUS_ERR_COUNTING_CONF     = "Error counting existing confirmations"
-	STATUS_PATIENT_NOT_AUTH      = "Patient cannot be member of care team"
-	STATUS_MEMBER_NOT_AUTH       = "Non patient users cannot be a patient of care team"
-	STATUS_PATIENT_NOT_CAREGIVER = "Patient cannot be added as caregiver"
+	STATUS_NO_TOKEN          = "No x-tidepool-session-token was found"
+	STATUS_OK                = "OK"
+	STATUS_SIGNUP_NO_ID      = "Required userid is missing"
+	STATUS_ERR_FINDING_USR   = "Error finding user"
+	STATUS_ERR_COUNTING_CONF = "Error counting existing confirmations"
 )
 
 var bmPolicy = bluemonday.StrictPolicy()
@@ -127,7 +97,6 @@ func InitApi(
 	store clients.StoreClient,
 	ntf clients.Notifier,
 	sl shoreline.ClientInterface,
-	perms clients.CrewRepo,
 	auth auth.ClientInterface,
 	seagull SeagullClientAPI,
 	medicalData tidewhisperer.ClientInterface,
@@ -136,18 +105,16 @@ func InitApi(
 	userRepo UserRepo,
 ) *Api {
 	return &Api{
-		Store:          store,
-		Config:         cfg,
-		notifier:       ntf,
-		sl:             sl,
-		perms:          perms,
-		auth:           auth,
-		seagull:        seagull,
-		medicalData:    medicalData,
-		templates:      templates,
-		LanguageBundle: nil,
-		logger:         logger,
-		userRepo:       userRepo,
+		Store:       store,
+		Config:      cfg,
+		notifier:    ntf,
+		sl:          sl,
+		auth:        auth,
+		seagull:     seagull,
+		medicalData: medicalData,
+		templates:   templates,
+		logger:      logger,
+		userRepo:    userRepo,
 	}
 }
 
@@ -165,17 +132,16 @@ func (a *Api) SetHandlers(prefix string, rtr *mux.Router) {
 
 	rtr.Handle("/sanity_check/{userid}", varsHandler(a.sendSanityCheckEmail)).Methods("POST")
 
-	// POST /confirm/send/forgot/:useremail
-	// POST /confirm/send/invite/:userid
 	send := rtr.PathPrefix("/send").Subrouter()
+	// POST /confirm/send/forgot/:useremail
 	send.Handle("/forgot/{useremail}", varsHandler(a.passwordReset)).Methods("POST")
 
 	// POST /confirm/send/inform/:userid
 	send.Handle("/inform/{userid}", varsHandler(a.sendSignUpInformation)).Methods("POST")
+	// POST /confirm/send/pin-reset/:userid
 	send.Handle("/pin-reset/{userid}", varsHandler(a.SendPinReset)).Methods("POST")
 
 	// PUT /confirm/accept/forgot/
-	// PUT /confirm/accept/invite/:userid/:invited_by
 	accept := rtr.PathPrefix("/accept").Subrouter()
 	accept.Handle("/forgot", varsHandler(a.acceptPassword)).Methods("PUT")
 
@@ -245,26 +211,6 @@ func (a *Api) findExistingConfirmation(ctx context.Context, conf *models.Confirm
 	}
 }
 
-// Find this confirmation
-// write error if it fails
-func (a *Api) addProfile(ctx context.Context, conf *models.Confirmation) error {
-	if conf.CreatorId != "" {
-		doc, err := a.seagull.GetProfile(ctx, conf.CreatorId, a.sl.TokenProvide())
-		if err != nil {
-			log.Printf("error getting the creators profile [%v] ", err)
-			return err
-		}
-		if doc.Profile == nil {
-			err := errors.New("profile is empty")
-			log.Printf("error getting the creators profile [%v] ", err)
-			return err
-		}
-		conf.Creator.Profile = &models.Profile{FullName: doc.Profile.FullName}
-		conf.Creator.UserId = conf.CreatorId
-	}
-	return nil
-}
-
 func (a *Api) getUserLanguage(userid string, req *http.Request, res http.ResponseWriter) string {
 	// let's get the invitee user preferences
 	if seagulDoc, err := a.seagull.GetPreferences(req.Context(), userid, a.sl.TokenProvide()); err != nil {
@@ -273,30 +219,6 @@ func (a *Api) getUserLanguage(userid string, req *http.Request, res http.Respons
 		return seagulDoc.Preferences.DisplayLanguageCode
 	}
 	return GetUserChosenLanguage(req)
-}
-
-// Find these confirmations
-// write error if fails or write no-content if it doesn't exist
-func (a *Api) checkFoundConfirmations(ctx context.Context, res http.ResponseWriter, results []*models.Confirmation, err error) []*models.Confirmation {
-	if err != nil {
-		log.Println("Error finding confirmations ", err)
-		statusErr := &status.StatusError{status.NewStatus(http.StatusInternalServerError, STATUS_ERR_FINDING_CONFIRMATION)}
-		a.sendModelAsResWithStatus(res, statusErr, http.StatusInternalServerError)
-		return nil
-	} else if results == nil || len(results) == 0 {
-		statusErr := &status.StatusError{status.NewStatus(http.StatusNotFound, STATUS_NOT_FOUND)}
-		//log.Println("No confirmations were found ", statusErr.Error())
-		a.sendModelAsResWithStatus(res, statusErr, http.StatusNotFound)
-		return nil
-	} else {
-		for i := range results {
-			if err = a.addProfile(ctx, results[i]); err != nil {
-				//report and move on
-				log.Println("Error getting profile", err.Error())
-			}
-		}
-		return results
-	}
 }
 
 // Generate a notification from the given confirmation,write the error if it fails
@@ -419,23 +341,6 @@ func (a *Api) findExistingUser(identifier, token string) *models.UserData {
 	}
 }
 
-// Makesure we have set the userId on these confirmations
-func (a *Api) ensureIdSet(ctx context.Context, userId string, confirmations []*models.Confirmation) {
-
-	if len(confirmations) < 1 {
-		return
-	}
-	for i := range confirmations {
-		//set the userid if not set already
-		if confirmations[i].UserId == "" {
-			log.Println("UserId wasn't set for invite so setting it")
-			confirmations[i].UserId = userId
-			a.Store.UpsertConfirmation(ctx, confirmations[i])
-		}
-	}
-	return
-}
-
 func (a *Api) sendModelAsResWithStatus(res http.ResponseWriter, model interface{}, statusCode int) {
 	if jsonDetails, err := json.Marshal(model); err != nil {
 		log.Printf("Error [%s] trying to send model [%s]", err.Error(), model)
@@ -465,35 +370,6 @@ func (a *Api) sendError(res http.ResponseWriter, statusCode int, reason string, 
 
 	log.Printf("%s:%d RESPONSE ERROR: [%d %s] %s", file, line, statusCode, reason, strings.Join(messages, "; "))
 	a.sendModelAsResWithStatus(res, status.NewStatus(statusCode, reason), statusCode)
-}
-
-func (a *Api) sendErrorWithCode(res http.ResponseWriter, statusCode int, errorCode int, reason string, extras ...interface{}) {
-	_, file, line, ok := runtime.Caller(1)
-	if ok {
-		segments := strings.Split(file, "/")
-		file = segments[len(segments)-1]
-	} else {
-		file = "???"
-		line = 0
-	}
-
-	messages := make([]string, len(extras))
-	for index, extra := range extras {
-		messages[index] = fmt.Sprintf("%v", extra)
-	}
-
-	log.Printf("%s:%d RESPONSE ERROR: [%d %s] %s", file, line, statusCode, reason, strings.Join(messages, "; "))
-	a.sendModelAsResWithStatus(res, status.NewStatusWithError(statusCode, errorCode, reason), statusCode)
-}
-
-func (a *Api) isAuthorizedUser(tokenData *token.TokenData, userId string) bool {
-	if tokenData.IsServer {
-		return true
-	} else if tokenData.UserId == userId {
-		return true
-	} else {
-		return false
-	}
 }
 
 func (a *Api) verifySendAttempts(ctx context.Context, confirmationType models.Type, creatorId string, email string, userId string) (bool, int64, error) {

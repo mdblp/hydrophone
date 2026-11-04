@@ -14,11 +14,7 @@ type UserData struct {
 
 // UserUpdate is the data structure for updating of a users details
 type UserUpdate struct {
-	Username      *string   `json:"username,omitempty"`
-	Emails        *[]string `json:"emails,omitempty"`
-	Password      *string   `json:"password,omitempty"`
-	Roles         *[]string `json:"roles,omitempty"`
-	EmailVerified *bool     `json:"emailVerified,omitempty"`
+	Password *string `json:"password,omitempty"`
 }
 
 func (u *UserData) HasRole(role string) bool {

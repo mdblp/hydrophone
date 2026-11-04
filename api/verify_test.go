@@ -66,10 +66,10 @@ func TestSanityCheckResponds(t *testing.T) {
 		mockUserRepo.On("GetUser", "NotFound", mock.Anything).Return(nil, nil)
 
 		if test.returnNone {
-			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
+			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
 			hydrophoneFindsNothing.SetHandlers("", testRtr)
 		} else {
-			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
+			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
 			hydrophone.SetHandlers("", testRtr)
 		}
 

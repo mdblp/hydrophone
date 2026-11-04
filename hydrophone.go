@@ -1,6 +1,6 @@
 // @title Hydrophone API
 // @version 1.5.0
-// @description The purpose of this API is to send notifications to users: forgotten passwords, initial signup, invitations and more
+// @description The purpose of this API is to send notifications to users: forgotten passwords, initial signup and more
 // @license.name BSD 2-Clause "Simplified" License
 // @host api.android-qa.your-loops.dev
 // @BasePath /confirm
@@ -22,7 +22,6 @@ import (
 	"os/signal"
 	"path"
 	"strconv"
-	"strings"
 	"syscall"
 	"time"
 
@@ -36,7 +35,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	crewClient "github.com/mdblp/crew/client"
 	"github.com/mdblp/go-common"
 	"github.com/mdblp/go-db/v3/mongo"
 	"github.com/mdblp/shoreline/clients/shoreline"
@@ -83,12 +81,6 @@ func main() {
 	// Load configuration from environment variables
 	if err := common.LoadEnvironmentConfig([]string{"TIDEPOOL_HYDROPHONE_SERVICE"}, &config); err != nil {
 		logger.Panic("Problem loading config ", err)
-	}
-	isTestEnv, found := os.LookupEnv("TEST")
-	if found && strings.ToUpper(isTestEnv) == "TRUE" {
-		config.Api.EnableTestRoutes = true
-	} else {
-		config.Api.EnableTestRoutes = false
 	}
 	region, found := os.LookupEnv("REGION")
 	if found {
@@ -152,7 +144,6 @@ func main() {
 
 	logger.Print("Shoreline client started")
 
-	permsClient, err := crewClient.NewClientFromEnv(httpClient)
 	seagull, err := seagullClient.NewClientFromEnv(httpClient)
 	if err != nil {
 		logger.Fatal(err)
@@ -209,7 +200,7 @@ func main() {
 	}
 
 	rtr := mux.NewRouter()
-	api := api.InitApi(config.Api, store, mail, shoreline, permsClient, authClient, seagull, tideV2Client, emailTemplates, logger, userRepoClient)
+	api := api.InitApi(config.Api, store, mail, shoreline, authClient, seagull, tideV2Client, emailTemplates, logger, userRepoClient)
 	api.SetHandlers("", rtr)
 
 	/*
