@@ -10,10 +10,11 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	goComMgo "github.com/mdblp/go-db/v3/mongo"
-	"github.com/mdblp/hydrophone/v2/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 const (
@@ -47,17 +48,6 @@ func NewStore(config *goComMgo.Config, logger *log.Logger) (*Client, error) {
 				},
 				Options: options.Index().
 					SetName("invite_index"),
-			},
-			{
-				Keys: bson.D{
-					{Key: "status", Value: 1},
-					{Key: "teamId", Value: 1},
-					{Key: "type", Value: 1},
-					{Key: "userId", Value: 1},
-					{Key: "created", Value: -1},
-				},
-				Options: options.Index().
-					SetName("accept_index"),
 			},
 		},
 	}
