@@ -17,7 +17,7 @@ RUN wget -nv https://golang.org/dl/$GO_ARCHIVE && \
     tar zxf $GO_ARCHIVE && \
     mv -v /tmp/go /go && \
     rm -v /tmp/$GO_ARCHIVE
-WORKDIR /root/go/src/github.com/mdblp/hydrophone
+WORKDIR /root/go/src/github.com/mdblp/hydrophone/v2
 
 COPY go.* ./
 RUN \

@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	goComMgo "github.com/mdblp/go-db/v3/mongo"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"

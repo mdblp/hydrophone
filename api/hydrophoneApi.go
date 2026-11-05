@@ -24,8 +24,8 @@ import (
 	"github.com/mdblp/shoreline/clients/shoreline"
 	"github.com/mdblp/shoreline/token"
 
-	"github.com/mdblp/hydrophone/clients"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/clients"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 type (

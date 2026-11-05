@@ -3,8 +3,8 @@ package templates
 import (
 	"testing"
 
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 const (

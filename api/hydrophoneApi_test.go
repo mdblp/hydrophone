@@ -21,10 +21,10 @@ import (
 	"github.com/mdblp/shoreline/token"
 	"github.com/sirupsen/logrus/hooks/test"
 
-	"github.com/mdblp/hydrophone/api/mocks"
-	"github.com/mdblp/hydrophone/clients"
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/api/mocks"
+	"github.com/mdblp/hydrophone/v2/clients"
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 const (

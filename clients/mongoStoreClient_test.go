@@ -9,7 +9,7 @@ import (
 	goComMgo "github.com/mdblp/go-db/v3/mongo"
 	"github.com/sirupsen/logrus/hooks/test"
 
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 var logger, _ = test.NewNullLogger()

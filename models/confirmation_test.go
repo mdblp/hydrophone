@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mdblp/hydrophone/utils/otp"
+	"github.com/mdblp/hydrophone/v2/utils/otp"
 )
 
 const USERID = "1234-555"

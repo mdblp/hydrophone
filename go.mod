@@ -1,4 +1,4 @@
-module github.com/mdblp/hydrophone
+module github.com/mdblp/hydrophone/v2
 
 go 1.27
 

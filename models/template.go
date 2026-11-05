@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/mdblp/hydrophone/localize"
+	"github.com/mdblp/hydrophone/v2/localize"
 )
 
 type TemplateName string

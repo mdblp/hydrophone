@@ -39,11 +39,11 @@ import (
 	"github.com/mdblp/go-db/v3/mongo"
 	"github.com/mdblp/shoreline/clients/shoreline"
 
-	"github.com/mdblp/hydrophone/api"
-	sc "github.com/mdblp/hydrophone/clients"
-	"github.com/mdblp/hydrophone/infrastructure"
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/templates"
+	"github.com/mdblp/hydrophone/v2/api"
+	sc "github.com/mdblp/hydrophone/v2/clients"
+	"github.com/mdblp/hydrophone/v2/infrastructure"
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/templates"
 )
 
 type (

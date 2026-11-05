@@ -7,7 +7,7 @@ import (
 
 	"github.com/mdblp/go-common/v2/clients/status"
 
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 // @Summary Patient account creation informative email

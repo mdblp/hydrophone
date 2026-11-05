@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	models "github.com/mdblp/hydrophone/models"
+	models "github.com/mdblp/hydrophone/v2/models"
 	mock "github.com/stretchr/testify/mock"
 )
 

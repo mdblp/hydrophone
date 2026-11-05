@@ -5,7 +5,7 @@ import (
 	"time"
 
 	goComMgo "github.com/mdblp/go-db/v3/mongo"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 type StoreClient interface {

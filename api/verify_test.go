@@ -11,8 +11,8 @@ import (
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/mdblp/hydrophone/api/mocks"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/api/mocks"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 func TestSanityCheckResponds(t *testing.T) {
