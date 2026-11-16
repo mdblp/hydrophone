@@ -3,7 +3,7 @@
 Hydrophone is the module responsible for sending emails.
 This API sends notifications to users for things like forgotten passwords and initial signup.
 
-## 2.0.0-rc0 - 2026-10-27
+## 2.0.0 - 2026-11-16
 ### Breaking changes
 - YLP-1939 remove invitation workflow (invitation routes and `clients/hydrophone` Go client removed)
 - Go module path is now `github.com/mdblp/hydrophone/v2`
