@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 type UserRepo interface {

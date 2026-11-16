@@ -15,9 +15,9 @@ import (
 	"github.com/mdblp/shoreline/token"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/mdblp/hydrophone/api/mocks"
-	"github.com/mdblp/hydrophone/models"
-	"github.com/mdblp/hydrophone/templates"
+	"github.com/mdblp/hydrophone/v2/api/mocks"
+	"github.com/mdblp/hydrophone/v2/models"
+	"github.com/mdblp/hydrophone/v2/templates"
 )
 
 func TestForgotResponds(t *testing.T) {
@@ -265,11 +265,11 @@ func TestForgotResponds(t *testing.T) {
 
 		if test.returnNone {
 			mockStoreEmpty.CounterLatestConfirmations = test.counterLatestConfirmations
-			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
+			hydrophoneFindsNothing := InitApi(FAKE_CONFIG, mockStoreEmpty, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
 			hydrophoneFindsNothing.SetHandlers("", testRtr)
 		} else {
 			mockStore.CounterLatestConfirmations = test.counterLatestConfirmations
-			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
+			hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, mockUserRepo)
 			hydrophone.SetHandlers("", testRtr)
 		}
 

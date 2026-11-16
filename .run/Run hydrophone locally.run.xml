@@ -33,7 +33,7 @@
       <env name="TIDEWHISPERERV2_HOST" value="http://api-private:3000/data" />
     </envs>
     <kind value="PACKAGE" />
-    <package value="github.com/mdblp/hydrophone" />
+    <package value="github.com/mdblp/hydrophone/v2" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$/hydrophone.go" />
     <method v="2" />

@@ -13,9 +13,10 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/mdblp/go-common/v2/clients/status"
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/models"
-	"github.com/mdblp/hydrophone/templates"
+
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/models"
+	"github.com/mdblp/hydrophone/v2/templates"
 )
 
 type (
@@ -116,16 +117,6 @@ func (a *Api) buildPreview(res http.ResponseWriter, req *http.Request, vars map[
 	var templateName models.TemplateName
 	lang := "en"
 	switch vars["template"] {
-	case "careteam_invitation":
-		templateName = models.TemplateNameCareteamInvite
-	case "medicalteam_patient_invitation":
-		templateName = models.TemplateNameMedicalteamPatientInvite
-	case "medicalteam_invitation":
-		templateName = models.TemplateNameMedicalteamInvite
-	case "medicalteam_do_admin":
-		templateName = models.TemplateNameMedicalteamDoAdmin
-	case "medicalteam_remove":
-		templateName = models.TemplateNameMedicalteamRemove
 	case "no_account":
 		templateName = models.TemplateNameNoAccount
 	case "password_reset":
@@ -140,8 +131,6 @@ func (a *Api) buildPreview(res http.ResponseWriter, req *http.Request, vars map[
 		templateName = models.TemplateNamePatientPinReset
 	case "signup_confirmation":
 		templateName = models.TemplateNameSignup
-	case "app_prescription":
-		templateName = models.TemplateNameAppPrescription
 	default:
 		log.Printf("Unknown template %s", vars["template"])
 		s := status.NewApiStatus(400, "Incorrect template name")
@@ -173,25 +162,13 @@ func (a *Api) generateEmail(templateName models.TemplateName, lang string) (stri
 	log.Printf("trying preview with template '%s' with language '%s'", templateName, lang)
 
 	content := map[string]string{
-		"Key":                      "123456789123456789123456789123456789",
-		"Email":                    "john@diabeloop.com",
-		"EncodedEmail":             url.QueryEscape("john@diabeloop.com"),
-		"FullName":                 "John Doe",
-		"PatientName":              "John Doe",
-		"WebPath":                  "login",
-		"ShortKey":                 "12345678",
-		"Duration":                 "1",
-		"OTP":                      "165236984",
-		"SupportEmail":             a.Config.SupportURL,
-		"MedicalteamName":          "Team CHU",
-		"MedicalteamAddress":       "Bd de la chantourne, 38000 Grenoble",
-		"MedicalteamPhone":         "33 4 760 101",
-		"MedicalteamIentification": "123-456-789",
-		"CreatorName":              "John Doe",
-		"Language":                 "en",
-		"Product":                  "DBLG2",
-		"PrescriptionCode":         "123456789",
-		"Invitor":                  "John Doe",
+		"Key":          "123456789123456789123456789123456789",
+		"EncodedEmail": url.QueryEscape("john@diabeloop.com"),
+		"FullName":     "John Doe",
+		"ShortKey":     "12345678",
+		"Duration":     "1",
+		"OTP":          "165236984",
+		"SupportEmail": a.Config.SupportURL,
 	}
 	// Content collection is here to replace placeholders in template body/content
 	content["WebURL"] = a.Config.WebURL

@@ -3,8 +3,8 @@ package templates
 import (
 	"testing"
 
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 const (
@@ -45,11 +45,6 @@ func Test_NewTemplates(t *testing.T) {
 		t.Fatalf("template.New() failled to execute with error %s", err)
 	}
 	expectedTemplates := []models.TemplateName{
-		models.TemplateNameCareteamInvite,
-		models.TemplateNameMedicalteamInvite,
-		models.TemplateNameMedicalteamPatientInvite,
-		models.TemplateNameMedicalteamDoAdmin,
-		models.TemplateNameMedicalteamRemove,
 		models.TemplateNameNoAccount,
 		models.TemplateNamePasswordReset,
 		models.TemplateNamePatientPasswordReset,

@@ -1,4 +1,4 @@
-module github.com/mdblp/hydrophone
+module github.com/mdblp/hydrophone/v2
 
 go 1.27
 
@@ -6,7 +6,6 @@ require (
 	github.com/aws/aws-sdk-go v1.55.8
 	github.com/gorilla/mux v1.8.1
 	github.com/k3a/html2text v1.4.0
-	github.com/mdblp/crew/client v1.0.0
 	github.com/mdblp/go-common v1.9.0
 	github.com/mdblp/go-common/v2 v2.2.0
 	github.com/mdblp/go-db/v3 v3.0.0

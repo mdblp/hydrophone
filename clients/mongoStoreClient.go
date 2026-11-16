@@ -10,10 +10,11 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	goComMgo "github.com/mdblp/go-db/v3/mongo"
-	"github.com/mdblp/hydrophone/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 const (
@@ -47,17 +48,6 @@ func NewStore(config *goComMgo.Config, logger *log.Logger) (*Client, error) {
 				},
 				Options: options.Index().
 					SetName("invite_index"),
-			},
-			{
-				Keys: bson.D{
-					{Key: "status", Value: 1},
-					{Key: "teamId", Value: 1},
-					{Key: "type", Value: 1},
-					{Key: "userId", Value: 1},
-					{Key: "created", Value: -1},
-				},
-				Options: options.Index().
-					SetName("accept_index"),
 			},
 		},
 	}
@@ -106,9 +96,6 @@ func (c *Client) FindConfirmation(ctx context.Context, confirmation *models.Conf
 	if confirmation.ShortKey != "" {
 		query["shortKey"] = confirmation.ShortKey
 	}
-	if confirmation.Team != nil && confirmation.Team.ID != "" {
-		query["teamId"] = confirmation.Team.ID
-	}
 	opts := options.FindOne()
 	opts.SetSort(bson.D{bson.E{Key: "created", Value: -1}})
 	if err = mgoConfirmationsCollection(c).FindOne(ctx, query, opts).Decode(&result); err != nil && err != mongo.ErrNoDocuments {
@@ -117,62 +104,6 @@ func (c *Client) FindConfirmation(ctx context.Context, confirmation *models.Conf
 	}
 
 	return result, nil
-}
-
-// FindConfirmations returns all created confirmations matching filter passed as parameter
-func (c *Client) FindConfirmations(ctx context.Context, confirmation *models.Confirmation, statuses []models.Status, types []models.Type) (results []*models.Confirmation, err error) {
-
-	var query bson.M = bson.M{}
-
-	if confirmation.Email != "" {
-		regexFilter := bson.Regex{Pattern: fmt.Sprintf("^%s$", regexp.QuoteMeta(confirmation.Email)), Options: "i"}
-		query["email"] = bson.M{"$regex": regexFilter}
-	}
-	if confirmation.Key != "" {
-		query["_id"] = confirmation.Key
-	}
-	if len(types) > 0 {
-		query["type"] = bson.M{"$in": types}
-	} else {
-		if string(confirmation.Type) != "" {
-			query["type"] = confirmation.Type
-		}
-	}
-	if confirmation.CreatorId != "" {
-		query["creatorId"] = confirmation.CreatorId
-	}
-	if confirmation.UserId != "" {
-		query["userId"] = confirmation.UserId
-	}
-	if len(statuses) > 0 {
-		query["status"] = bson.M{"$in": statuses}
-	}
-	if confirmation.ShortKey != "" {
-		query["shortKey"] = confirmation.ShortKey
-	}
-	if confirmation.Team != nil && confirmation.Team.ID != "" {
-		query["teamId"] = confirmation.Team.ID
-	}
-
-	opts := options.Find()
-	opts.SetSort(bson.D{bson.E{Key: "created", Value: -1}})
-	cursor, err := mgoConfirmationsCollection(c).Find(ctx, query, opts)
-	defer cursor.Close(ctx)
-	if err != nil {
-		log.Printf("FindConfirmation: something bad happened [%v]", err)
-		return results, err
-	}
-	err = cursor.All(ctx, &results)
-	return results, err
-}
-
-// RemoveConfirmation deletes confirmation based on key (_id)
-func (c *Client) RemoveConfirmation(ctx context.Context, confirmation *models.Confirmation) error {
-
-	if _, err := mgoConfirmationsCollection(c).DeleteOne(ctx, bson.M{"_id": confirmation.Key}); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (c *Client) CountLatestConfirmations(ctx context.Context, confirmation models.Confirmation, createdSince time.Time) (int64, error) {

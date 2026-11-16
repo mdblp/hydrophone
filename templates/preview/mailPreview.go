@@ -13,8 +13,8 @@ import (
 	"github.com/gorilla/mux"
 	common "github.com/mdblp/go-common"
 
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/templates"
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/templates"
 )
 
 type Config struct {

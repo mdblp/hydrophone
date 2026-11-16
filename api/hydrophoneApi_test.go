@@ -21,10 +21,10 @@ import (
 	"github.com/mdblp/shoreline/token"
 	"github.com/sirupsen/logrus/hooks/test"
 
-	"github.com/mdblp/hydrophone/api/mocks"
-	"github.com/mdblp/hydrophone/clients"
-	"github.com/mdblp/hydrophone/localize"
-	"github.com/mdblp/hydrophone/models"
+	"github.com/mdblp/hydrophone/v2/api/mocks"
+	"github.com/mdblp/hydrophone/v2/clients"
+	"github.com/mdblp/hydrophone/v2/localize"
+	"github.com/mdblp/hydrophone/v2/models"
 )
 
 const (
@@ -66,7 +66,6 @@ var (
 	rtr           = mux.NewRouter()
 	mockNotifier  = clients.NewMockNotifier()
 	mockShoreline = shoreline.NewMock(testing_token)
-	mockPerms     = mocks.NewCrewMock()
 	mockAuth      = auth.NewMock()
 
 	mockSeagull = &mocks.SeagullClientAPI{}
@@ -88,7 +87,7 @@ var (
 	 */
 	mock_uid1Shoreline = newtestingShorelingMock(testing_uid1)
 
-	responsableHydrophone = InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, nil)
+	responsableHydrophone = InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, nil)
 
 	mockLocalizer, _ = localize.NewI18nLocalizer("../templates/locales")
 )
@@ -190,7 +189,7 @@ func TestGetStatus_StatusOk(t *testing.T) {
 	request, _ := http.NewRequest("GET", "/status", nil)
 	response := httptest.NewRecorder()
 
-	hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, nil)
+	hydrophone := InitApi(FAKE_CONFIG, mockStore, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, nil)
 	hydrophone.SetHandlers("", rtr)
 
 	hydrophone.GetStatus(response, request)
@@ -215,7 +214,7 @@ func TestGetStatus_StatusInternalServerError(t *testing.T) {
 	request, _ := http.NewRequest("GET", "/status", nil)
 	response := httptest.NewRecorder()
 
-	hydrophoneFails := InitApi(FAKE_CONFIG, mockStoreFails, mockNotifier, mockShoreline, mockPerms, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, nil)
+	hydrophoneFails := InitApi(FAKE_CONFIG, mockStoreFails, mockNotifier, mockShoreline, mockAuth, mockSeagull, medicalDataMock, mockTemplates, logger, nil)
 	hydrophoneFails.SetHandlers("", rtr)
 
 	hydrophoneFails.GetStatus(response, request)
@@ -238,30 +237,6 @@ func (i *testJSONObject) deepCompare(j *testJSONObject) string {
 		}
 	}
 	return ""
-}
-
-func Test_isAuthorizedUser_Server(t *testing.T) {
-	tokenData := &token.TokenData{UserId: "abcdef1234", IsServer: true}
-	res := responsableHydrophone.isAuthorizedUser(tokenData, "some_server")
-	if res != true {
-		t.Fatalf("Test_isAuthorizedUser_Server should have returned true")
-	}
-}
-
-func Test_isAuthorizedUser_Owner(t *testing.T) {
-	tokenData := &token.TokenData{UserId: "abcdef1234", IsServer: false}
-	res := responsableHydrophone.isAuthorizedUser(tokenData, "abcdef1234")
-	if res != true {
-		t.Fatalf("Test_isAuthorizedUser_Owner should have returned true")
-	}
-}
-
-func Test_isAuthorizedUser_UnAuthorized(t *testing.T) {
-	tokenData := &token.TokenData{UserId: "abcdef1234", IsServer: false}
-	res := responsableHydrophone.isAuthorizedUser(tokenData, "abcdef1238")
-	if res == true {
-		t.Fatalf("Test_isAuthorizedUser_UnAuthorized should have returned false")
-	}
 }
 
 func Test_verifySendAttempts(t *testing.T) {
